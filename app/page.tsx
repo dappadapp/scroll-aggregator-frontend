@@ -9,6 +9,9 @@ import Navbar from "../components/Navbar";
 import { Network, networks } from "@/utils/networks";
 import SwapCard from "@/components/Swap/SwapCard";
 import { Divider } from "@/components/Divider";
+import SwapModal from "@/components/SwapModal";
+import TradingViewWidget from "@/components/TradingChart";
+import { SwapSteps } from "@/components/SwapSteps";
 
 export default function Home({
   searchParams,
@@ -75,15 +78,17 @@ export default function Home({
   };
 
   return (
-    <div className={"relative w-full h-[100vh] overflow-x-hidden"}>
-      {isSwapModalOpen ? <></> : null}
+    <div className={"relative w-full h-screen overflow-x-hidden"}>
+      {isSwapModalOpen ? (
+        <SwapModal onCloseModal={() => setIsSwapModalOpen(false)} />
+      ) : null}
 
-      <div className={"absolute overflow-y-scroll z-10 w-full flex flex-col p-2"}>
+      <div className={"absolute z-10 w-full flex flex-col p-2"}>
         <div className={"container mx-auto md:px-20 gap-2 flex flex-col"}>
           <Navbar />
           <div
             className={
-              "w-full max-w-full min-h-fit flex flex-col md:flex-row relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg  gap-1 items-center  mx-auto mt-4"
+              "w-full max-w-full min-h-fit flex flex-col md:flex-row relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg gap-1 mx-auto mt-4"
             }
           >
             <SwapCard
@@ -95,7 +100,24 @@ export default function Home({
               onArrowClick={onArrowClick}
             />
             {/* TODO: Graphic  */}
-            <div className="flex-[2] w-fit h-fit "></div>
+            <div className="flex-[2] md:flex hidden w-fit p-10 flex-col gap-24 h-full">
+              <TradingViewWidget />
+              <div className="flex gap-5 w-full justify-center">
+                <SwapSteps
+                  hasNext={true}
+                  type="swap"
+                  tokenImage={`/chains/${networks[0].image}`}
+                  value={0.001}
+                />
+                <SwapSteps
+                  hasNext={true}
+                  type="bridge"
+                  tokenImage={`/chains/${networks[0].image}`}
+                  value={0.1}
+                />
+                <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={0.1} />
+              </div>
+            </div>
           </div>
           <Footer />
         </div>
@@ -110,35 +132,35 @@ export default function Home({
         >
           <div
             className={
-              "absolute translate-x-[-50%] left-0 w-1/2 h-full flex flex-col justify-between items-center side"
+              "absolute translate-x-[-20%] left-0 w-1/2 h-full flex flex-col justify-between items-center side"
             }
           >
             <span
               className={
-                "absolute bg-[#FFA030] top-0 left-1/2 h-[200px] aspect-square blur-[80px] rounded-full"
+                "absolute bg-[#FFA030]/50 top-0 left-1/2 h-[200px] aspect-square blur-[80px] rounded-full"
               }
             ></span>
 
             <span
               className={
-                "absolute bg-[#FFA030] bottom-0 right-0 h-[200px] aspect-square blur-[80px] rounded-full"
+                "absolute bg-[#FFA030]/50 bottom-0 right-0 h-[200px] aspect-square blur-[80px] rounded-full"
               }
             ></span>
           </div>
           <div
             className={
-              "absolute translate-x-[50%] right-0 w-1/2 h-full flex flex-col justify-between items-center side"
+              "absolute translate-x-[30%] right-0 w-1/2 h-full flex flex-col justify-between items-center side"
             }
           >
             <span
               className={
-                "absolute bg-[#FFA030] top-[30%] left-0 h-[200px] aspect-square blur-[80px] rounded-full"
+                "absolute bg-[#FFA030]/50 top-[30%] left-0 h-[200px] aspect-square blur-[80px] rounded-full"
               }
             ></span>
 
             <span
               className={
-                "absolute bg-[#FFA030] top-[60%] left-1/3 h-[200px] aspect-square blur-[80px] rounded-full"
+                "absolute bg-[#FFA030]/50 top-[60%] left-1/3 h-[200px] aspect-square blur-[80px] rounded-full"
               }
             ></span>
           </div>

@@ -2,10 +2,6 @@ import type { Network } from "@/utils/networks";
 import React, { useEffect, useMemo, useState } from "react";
 
 import { networks } from "@/utils/networks";
-import { useAccount, useContractRead, useContractReads } from "wagmi";
-import swapIcon from "@/assets/images/swapIcon.svg";
-import { faUpDown } from "@fortawesome/free-solid-svg-icons";
-import Image from "next/image";
 import { Input } from "../Input";
 import DropdownSelect from "../DropdownSelect";
 import { SwapIcon } from "../SwapIcon";
@@ -22,7 +18,7 @@ type Props = {
 
 const percentageButtons = [25, 50, 75, 100];
 
-const SwapCard: React.FC<Props> = ({ sourceChain }) => {
+const SwapCard: React.FC<Props> = ({ sourceChain, onSwap }) => {
   const [swapFromInput, setSwapFromInput] = useState(0);
   const [receiveInput, setReceiveInput] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -85,7 +81,7 @@ const SwapCard: React.FC<Props> = ({ sourceChain }) => {
           </div>
         </div>
       </div>
-      <Button>SWAP</Button>
+      <Button onClick={() => onSwap(true)}>SWAP</Button>
     </div>
   );
 };

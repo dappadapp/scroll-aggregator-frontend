@@ -16,7 +16,7 @@ export const Input: React.FC<Props> = (props) => {
       placeholder={props.placeholder}
       type={props.type}
       disabled={props.disabled}
-      className={`${props.className} rounded-lg p-4 w-full focus:outline-0 text-base border-none bg-transparent`}
+      className={`${props.className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent`}
     />
   );
 };
