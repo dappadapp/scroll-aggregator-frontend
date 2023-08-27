@@ -8,10 +8,7 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Network, networks } from "@/utils/networks";
 import SwapCard from "@/components/Swap/SwapCard";
-import { Divider } from "@/components/Divider";
 import SwapModal from "@/components/SwapModal";
-import TradingViewWidget from "@/components/TradingChart";
-import { SwapSteps } from "@/components/SwapSteps";
 
 export default function Home({
   searchParams,
@@ -80,7 +77,14 @@ export default function Home({
   return (
     <div className={"relative w-full h-screen overflow-x-hidden"}>
       {isSwapModalOpen ? (
-        <SwapModal onCloseModal={() => setIsSwapModalOpen(false)} />
+        <SwapModal
+          liqSource="WOOFI"
+          rate="1 ETH = 1000 USDC"
+          minRecieve={1000.1}
+          tradingFee="0 ETH (0$)"
+          slippage={20}
+          onCloseModal={() => setIsSwapModalOpen(false)}
+        />
       ) : null}
 
       <div className={"absolute z-10 w-full flex flex-col p-2"}>
@@ -88,7 +92,7 @@ export default function Home({
           <Navbar />
           <div
             className={
-              "w-full max-w-full min-h-fit flex flex-col md:flex-row relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg gap-1 mx-auto mt-4"
+              "w-[50%] max-w-full min-h-fit p-10 gap-2 flex flex-col relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg mx-auto mt-4"
             }
           >
             <SwapCard
@@ -99,25 +103,8 @@ export default function Home({
               onChangeTargetChain={onChangeTargetChain}
               onArrowClick={onArrowClick}
             />
+
             {/* TODO: Graphic  */}
-            <div className="flex-[2] md:flex hidden w-fit p-10 flex-col gap-24 h-full">
-              <TradingViewWidget />
-              <div className="flex gap-5 w-full justify-center">
-                <SwapSteps
-                  hasNext={true}
-                  type="swap"
-                  tokenImage={`/chains/${networks[0].image}`}
-                  value={0.001}
-                />
-                <SwapSteps
-                  hasNext={true}
-                  type="bridge"
-                  tokenImage={`/chains/${networks[0].image}`}
-                  value={0.1}
-                />
-                <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={0.1} />
-              </div>
-            </div>
           </div>
           <Footer />
         </div>

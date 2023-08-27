@@ -29,9 +29,7 @@ const SwapCard: React.FC<Props> = ({ sourceChain, onSwap }) => {
   const [selectedToToken, setSelectedToToken] = useState<any>(networks[0]);
 
   return (
-    <div
-      className={`w-full p-10 border-r border-white/10 min-h-[560px] gap-2 h-fit flex-1 flex justify-between flex-col`}
-    >
+    <div className={`w-ful gap-4 h-fit flex-1 flex justify-between flex-col`}>
       <h1 className={"text-3xl w-full"}>Swap</h1>
       <div className="relative w-full flex flex-col items-center">
         <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white gap-2 pb-7 bg-opacity-[4%]">

@@ -4,13 +4,26 @@ import { networks } from "@/utils/networks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "./Button";
+import { SwapSteps } from "./SwapSteps";
 
 type Props = {
   onCloseModal: () => void;
+  tradingFee: string;
+  minRecieve: number;
+  slippage: number;
+  rate: string;
+  liqSource: string;
   refCode?: string;
 };
 
-function SwapModal({ onCloseModal }: Props) {
+function SwapModal({
+  onCloseModal,
+  liqSource,
+  rate,
+  minRecieve,
+  slippage,
+  tradingFee,
+}: Props) {
   return (
     <div
       className={
@@ -41,27 +54,42 @@ function SwapModal({ onCloseModal }: Props) {
           />
           <SwapToken value={0.0001} token="BTC" image={`/chains/${networks[1].image}`} />
         </div>
-        <div className="w-full bg-[#AAA] h-[1px]"></div>
+        <div className="w-full bg-[#AAA] h-[1px] my-6"></div>
+        <div className="flex gap-2 w-full justify-center">
+          <SwapSteps
+            hasNext={true}
+            type="swap"
+            tokenImage={`/chains/${networks[0].image}`}
+            value={0.001}
+          />
+          <SwapSteps
+            hasNext={true}
+            type="bridge"
+            tokenImage={`/chains/${networks[0].image}`}
+            value={0.1}
+          />
+          <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={0.1} />
+        </div>
         <div className="my-10 text-xs md:text-sm flex flex-col gap-2 text-[#AAA]">
           <div className="flex justify-between">
             <span>Trading Fee</span>
-            <span>0 ETH ( 10$ )</span>
+            <span>{tradingFee}</span>
           </div>
           <div className="flex justify-between">
             <span>Minimum Receive</span>
-            <span>1.100 USDC</span>
+            <span> {minRecieve} USDC</span>
           </div>
           <div className="flex justify-between">
             <span>Slippage tolerance</span>
-            <span>1%</span>
+            <span>{slippage}%</span>
           </div>
           <div className="flex justify-between">
             <span>Rate</span>
-            <span>1 ETH = 1000 USDC</span>
+            <span>{rate}</span>
           </div>
           <div className="flex justify-between">
             <span>Liquidity source</span>
-            <span>WOOFI</span>
+            <span>{liqSource}</span>
           </div>
         </div>
         <Button>Confirm Swap</Button>
