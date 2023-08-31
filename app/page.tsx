@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Network, networks } from "@/utils/networks";
-import SwapCard from "@/components/Swap/SwapCard";
+import SwapCard from "@/components/SwapCard/SwapCard";
 import SwapModal from "@/components/SwapModal";
 
 export default function Home({
@@ -17,7 +17,6 @@ export default function Home({
 }) {
   const [sourceChain, setSourceChain] = useState(networks[0]);
   const [targetChain, setTargetChain] = useState(networks[1]);
-  const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const { switchNetworkAsync } = useSwitchNetwork();
   const { chain: connectedChain } = useNetwork();
 
@@ -76,29 +75,21 @@ export default function Home({
 
   return (
     <div className={"relative w-full h-screen overflow-x-hidden"}>
-      {isSwapModalOpen ? (
-        <SwapModal
-          liqSource="WOOFI"
-          rate="1 ETH = 1000 USDC"
-          minRecieve={1000.1}
-          tradingFee="0 ETH (0$)"
-          slippage={20}
-          onCloseModal={() => setIsSwapModalOpen(false)}
-        />
-      ) : null}
-
-      <div className={"absolute z-10 w-full flex flex-col p-2"}>
-        <div className={"container mx-auto md:px-20 gap-2 flex flex-col"}>
+      <div className={"absolute z-10 w-full flex h-full flex-col p-2"}>
+        <div
+          className={
+            "container mx-auto md:px-20 gap-2 flex h-full justify-between md:justify-normal flex-col"
+          }
+        >
           <Navbar />
           <div
             className={
-              "w-[50%] max-w-full min-h-fit p-10 gap-2 flex flex-col relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg mx-auto mt-4"
+              "md:w-[50%] max-w-full min-h-fit p-10 gap-2 flex flex-col relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg mx-auto mt-4"
             }
           >
             <SwapCard
               sourceChain={sourceChain}
               targetChain={targetChain}
-              onSwap={() => setIsSwapModalOpen(true)}
               onChangeSourceChain={onChangeSourceChain}
               onChangeTargetChain={onChangeTargetChain}
               onArrowClick={onArrowClick}

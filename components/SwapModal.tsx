@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "./Button";
 import { SwapSteps } from "./SwapSteps";
+import SwapButton, { SwapParam } from "./SwapCard/SwapButton";
 
 type Props = {
   onCloseModal: () => void;
@@ -12,6 +13,7 @@ type Props = {
   minRecieve: number;
   slippage: number;
   rate: string;
+  swapParams: SwapParam[];
   liqSource: string;
   refCode?: string;
 };
@@ -23,11 +25,12 @@ function SwapModal({
   minRecieve,
   slippage,
   tradingFee,
+  swapParams,
 }: Props) {
   return (
     <div
       className={
-        "z-[999] absolute w-screen h-[123vh] md:h-[110vh] bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
+        "z-[999] fixed w-screen h-[100vh] bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
       }
     >
       <div
@@ -92,7 +95,7 @@ function SwapModal({
             <span>{liqSource}</span>
           </div>
         </div>
-        <Button>Confirm Swap</Button>
+        <SwapButton swapParams={swapParams} />
       </div>
     </div>
   );
