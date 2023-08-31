@@ -42,17 +42,17 @@ const SwapButton: React.FC<Props> = ({ swapParams }) => {
       return alert("Please connect your wallet first.");
     }
     if (!onExecuteSwaps)
-      return alert("Make sure you have enough ETH and you're on the correct network.");
+      return alert("Make sure you have enough GAS and you're on the correct network.");
     if (!isSuccess) {
       return alert("An unknown error occured. Please try again.");
     }
     try {
       setLoading(true);
       const { hash } = await onExecuteSwaps();
-      toast("Cross chain transaction sent!");
+      toast("Swap transaction sent!");
 
       await waitForTransaction({ hash });
-      toast("Cross chain successful!");
+      toast("Swap successful!");
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
