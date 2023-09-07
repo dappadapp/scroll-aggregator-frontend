@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import ZetaGateLogo from "./Logo";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import NetworkSelector from "./NetworkSelector";
 
 type Props = {};
 const ConnectButton: any = dynamic(() => import("./ConnectButton"), {
@@ -11,6 +12,7 @@ const ConnectButton: any = dynamic(() => import("./ConnectButton"), {
 
 const Navbar: React.FC<Props> = (props) => {
   const path = usePathname();
+
   return (
     <div
       className={"w-full flex flex-row items-center justify-between mt-2 md:mt-10 gap-2"}
@@ -30,6 +32,7 @@ const Navbar: React.FC<Props> = (props) => {
         </div>
       </div>
       <div className="flex flex-col-reverse md:flex-row gap-3">
+        <NetworkSelector />
         <ConnectButton />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { goerli, bscTestnet } from "wagmi/chains";
+import { goerli, bscTestnet, scrollTestnet, zkSyncTestnet } from "wagmi/chains";
 
 export interface Network {
   name: string;
@@ -32,6 +32,26 @@ export const networks: Network[] = [
     colorClass: "bg-[#EFB90A]",
     image: "bsc.svg",
     symbol: "BNB",
+    isTestnet: true,
+  },
+  {
+    name: scrollTestnet.name,
+    chainId: scrollTestnet.id,
+    wrappedNativeAddress: "test",
+    blockConfirmation: 3,
+    colorClass: "bg-[#EFB90A]",
+    image: "scroll.svg",
+    symbol: scrollTestnet.nativeCurrency.symbol,
+    isTestnet: true,
+  },
+  {
+    name: zkSyncTestnet.name,
+    chainId: zkSyncTestnet.id,
+    wrappedNativeAddress: "test",
+    blockConfirmation: 3,
+    colorClass: "bg-[#EFB90A]",
+    image: "zksync-era.svg",
+    symbol: zkSyncTestnet.nativeCurrency.symbol,
     isTestnet: true,
   },
 ];
