@@ -4,10 +4,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { networks } from "@/utils/networks";
 import { Input } from "../Input";
 import DropdownSelect from "../DropdownSelect";
-import { SwapIcon } from "../SwapIcon";
 import { Button } from "../Button";
 import SwapModal from "../SwapModal";
 import { SwapParam } from "./SwapButton";
+import IconSlider from '@/assets/images/icon-sliders.svg'
+import IconRefresh from '@/assets/images/icon-refresh.svg'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsUpDown, faArrowsSplitUpAndLeft } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   sourceChain: Network;
@@ -36,12 +39,20 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
   //TODO: Add approve function for tokenOut
 
   return (
-    <div className="relative">
-      <div className={`w-full gap-4 h-fit flex-1 flex justify-between flex-col`}>
-        <h1 className={"text-3xl w-full"}>Swap</h1>
-        <div className="relative w-full flex flex-col items-center">
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white gap-2 pb-7 bg-opacity-[4%]">
-            <span className="text-[#AAA]">swap from</span>
+    <div className="relative h-full">
+      <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
+        <div className="flex items-center gap-2">
+          <h1 className="font-semibold text-3xl">SWAP</h1>
+          <div className="p-3 rounded-lg bg-white/[.04] cursor-pointer ms-auto">
+            <IconSlider />
+          </div>
+          <div className="p-3 rounded-lg bg-white/[.04] cursor-pointer">
+            <IconRefresh />
+          </div>
+        </div>
+        <div className="relative w-full flex flex-col">
+          <span className="text-white/25">from</span>
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
             <div className="flex gap-2 flex-col md:flex-row">
               <Input
                 onChange={(e) => setSwapFromInput(e.target.value)}
@@ -73,9 +84,9 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
           </div>
           <button
             onClick={() => onArrowClick()}
-            className=" w-10 h-10 p-2 -mb-1 rounded-lg text-white flex items-center justify-center z-10 -mt-1 bg-[#1B1B35] hover:bg-opacity-40 transition-all "
+            className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center z-10 bg-[#1B1B35] hover:bg-opacity-40 transition-all "
           >
-            <SwapIcon />
+            <FontAwesomeIcon icon={faArrowsSplitUpAndLeft} className="h-6" />
           </button>
           <div className="rounded-lg w-full -mt-1 p-4 flex flex-col bg-white gap-2 pb-7 bg-opacity-[4%]">
             <span className="text-[#AAA]">receive</span>

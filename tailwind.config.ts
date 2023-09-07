@@ -15,6 +15,10 @@ const config: Config = {
       },
       colors: {
         "panel": "rgba(255,255,255,0.04)"
+      },
+      fontFamily: {
+        inter: 'var(--font-inter)',
+        raleway: 'var(--font-raleway)'
       }
     },
   },

@@ -74,7 +74,7 @@ export default function Home({
   };
 
   return (
-    <div className={"relative w-full h-screen overflow-x-hidden"}>
+    <div className={"relative w-full h-screen overflow-x-hidden font-raleway"}>
       <div className={"absolute z-10 w-full flex h-full flex-col p-2"}>
         <div
           className={
@@ -83,9 +83,7 @@ export default function Home({
         >
           <Navbar />
           <div
-            className={
-              "md:w-[50%] max-w-full min-h-fit p-10 gap-2 flex flex-col relative border-white/10 border-[2px] bg-white bg-opacity-[4%] rounded-lg mx-auto mt-4"
-            }
+            className="w-full h-full max-w-[548px] p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4 backdrop-blur-[100px]"
           >
             <SwapCard
               sourceChain={sourceChain}

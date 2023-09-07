@@ -3,7 +3,7 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Footer = () => {
   return (
-    <div className={"md:mt-auto pb-8 flex justify-between items-center"}>
+    <div className={"pb-8 flex justify-between items-center"}>
       <p className={"text-[#fff] font-light"}>Aggregator</p>
       <div className={"flex gap-4 text-xl text-gray-400 "}>
         <a
