@@ -3,14 +3,15 @@ import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
 
 export const buttonVariants = cva(
-  "py-2 rounded-md w-full flex transition-all justify-center items-center",
+  "p-2 rounded flex transition-all justify-center items-center",
   {
     variants: {
       variant: {
         primary:
-          "uppercase bg-white/10 text-white/50  hover:bg-white hover:text-black  w-full flex justify-center items-center",
+          "bg-white/[.04] text-white/50 hover:bg-white/20 hover:text-black flex justify-center items-center",
         secondary: "bg-[#3AFF4242] text-white",
         disabled: "bg-[#202020] text-[#AAA]",
+        bordered: "bg-white/[.04] text-white/75 border border-white/10"
       },
     },
     defaultVariants: {

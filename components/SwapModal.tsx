@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "./Button";
 import { SwapSteps } from "./SwapSteps";
-import SwapButton, { SwapParam } from "./SwapCard/SwapButton";
+import SwapButton, { SwapParam } from "../modules/SwapCard/SwapButton";
 
 type Props = {
   onCloseModal: () => void;

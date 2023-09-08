@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Network, networks } from "@/utils/networks";
-import SwapCard from "@/components/SwapCard/SwapCard";
+import SwapCard from "@/modules/SwapCard/SwapCard";
 import SwapModal from "@/components/SwapModal";
 
 export default function Home({
@@ -83,7 +83,7 @@ export default function Home({
         >
           <Navbar />
           <div
-            className="w-full h-full max-w-[548px] p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4 backdrop-blur-[100px]"
+            className="w-full h-full max-w-[548px] p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4"
           >
             <SwapCard
               sourceChain={sourceChain}

@@ -6,40 +6,32 @@ import { Listbox, Transition } from "@headlessui/react";
 
 type Props = {
   value: any;
-  flexReverse?: boolean;
+  className?: string;
+  dropdownClassName?: string;
   onChange: (value: any) => void;
   options: any[];
-  optionRenderer?: (option: any, selected: boolean) => JSX.Element;
+  optionRenderer: (option: any, selected: boolean) => JSX.Element;
+  onSearch?: (key: string) => void;
+  children: JSX.Element;
 };
 
 const DropdownSelect = ({
   value,
+  className = '',
+  dropdownClassName = '',
   onChange,
-  flexReverse = false,
   options,
-  optionRenderer = defaultOptionRenderer,
+  optionRenderer,
+  onSearch,
+  children
 }: Props) => {
-  const [searchValue, setSearchValue] = useState("");
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="relative md:max-w-[120px] w-full">
+      <div className="relative">
         <Listbox.Button
-          className={`${
-            !flexReverse ? "flex-row" : "flex-row-reverse"
-          } flex items-center justify-between relative w-full cursor-pointer rounded-lg bg-white bg-opacity-5 p-2 break-words overflow-hidden text-left text-lg focus:outline-none`}
+          className={`${className} flex items-center justify-between relative w-full cursor-pointer rounded-lg bg-white/5 gap-2 p-2 break-words overflow-hidden text-left text-lg focus:outline-none`}
         >
-          <div className="flex items-center gap-2">
-            <Image
-              src={`/chains/${value.image}`}
-              alt={value.name}
-              width={25}
-              height={25}
-              className="rounded-full w-4 h-4 md:w-6 md:h-6"
-            />
-            <span className="block md:max-w-[80px] truncate text-xs md:text-base font-medium">
-              {value.name}
-            </span>
-          </div>
+          {children}
           <span className="pointer-events-none inset-y-0 flex items-center">
             <FontAwesomeIcon icon={faAngleDown} />
           </span>
@@ -50,14 +42,15 @@ const DropdownSelect = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className="absolute mt-1 z-20  flex flex-col items-center max-h-60 w-full overflow-auto rounded-md bg-[#202020] backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <Listbox.Options className={`${dropdownClassName} absolute right-0 mt-1 z-20 flex flex-col items-center max-h-60 overflow-auto rounded-md bg-[#202020] backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}>
+            {onSearch && 
             <input
               type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
+              onChange={(e) => onSearch(e.target.value)}
               className="my-1 w-5/6 px-1 py-1 text-xs md:text-base rounded-md bg-gray-700"
               placeholder="Search"
             />
+            }
             {options.map((option, i) => (
               <Listbox.Option
                 key={i}
@@ -78,18 +71,4 @@ const DropdownSelect = ({
   );
 };
 
-const defaultOptionRenderer = (option: any, selected: any) => (
-  <div
-    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""}`}
-  >
-    <Image
-      src={`/chains/${option.image}`}
-      alt={option.name}
-      width={25}
-      height={25}
-      className="rounded-full w-4 h-4 md:w-6 md:h-6"
-    />
-    <span className="block truncate text-xs md:text-base font-medium">{option.name}</span>
-  </div>
-);
 export default DropdownSelect;

@@ -2,15 +2,16 @@ import type { Network } from "@/utils/networks";
 import React, { useEffect, useMemo, useState } from "react";
 
 import { networks } from "@/utils/networks";
-import { Input } from "../Input";
-import DropdownSelect from "../DropdownSelect";
-import { Button } from "../Button";
-import SwapModal from "../SwapModal";
+import { Input } from "../../components/Input";
+import DropdownSelect from "../../components/DropdownSelect";
+import { Button } from "../../components/Button";
+import SwapModal from "../../components/SwapModal";
 import { SwapParam } from "./SwapButton";
 import IconSlider from '@/assets/images/icon-sliders.svg'
 import IconRefresh from '@/assets/images/icon-refresh.svg'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsUpDown, faArrowsSplitUpAndLeft } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
+import TokenSelect from "@/components/TokenSelect";
 
 type Props = {
   sourceChain: Network;
@@ -43,78 +44,64 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center gap-2">
           <h1 className="font-semibold text-3xl">SWAP</h1>
-          <div className="p-3 rounded-lg bg-white/[.04] cursor-pointer ms-auto">
+          <Button className="p-3 w-12 h-12 rounded-lg ms-auto">
             <IconSlider />
-          </div>
-          <div className="p-3 rounded-lg bg-white/[.04] cursor-pointer">
+          </Button>
+          <Button className="p-3 w-12 h-12 rounded-lg">
             <IconRefresh />
-          </div>
+          </Button>
         </div>
         <div className="relative w-full flex flex-col">
           <span className="text-white/25">from</span>
           <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
-            <div className="flex gap-2 flex-col md:flex-row">
+            <div className="flex gap-4">
               <Input
                 onChange={(e) => setSwapFromInput(e.target.value)}
                 value={swapFromInput}
                 type="number"
-                placeholder="Send Amount"
-                className="md:!w-[50%] crosschainswap-input"
+                placeholder="Enter Amount"
+                className="w-full crosschainswap-input"
               />
-              <div className="flex flex-col md:flex-row w-full md:w-[50%] md:justify-end gap-5">
-                <DropdownSelect
-                  onChange={(e: any) => setSelectedFromToken(e)}
-                  value={selectedFromToken}
-                  options={networks}
-                />
-                <DropdownSelect
-                  onChange={(e: any) => setSelectedFromChain(e)}
-                  value={selectedFromChain}
-                  options={networks}
-                />
-              </div>
+              <TokenSelect
+                onChange={setSelectedFromToken}
+                token={selectedFromToken}
+              />
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {percentageButtons.map((button, index) => (
-                <Button className="text-sm" key={"perc-button-" + index}>
+                <Button className="font-inter text-sm" key={"perc-button-" + index}>
                   {button}%
                 </Button>
               ))}
             </div>
           </div>
           <button
-            onClick={() => onArrowClick()}
+            onClick={onArrowClick}
             className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center z-10 bg-[#1B1B35] hover:bg-opacity-40 transition-all "
           >
-            <FontAwesomeIcon icon={faArrowsSplitUpAndLeft} className="h-6" />
+            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6" />
           </button>
-          <div className="rounded-lg w-full -mt-1 p-4 flex flex-col bg-white gap-2 pb-7 bg-opacity-[4%]">
-            <span className="text-[#AAA]">receive</span>
-            <div className="flex gap-2 flex-col md:flex-row">
+          <span className="text-white/25">to</span>
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
+            <div className="flex gap-4">
               <Input
-                onChange={(e) => setSwapFromInput(e.target.value)}
-                value={swapFromInput}
+                onChange={(e) => setReceiveInput(e.target.value)}
+                value={receiveInput}
                 type="number"
                 disabled
                 placeholder="Receive Amount"
-                className="md:!w-[50%] crosschainswap-input w-full"
+                className="crosschainswap-input w-full"
               />
-              <div className="flex w-full flex-col md:flex-row md:w-[50%] md:justify-end gap-5">
-                <DropdownSelect
-                  onChange={(e: any) => setSelectedToToken(e)}
-                  value={selectedToToken}
-                  options={networks}
-                />
-                <DropdownSelect
-                  onChange={(e: any) => setSelectedToChain(e)}
-                  value={selectedToChain}
-                  options={networks}
-                />
-              </div>
+              <TokenSelect
+                onChange={setSelectedToToken}
+                token={selectedToToken}
+              />
             </div>
           </div>
         </div>
-        <Button onClick={() => setIsSwapModalOpen(true)}>SWAP</Button>
+        <Button variant="bordered" className="w-full p-4 rounded-lg text-xl font-semibold" onClick={() => setIsSwapModalOpen(true)}>
+          SWAP
+        </Button>
       </div>
       {isSwapModalOpen ? (
         <SwapModal
