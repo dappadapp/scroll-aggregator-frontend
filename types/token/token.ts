@@ -1,5 +1,7 @@
+import { Address } from 'viem'
 import { BaseCurrency } from './baseCurrency'
 import { Currency } from './currency'
+import { validateAndParseAddress } from '@/utils/address'
 
 export interface SerializedToken {
   chainId: number
@@ -72,5 +74,18 @@ export class Token extends BaseCurrency {
       name: this.name,
       projectLink: this.projectLink,
     }
+  }
+}
+
+export class ERC20Token extends Token {
+  public constructor(
+    chainId: number,
+    address: Address,
+    decimals: number,
+    symbol: string,
+    name?: string,
+    projectLink?: string
+  ) {
+    super(chainId, validateAndParseAddress(address), decimals, symbol, name, projectLink)
   }
 }

@@ -1,18 +1,16 @@
 "use client";
 import React, { useEffect } from "react";
-import formatAddress from "@/utils/formatAddress";
+import { formatAddress } from "@/utils/address";
 import { useWeb3Modal } from "@web3modal/react";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount } from "wagmi";
 
 import WalletIcon from "@/assets/images/wallet.svg";
 import Loading from "@/assets/images/loading.svg";
 
 const ConnectButton = () => {
   const { open } = useWeb3Modal();
-  const { address, isConnected, isConnecting, isReconnecting, isDisconnected } =
+  const { address, isConnected, isConnecting, isDisconnected } =
     useAccount();
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect();
 
   return (
     <button
@@ -21,7 +19,7 @@ const ConnectButton = () => {
       }
       onClick={open}
     >
-      {isConnecting || isReconnecting ? (
+      {isConnecting ? (
         <div className="flex justify-center items-center text-sm text-black-500 ">
           <Loading />
         </div>
