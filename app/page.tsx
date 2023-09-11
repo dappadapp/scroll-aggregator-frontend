@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { Network, networks } from "@/utils/networks";
+import { Network, networks } from "@/constants/networks";
 import SwapCard from "@/modules/SwapCard/SwapCard";
 import SwapModal from "@/components/SwapModal";
 

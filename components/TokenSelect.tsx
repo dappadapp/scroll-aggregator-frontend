@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { Listbox, Transition } from "@headlessui/react";
 import DropdownSelect from "./DropdownSelect";
-import { Network, networks } from "@/utils/networks";
+import { Network, networks } from "@/constants/networks";
 
 type Props = {
   token: any;
@@ -27,7 +27,7 @@ const TokenSelect = ({ token, onChange }: Props) => {
       optionRenderer={defaultOptionRenderer}
       onSearch={handleSearch}
     >
-      <div className="flex items-center gap-2 w-full max-w-[120px]">
+      <div className="flex items-center gap-2 w-full w-20">
         <Image
           src={`/chains/${token.image}`}
           alt={token.name}

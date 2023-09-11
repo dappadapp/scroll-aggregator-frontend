@@ -4,6 +4,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import NetworkSelector from "./NetworkSelector";
+import { Network, networks } from "@/constants/networks";
 
 type Props = {};
 const ConnectButton: any = dynamic(() => import("./ConnectButton"), {

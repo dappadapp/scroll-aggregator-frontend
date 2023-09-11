@@ -1,17 +1,17 @@
-import type { Network } from "@/utils/networks";
 import React, { useEffect, useMemo, useState } from "react";
 
-import { networks } from "@/utils/networks";
-import { Input } from "../../components/Input";
-import DropdownSelect from "../../components/DropdownSelect";
-import { Button } from "../../components/Button";
-import SwapModal from "../../components/SwapModal";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
+import SwapModal from "@/components/SwapModal";
+import TokenSelect from "@/components/TokenSelect";
+import { networks } from "@/constants/networks";
+import { Network } from "@/types";
 import { SwapParam } from "./SwapButton";
+
 import IconSlider from '@/assets/images/icon-sliders.svg'
 import IconRefresh from '@/assets/images/icon-refresh.svg'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
-import TokenSelect from "@/components/TokenSelect";
 
 type Props = {
   sourceChain: Network;

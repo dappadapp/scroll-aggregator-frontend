@@ -27,7 +27,7 @@ interface Props extends VariantProps<typeof buttonVariants> {
   children: any;
 }
 
-export const Button: React.FC<Props> = ({
+const Button: React.FC<Props> = ({
   disabled = false,
   className,
   onClick,
@@ -44,3 +44,5 @@ export const Button: React.FC<Props> = ({
     </button>
   );
 };
+
+export default Button;

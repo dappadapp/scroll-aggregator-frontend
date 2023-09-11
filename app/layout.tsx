@@ -1,8 +1,8 @@
 import Providers from "@/provider/Providers";
-import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Raleway } from "next/font/google";
 import Script from "next/script";
+import "./globals.css";
 
 const inter = Inter({ 
   subsets: ["latin"], 

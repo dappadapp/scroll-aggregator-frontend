@@ -1,17 +1,18 @@
 "use client";
+import React, { useEffect } from "react";
 import formatAddress from "@/utils/formatAddress";
 import { useWeb3Modal } from "@web3modal/react";
-import React, { useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
+
 import WalletIcon from "@/assets/images/wallet.svg";
-import axios from "axios";
+import Loading from "@/assets/images/loading.svg";
 
-type Props = {};
-
-const ConnectButton: React.FC<Props> = () => {
+const ConnectButton = () => {
   const { open } = useWeb3Modal();
-  const { address } = useAccount();
-  const [pendingFilter, setPendingFilter] = React.useState<any[]>([]);
+  const { address, isConnected, isConnecting, isReconnecting, isDisconnected } =
+    useAccount();
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect();
 
   return (
     <button
@@ -20,25 +21,10 @@ const ConnectButton: React.FC<Props> = () => {
       }
       onClick={open}
     >
-      {pendingFilter.length > 0 ? (
-        <span className="ml-2 text-sm text-black-500 flex justify-center items-center">
-          <div className="flex px-1 mt-1 justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-5 h-5 animate-spin"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
-              />
-            </svg>
-          </div>
-        </span>
+      {isConnecting || isReconnecting ? (
+        <div className="flex justify-center items-center text-sm text-black-500 ">
+          <Loading />
+        </div>
       ) : address ? (
         formatAddress(address)
       ) : (

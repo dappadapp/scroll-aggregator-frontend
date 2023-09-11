@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { SwapToken } from "./SwapToken";
-import { networks } from "@/utils/networks";
+import { networks } from "@/constants/networks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "./Button";

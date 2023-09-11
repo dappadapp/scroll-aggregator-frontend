@@ -8,7 +8,8 @@ type Props = {
   disabled?: boolean;
   onChange: (event: any) => void;
 };
-export const Input: React.FC<Props> = (props) => {
+
+const Input: React.FC<Props> = (props) => {
   return (
     <input
       onChange={(e) => props.onChange(e)}
@@ -20,3 +21,5 @@ export const Input: React.FC<Props> = (props) => {
     />
   );
 };
+
+export default Input;
