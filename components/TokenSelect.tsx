@@ -1,23 +1,32 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useNetwork } from "wagmi";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
-import { Listbox, Transition } from "@headlessui/react";
 import DropdownSelect from "./DropdownSelect";
-import { Network, networks } from "@/constants/networks";
+import useNativeCurrency from "@/hooks/useNativeCurrency";
+import { Currency } from "@/types";
+import Tokens from "@/constants/tokens";
+import { CurrencyLogo } from "./CurrencyLogo";
+import _ from "lodash";
 
 type Props = {
-  token: any;
+  token?: Currency;
   onChange: (token: any) => void;
 };
 
 const TokenSelect = ({ token, onChange }: Props) => {
-  const [tokens, setTokens] = useState<Network[]>(networks)
+  const { chain } = useNetwork();
+  const native = useNativeCurrency();
 
-  const handleSearch = (v: string) => {
+  const tokens: Currency[] = useMemo(() => {
+    if (chain && Tokens[chain.id]) {
+      const tokens = _.values(Tokens[chain.id]);
+      return [native, ...tokens];
+    }
+    return [native];
+  }, [chain, native]);
 
-  }
-  
+  const handleSearch = (v: string) => {};
+
   return (
     <DropdownSelect
       value={token}
@@ -28,36 +37,28 @@ const TokenSelect = ({ token, onChange }: Props) => {
       onSearch={handleSearch}
     >
       <div className="flex items-center gap-2 w-full w-20">
-        <Image
-          src={`/chains/${token.image}`}
-          alt={token.name}
-          width={24}
-          height={24}
-          className="rounded-full w-6 h-6"
-        />
-        <span className="block truncate text-xs md:text-base font-medium">
-          {token.name}
-        </span>
+        {token && (
+          <>
+            <CurrencyLogo currency={token} />
+            <span className="block truncate text-xs md:text-base font-medium">
+              {token?.symbol}
+            </span>
+          </>
+        )}
       </div>
     </DropdownSelect>
   );
 };
 
-const defaultOptionRenderer = (option: any, selected: any) => (
+const defaultOptionRenderer = (option: Currency, selected: any) => (
   <div
     className={`flex items-center gap-2 p-1 ${
       selected ? "bg-[#2B2B2B] rounded-lg" : ""
     }`}
   >
-    <Image
-      src={`/chains/${option.image}`}
-      alt={option.name}
-      width={24}
-      height={24}
-      className="rounded-full w-6 h-6"
-    />
+    <CurrencyLogo currency={option} />
     <span className="block truncate text-xs md:text-base font-medium">
-      {option.name}
+      {option.symbol}
     </span>
   </div>
 );

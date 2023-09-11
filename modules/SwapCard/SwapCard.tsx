@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNetwork } from "wagmi";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import SwapModal from "@/components/SwapModal";
 import TokenSelect from "@/components/TokenSelect";
-import { networks } from "@/constants/networks";
-import { Network } from "@/types";
+import useNativeCurrency from "@/hooks/useNativeCurrency";
+import { Currency, ERC20Token, Network } from "@/types";
 import { SwapParam } from "./SwapButton";
 
 import IconSlider from '@/assets/images/icon-sliders.svg'
@@ -14,30 +15,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
-  sourceChain: Network;
-  targetChain: Network;
-  onChangeSourceChain: (selectedNetwork: Network) => Promise<void>;
-  onChangeTargetChain: (selectedNetwork: Network) => Promise<void>;
-  onArrowClick: () => Promise<void>;
 };
 
 const percentageButtons = [25, 50, 75, 100];
 
-const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) => {
+const SwapCard: React.FC<Props> = () => {
+  const { chain } = useNetwork();
   const [swapFromInput, setSwapFromInput] = useState(0);
   const [receiveInput, setReceiveInput] = useState(0);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
-  const [selectedFromChain, setSelectedFromChain] = useState<Network>(sourceChain);
-  const [selectedToChain, setSelectedToChain] = useState<Network>(targetChain);
   //TODO: Add tokens
-  const [selectedToToken, setSelectedToToken] = useState<Network>(networks[0]);
-  const [selectedFromToken, setSelectedFromToken] = useState<Network>(networks[0]);
+  const [tokenFrom, setTokenFrom] = useState<Currency>();
+  const [tokenTo, setTokenTo] = useState<Currency>();
 
   const swapParams: SwapParam[] = useMemo(
-    () => setSwapParams(selectedToToken, selectedFromToken, swapFromInput, receiveInput),
-    [selectedToToken, selectedFromToken, swapFromInput, receiveInput]
+    () => (tokenFrom && tokenTo) ? setSwapParams(tokenFrom, tokenTo, swapFromInput, receiveInput) : [],
+    [tokenFrom, tokenTo, swapFromInput, receiveInput]
   );
-  //TODO: Add approve function for tokenOut
+
+  const native = useNativeCurrency()
+
+  useEffect(() => {
+    setTokenFrom(native)
+  }, [native])
+  
+  const handleSwitchToken = () => {
+
+  }
 
   return (
     <div className="relative h-full">
@@ -63,8 +67,8 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
                 className="w-full crosschainswap-input"
               />
               <TokenSelect
-                onChange={setSelectedFromToken}
-                token={selectedFromToken}
+                onChange={setTokenFrom}
+                token={tokenFrom}
               />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -76,7 +80,7 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
             </div>
           </div>
           <button
-            onClick={onArrowClick}
+            onClick={handleSwitchToken}
             className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center z-10 bg-[#1B1B35] hover:bg-opacity-40 transition-all "
           >
             <FontAwesomeIcon icon={faArrowsUpDown} className="h-6" />
@@ -93,8 +97,8 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
                 className="crosschainswap-input w-full"
               />
               <TokenSelect
-                onChange={setSelectedToToken}
-                token={selectedToToken}
+                onChange={setTokenTo}
+                token={tokenTo}
               />
             </div>
           </div>
@@ -118,16 +122,16 @@ const SwapCard: React.FC<Props> = ({ sourceChain, targetChain, onArrowClick }) =
   );
 };
 const setSwapParams = (
-  selectedToToken: Network,
-  selectedFromToken: Network,
+  selectedFromToken: Currency,
+  selectedToToken: Currency,
   swapFromInput: number,
   receiveInput: number
 ): SwapParam[] => {
   let swapParamsArr: SwapParam[] = [];
   //TODO: Validate params
   let swapParam: SwapParam = {
-    tokenOut: selectedFromToken.wrappedNativeAddress,
-    tokenIn: selectedToToken.wrappedNativeAddress,
+    tokenOut: selectedFromToken.isNative ? selectedFromToken.wrapped.address : selectedFromToken.address,
+    tokenIn: selectedToToken.isNative ? selectedToToken.wrapped.address : selectedToToken.address,
     amountOutMin: swapFromInput,
     amountIn: receiveInput,
     fee: 0,

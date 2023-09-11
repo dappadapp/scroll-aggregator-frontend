@@ -1,12 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { Network, networks } from "@/constants/networks";
+import { networks } from "@/constants/networks";
+import { Network } from "@/types";
 import SwapCard from "@/modules/SwapCard/SwapCard";
 import SwapModal from "@/components/SwapModal";
 
@@ -15,64 +14,6 @@ export default function Home({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const [sourceChain, setSourceChain] = useState(networks[0]);
-  const [targetChain, setTargetChain] = useState(networks[1]);
-  const { switchNetworkAsync } = useSwitchNetwork();
-  const { chain: connectedChain } = useNetwork();
-
-  const onChangeSourceChain = async (selectedNetwork: Network) => {
-    const chain = networks.find((network) => network.name === selectedNetwork.name);
-    if (chain) {
-      try {
-        if (chain.chainId !== connectedChain?.id) {
-          await switchNetworkAsync?.(chain.chainId);
-        }
-        if (chain.name === targetChain.name) {
-          setTargetChain(sourceChain);
-        }
-        setSourceChain(chain);
-        toast("Chain changed!");
-      } catch (error: any) {
-        if (error.code === 4001) {
-          toast("You need to confirm the Metamask request in order to switch network.");
-          return;
-        }
-        console.log(error.code);
-        toast("An error occured.");
-        return;
-      }
-    }
-  };
-
-  const onChangeTargetChain = async (selectedNetwork: Network) => {
-    const chain = networks.find((network) => network.name === selectedNetwork.name);
-    if (chain) {
-      try {
-        if (chain.name === sourceChain.name) {
-          if (connectedChain?.id !== targetChain.chainId) {
-            await switchNetworkAsync?.(targetChain.chainId);
-          }
-          setSourceChain(targetChain);
-        }
-        setTargetChain(chain);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  const onArrowClick = async () => {
-    try {
-      if (connectedChain?.id !== targetChain.chainId) {
-        await switchNetworkAsync?.(targetChain.chainId);
-      }
-      setSourceChain(targetChain);
-      setTargetChain(sourceChain);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className={"relative w-full h-screen overflow-x-hidden font-raleway"}>
       <div className={"absolute z-10 w-full flex h-full flex-col p-2"}>
@@ -85,13 +26,7 @@ export default function Home({
           <div
             className="w-full h-full max-w-[548px] p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4"
           >
-            <SwapCard
-              sourceChain={sourceChain}
-              targetChain={targetChain}
-              onChangeSourceChain={onChangeSourceChain}
-              onChangeTargetChain={onChangeTargetChain}
-              onArrowClick={onArrowClick}
-            />
+            <SwapCard />
 
             {/* TODO: Graphic  */}
           </div>
