@@ -8,6 +8,6 @@ export default function useNativeCurrency(): NativeCurrency {
   return useMemo(() => {
     if( chain )
       return Native.onChain(chain.id)
-    return Native.onChain(ChainId.BSC)
+    return Native.onChain(ChainId.SCROLL_TESTNET)
   }, [chain])
 }

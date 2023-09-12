@@ -3,6 +3,7 @@ import { mainnet, goerli, bsc, bscTestnet, scrollSepolia, scrollTestnet, zkSync,
 export * from './token'
 
 export enum ChainId {
+  /*
   ETHEREUM = mainnet.id,
   GOERLI = goerli.id,
   BSC = bsc.id,
@@ -10,6 +11,7 @@ export enum ChainId {
   ZKSYNC = zkSync.id,
   ZKSYNC_TESTNET = zkSyncTestnet.id,
   SCROLL = scrollSepolia.id,
+  */
   SCROLL_TESTNET = scrollTestnet.id,
 }
 
