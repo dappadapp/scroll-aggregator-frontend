@@ -10,6 +10,8 @@ import addresses from "@/constants/contracts";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 
+import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
+
 type Props = {
   onCloseModal: () => void;
   tokenA: Currency,
@@ -34,6 +36,12 @@ function SwapModal({
     enabled: !!account && tokenA.isToken
   });
 
+  const { data: poolAddress } = useContractRead({
+    address: addresses.syncswapClassicPoolFactory,
+    abi: SyncSwapPoolFactoryAbi,
+    functionName: "getPool",
+    args: [tokenA.wrapped.address, tokenB.wrapped.address],
+  });
 
   return (
     <div
@@ -107,12 +115,12 @@ function SwapModal({
         <AllowButton tokenIn={tokenA} amountIn={amountA} onSuccess={refetch} />
         :
         <SwapButton swapParam={{
-          poolAddress: tokenA.wrapped.address, // temporary
+          poolAddress: poolAddress as string,
           tokenIn: tokenA.wrapped.address,
           tokenOut: tokenB.wrapped.address,
           amountIn: amountA,
           amountOutMin: amountB,
-          swapType: SWAP_TYPE.ECHO,
+          swapType: SWAP_TYPE.SYNCSWAP,
           fee: 0
         }} />
         }

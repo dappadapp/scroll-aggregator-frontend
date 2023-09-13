@@ -42,7 +42,7 @@ const SwapCard: React.FC<Props> = () => {
   const native = useNativeCurrency()
 
   useEffect(() => {
-    setTokenFrom(native)
+    setTokenFrom(native.wrapped)
   }, [native])
   
   const handleSwitchToken = () => {

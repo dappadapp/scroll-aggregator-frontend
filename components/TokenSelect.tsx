@@ -20,10 +20,10 @@ const TokenSelect = ({ token, onChange }: Props) => {
   const tokens: Currency[] = useMemo(() => {
     if (chain && Tokens[chain.id]) {
       const tokens = _.values(Tokens[chain.id]);
-      return [native, ...tokens];
+      return tokens;
     }
-    return [native];
-  }, [chain, native]);
+    return [];
+  }, [chain]);
 
   const handleSearch = (v: string) => {};
 
