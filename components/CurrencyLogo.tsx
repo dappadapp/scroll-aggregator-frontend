@@ -14,10 +14,11 @@ const getTokenLogoURL = memoize(
 
 export function CurrencyLogo({
   currency,
+  size = 6,
   style,
 }: {
   currency?: Currency;
-  size?: string;
+  size?: number;
   style?: React.CSSProperties;
 }) {
   const srcUrl: string | null = useMemo(() => {
@@ -35,9 +36,9 @@ export function CurrencyLogo({
       src={srcUrl}
       alt={`${currency?.symbol ?? "token"} logo`}
       style={style}
-      className={`rounded-full w-6 h-6`}
+      className={`rounded-full w-${size} h-${size}`}
     />
   ) : (
-    <div className={`bg-white/10 rounded-full w-6 h-6`} />
+    <div className={`bg-white/10 rounded-full w-${size} h-${size}`} />
   );
 }

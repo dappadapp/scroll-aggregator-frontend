@@ -1,30 +1,21 @@
 import React from "react";
-import Image from "next/image";
+import { Currency } from "@/types";
+import { CurrencyLogo } from "./CurrencyLogo";
 
 type Props = {
-  image: any;
-  token: string;
+  currency: Currency;
   value: number;
-  flexReverse?: boolean;
 };
 
 export const SwapToken: React.FC<Props> = (props) => {
   return (
     <div
-      className={`flex items-center gap-2 ${
-        props.flexReverse ? "flex-row-reverse" : "flex-row"
-      }`}
+      className="flex items-center gap-2"
     >
-      <Image
-        src={props.image}
-        alt={props.token + "-swap-img"}
-        width={40}
-        height={40}
-        className="rounded-full md:h-10 md:w-10 w-6 h-6"
-      />
+      <CurrencyLogo currency={props.currency} size={10} />
       <div className={`flex flex-col text-left`}>
         <span className="text-sm md:text-xl">{props.value}</span>
-        <span className="text-[#AAA] text-xs md:text-sm">{props.token}</span>
+        <span className="text-[#AAA] text-xs md:text-sm">{props.currency.symbol}</span>
       </div>
     </div>
   );

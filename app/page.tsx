@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import { toast, ToastContainer } from "react-toastify";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { networks } from "@/constants/networks";
-import { Network } from "@/types";
-import SwapCard from "@/modules/SwapCard/SwapCard";
-import SwapModal from "@/components/SwapModal";
+
+const SwapCard: any = dynamic(() => import("@/modules/SwapCard/SwapCard"), {
+  ssr: false,
+});
 
 export default function Home({
   searchParams,

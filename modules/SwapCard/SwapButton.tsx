@@ -1,48 +1,43 @@
 import type { Network } from "@/types";
 import React, { useState } from "react";
-import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
+import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, erc20ABI } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 import { parseEther } from "ethers";
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
-import SwapAbi from "@/constants/abi/Swap.json";
+
+import AggregatorAbi from "@/constants/abis/aggregator.json";
 import addresses from "@/constants/contracts";
 
-import LoadingIcon from "@/assets/images/loading.svg";
-
 type Props = {
-  swapParams: SwapParam[];
+  swapParam: SwapParam;
 };
 
 export type SwapParam = {
   poolAddress: string;
-  tokenIn: string;
-  tokenOut: string;
+  tokenIn: `0x${string}`;
+  tokenOut: `0x${string}`;
   amountIn: number;
   amountOutMin: number;
   swapType: number;
   fee: number;
 };
 
-const SwapButton: React.FC<Props> = ({ swapParams }) => {
+const SwapButton: React.FC<Props> = ({ swapParam }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
   const [convEth, setConvEth] = useState<boolean>(false);
-  const { address: account } = useAccount();
-
+  
   const { config } = usePrepareContractWrite({
-    address: addresses.crossChainSwap as `0x${string}`,
-    abi: SwapAbi,
+    address: addresses.aggregatorContract,
+    abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [swapParams, parseEther(`${minTotalAmountOut || 0}`), convEth],
+    args: [[swapParam], parseEther(`${minTotalAmountOut || 0}`), convEth],
   });
 
   const { writeAsync: onExecuteSwaps, error, isSuccess } = useContractWrite(config);
 
-  const handleSwap = async () => {
-    if (!account) {
-      return alert("Please connect your wallet first.");
-    }
+  const handleSwap = async () => {    
     if (!onExecuteSwaps)
       return alert("Make sure you have enough GAS and you're on the correct network.");
     if (!isSuccess) {
@@ -63,11 +58,8 @@ const SwapButton: React.FC<Props> = ({ swapParams }) => {
   };
 
   return (
-    <Button onClick={handleSwap}>
+    <Button className="w-full" onClick={handleSwap} loading={loading}>
       SWAP
-      {loading && (
-        <LoadingIcon />
-      )}
     </Button>
   );
 };

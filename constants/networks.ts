@@ -2,27 +2,27 @@ import { Network } from "@/types";
 import { goerli, bscTestnet, scrollTestnet, zkSyncTestnet } from "wagmi/chains";
 
 export const networks: Network[] = [
-  {
-    name: goerli.name,
-    chainId: goerli.id,
-    blockConfirmation: 3,
-    wrappedNativeAddress: "test",
+  // {
+  //   name: goerli.name,
+  //   chainId: goerli.id,
+  //   blockConfirmation: 3,
+  //   wrappedNativeAddress: "test",
 
-    colorClass: "bg-[#373737]",
-    image: "ethereum.svg",
-    symbol: "ETH",
-    isTestnet: true,
-  },
-  {
-    name: bscTestnet.name,
-    chainId: bscTestnet.id,
-    wrappedNativeAddress: "test",
-    blockConfirmation: 3,
-    colorClass: "bg-[#EFB90A]",
-    image: "bsc.svg",
-    symbol: "BNB",
-    isTestnet: true,
-  },
+  //   colorClass: "bg-[#373737]",
+  //   image: "ethereum.svg",
+  //   symbol: "ETH",
+  //   isTestnet: true,
+  // },
+  // {
+  //   name: bscTestnet.name,
+  //   chainId: bscTestnet.id,
+  //   wrappedNativeAddress: "test",
+  //   blockConfirmation: 3,
+  //   colorClass: "bg-[#EFB90A]",
+  //   image: "bsc.svg",
+  //   symbol: "BNB",
+  //   isTestnet: true,
+  // },
   {
     name: scrollTestnet.name,
     chainId: scrollTestnet.id,

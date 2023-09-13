@@ -1,31 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { SwapToken } from "./SwapToken";
+import { erc20ABI, useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { networks } from "@/constants/networks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
-import { SwapSteps } from "./SwapSteps";
-import SwapButton, { SwapParam } from "../modules/SwapCard/SwapButton";
+import { SwapToken } from "@/components/SwapToken";
+import { SwapSteps } from "@/components/SwapSteps";
+import { Currency, SWAP_TYPE } from "@/types";
+import addresses from "@/constants/contracts";
+import SwapButton, { SwapParam } from "./SwapButton";
+import AllowButton from "./AllowButton";
 
 type Props = {
   onCloseModal: () => void;
-  tradingFee: string;
-  minRecieve: number;
-  slippage: number;
-  rate: string;
-  swapParams: SwapParam[];
-  liqSource: string;
-  refCode?: string;
+  tokenA: Currency,
+  tokenB: Currency,
+  amountA: number,
+  amountB: number,
 };
 
 function SwapModal({
   onCloseModal,
-  liqSource,
-  rate,
-  minRecieve,
-  slippage,
-  tradingFee,
-  swapParams,
-}: Props) {
+  tokenA,
+  tokenB,
+  amountA,
+  amountB
+}: Props) {  
+  const { address: account, isConnected } = useAccount();
+  const { data: allowance, refetch } = useContractRead({
+    address: tokenA.wrapped.address,
+    abi: erc20ABI,
+    functionName: "allowance",
+    args: [account!, addresses.aggregatorContract],
+    enabled: !!account && tokenA.isToken
+  });
+
+
   return (
     <div
       className={
@@ -47,14 +56,14 @@ function SwapModal({
           </div>
         </div>
         <div className="flex justify-between mb-10 items-center">
-          <SwapToken value={0.002} token="ETH" image={`/chains/${networks[0].image}`} />
+          <SwapToken value={amountA} currency={tokenA} />
           <FontAwesomeIcon
             icon={faArrowRight}
             className="text-[#AAA]"
             width={30}
             height={30}
           />
-          <SwapToken value={0.0001} token="BTC" image={`/chains/${networks[1].image}`} />
+          <SwapToken value={amountB} currency={tokenB} />
         </div>
         <div className="w-full bg-[#AAA] h-[1px] my-6"></div>
         <div className="flex gap-2 w-full justify-center">
@@ -75,26 +84,38 @@ function SwapModal({
         <div className="my-10 text-xs md:text-sm flex flex-col gap-2 text-[#AAA]">
           <div className="flex justify-between">
             <span>Trading Fee</span>
-            <span>{tradingFee}</span>
+            <span>0 ETH (0$)</span>
           </div>
           <div className="flex justify-between">
             <span>Minimum Receive</span>
-            <span> {minRecieve} USDC</span>
+            <span> {1000.1} USDC</span>
           </div>
           <div className="flex justify-between">
             <span>Slippage tolerance</span>
-            <span>{slippage}%</span>
+            <span>20%</span>
           </div>
           <div className="flex justify-between">
             <span>Rate</span>
-            <span>{rate}</span>
+            <span>1 ETH = 1000 USDC</span>
           </div>
           <div className="flex justify-between">
             <span>Liquidity source</span>
-            <span>{liqSource}</span>
+            <span>WOOFI</span>
           </div>
         </div>
-        <SwapButton swapParams={swapParams} />
+        {allowance !== undefined && allowance < BigInt(amountA * (10 ^ tokenA.decimals)) ? 
+        <AllowButton tokenIn={tokenA} amountIn={amountA} onSuccess={refetch} />
+        :
+        <SwapButton swapParam={{
+          poolAddress: tokenA.wrapped.address, // temporary
+          tokenIn: tokenA.wrapped.address,
+          tokenOut: tokenB.wrapped.address,
+          amountIn: amountA,
+          amountOutMin: amountB,
+          swapType: SWAP_TYPE.ECHO,
+          fee: 0
+        }} />
+        }
       </div>
     </div>
   );

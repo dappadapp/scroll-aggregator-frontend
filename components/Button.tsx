@@ -1,6 +1,7 @@
 import React from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/utils/cn";
+import LoadingIcon from "@/assets/images/loading.svg";
 
 export const buttonVariants = cva(
   "p-2 rounded flex transition-all justify-center items-center",
@@ -24,23 +25,28 @@ interface Props extends VariantProps<typeof buttonVariants> {
   disabled?: boolean;
   className?: string;
   onClick?: (event: any) => void;
+  loading?: boolean;
   children: any;
 }
 
 const Button: React.FC<Props> = ({
-  disabled = false,
+  variant,
   className,
   onClick,
+  disabled = false,
+  loading = false,
   children,
-  variant,
 }) => {
   return (
     <button
       disabled={disabled}
-      onClick={(e) => onClick!(e)}
+      onClick={(e) => onClick && onClick(e)}
       className={cn(buttonVariants({ variant, className }))}
     >
       {children}
+      {loading &&
+        <LoadingIcon className="w-5 h-5 animate-spin ms-2" />
+      }
     </button>
   );
 };
