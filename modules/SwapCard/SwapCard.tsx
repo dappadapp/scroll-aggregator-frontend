@@ -82,7 +82,7 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     if( outAmount !== undefined && tokenTo && isChangeFrom ) {
-      setReceiveAmount(+formatUnits(outAmount as bigint, tokenTo.decimals))
+      setReceiveAmount(+(+formatUnits(outAmount as bigint, tokenTo.decimals)).toFixed(10))
     }
   }, [outAmount, tokenTo, isChangeFrom])
 

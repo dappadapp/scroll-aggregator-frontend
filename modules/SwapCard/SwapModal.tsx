@@ -82,15 +82,10 @@ function SwapModal({
             hasNext={true}
             type="swap"
             tokenImage={`/chains/${networks[0].image}`}
-            value={0.001}
+            value={amountA}
           />
-          <SwapSteps
-            hasNext={true}
-            type="bridge"
-            tokenImage={`/chains/${networks[0].image}`}
-            value={0.1}
-          />
-          <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={0.1} />
+     
+          <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={amountB} />
         </div>
         <div className="my-10 text-xs md:text-sm flex flex-col gap-2 text-[#AAA]">
           <div className="flex justify-between">
@@ -99,11 +94,11 @@ function SwapModal({
           </div>
           <div className="flex justify-between">
             <span>Minimum Receive</span>
-            <span> {1000.1} USDC</span>
+            <span> {amountB} Currency TODO</span>
           </div>
           <div className="flex justify-between">
             <span>Slippage tolerance</span>
-            <span>20%</span>
+            <span>1%</span>
           </div>
           <div className="flex justify-between">
             <span>Rate</span>
@@ -111,7 +106,7 @@ function SwapModal({
           </div>
           <div className="flex justify-between">
             <span>Liquidity source</span>
-            <span>WOOFI</span>
+            <span>SyncSwap</span>
           </div>
         </div>
         {!allowance || allowance < bigAmountA ? 
