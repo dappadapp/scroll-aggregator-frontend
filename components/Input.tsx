@@ -2,22 +2,32 @@ import React from "react";
 
 type Props = {
   value: any;
-  placeholder: string;
+  placeholder?: string;
   type?: React.HTMLInputTypeAttribute;
   className?: string;
   disabled?: boolean;
-  onChange: (event: any) => void;
+  onChange?: (event: any) => void;
+  onKeyDown?: (event: any) => void;
 };
 
-const Input: React.FC<Props> = (props) => {
+const Input: React.FC<Props> = ({
+  value,
+  className = '',
+  placeholder,
+  type,
+  disabled,
+  onChange,
+  onKeyDown
+}) => {
   return (
     <input
-      onChange={(e) => props.onChange(e)}
-      value={props.value}
-      placeholder={props.placeholder}
-      type={props.type}
-      disabled={props.disabled}
-      className={`${props.className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent`}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      value={value}
+      placeholder={placeholder}
+      type={type}
+      disabled={disabled}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent`}
     />
   );
 };

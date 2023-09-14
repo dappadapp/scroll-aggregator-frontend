@@ -1,21 +1,25 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
+import { formatUnits, parseUnits } from "viem";
+import _ from "lodash";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import TokenSelect from "@/components/TokenSelect";
 import useNativeCurrency from "@/hooks/useNativeCurrency";
-import { ChainId, Currency, ERC20Token, Network, Token } from "@/types";
-import SwapModal from "./SwapModal";
 import Tokens from "@/constants/tokens";
-import _ from "lodash";
+import addresses from "@/constants/contracts";
+import { ChainId, Currency } from "@/types";
+import SwapModal from "./SwapModal";
 
+import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
+import SyncSwapClassicPool from "@/constants/abis/SyncSwapClassicPool.json"
+import SyncSwapStablePool from "@/constants/abis/SyncSwapStablePool.json"
 import IconSlider from '@/assets/images/icon-sliders.svg'
 import IconRefresh from '@/assets/images/icon-refresh.svg'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
-import { formatUnits, parseUnits } from "viem";
 
 type Props = {
 };
@@ -31,6 +35,7 @@ const SwapCard: React.FC<Props> = () => {
   //TODO: Add tokens
   const [tokenFrom, setTokenFrom] = useState<Currency>();
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(Tokens[ChainId.SCROLL_TESTNET].mock);
+  const [isChangeFrom, setChangeFrom] = useState(true);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
@@ -50,6 +55,43 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,    
   })
 
+  const { data: poolAddress } = useContractRead({
+    address: addresses.syncswapClassicPoolFactory,
+    abi: SyncSwapPoolFactoryAbi,
+    functionName: "getPool",
+    args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+    enabled: !!tokenFrom && !!tokenTo
+  });
+
+  const { data: outAmount } = useContractRead({
+    address: poolAddress as `0x${string}`,
+    abi: SyncSwapClassicPool,
+    functionName: "getAmountOut",
+    args: [tokenFrom?.wrapped.address, parseUnits(`${swapAmount.toFixed(10)}`, tokenFrom?.decimals || 18), address],
+    enabled: !!poolAddress && !!tokenFrom && isChangeFrom
+  });
+
+  const { data: inAmount } = useContractRead({
+    address: poolAddress as `0x${string}`,
+    abi: SyncSwapClassicPool,
+    functionName: "getAmountIn",
+    args: [tokenTo?.wrapped.address, parseUnits(`${receiveAmount.toFixed(10)}`, tokenTo?.decimals || 18), address],
+    enabled: !!poolAddress && !!tokenTo && !isChangeFrom
+  });
+
+
+  useEffect(() => {
+    if( outAmount !== undefined && tokenTo && isChangeFrom ) {
+      setReceiveAmount(+formatUnits(outAmount as bigint, tokenTo.decimals))
+    }
+  }, [outAmount, tokenTo, isChangeFrom])
+
+  useEffect(() => {
+    if( inAmount !== undefined && tokenFrom && !isChangeFrom  ) {
+      setSwapAmount(+formatUnits(inAmount as bigint, tokenFrom.decimals))
+    }
+  }, [inAmount, tokenFrom, !isChangeFrom])
+
   const native = useNativeCurrency()
 
   useEffect(() => {
@@ -66,6 +108,15 @@ const SwapCard: React.FC<Props> = () => {
       return;
     const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals) 
     setSwapAmount(parseInt(balance) * percent / 100);
+    setChangeFrom(true);
+  }
+
+  const onKeyDownSwapAmount = () => {
+    setChangeFrom(true);
+  }
+
+  const onKeyDownReceiveAmount = () => {
+    setChangeFrom(false);
   }
 
   return (
@@ -87,6 +138,7 @@ const SwapCard: React.FC<Props> = () => {
               <div className="w-full">
                 <Input
                   onChange={(e) => setSwapAmount(+e.target.value)}
+                  onKeyDown={onKeyDownSwapAmount}
                   value={swapAmount}
                   type="number"
                   placeholder="Enter Amount"
@@ -122,10 +174,10 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
-                  onChange={(e) => setReceiveAmount(e.target.value)}
+                  onChange={(e) => setReceiveAmount(+e.target.value)}
+                  onKeyDown={onKeyDownReceiveAmount}
                   value={receiveAmount}
                   type="number"
-                  disabled
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
                 />
@@ -147,8 +199,9 @@ const SwapCard: React.FC<Props> = () => {
           {isConnected ? 'SWAP' : 'CONNECT WALLET'}
         </Button>
       </div>
-      {tokenFrom && tokenTo && isSwapModalOpen ? (
+      {tokenFrom && tokenTo && isSwapModalOpen && poolAddress ? (
         <SwapModal
+          pool={poolAddress as string}
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={swapAmount}

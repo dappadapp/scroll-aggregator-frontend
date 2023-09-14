@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { erc20ABI, useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
+import { erc20ABI, useAccount, useContractRead } from "wagmi";
+import { parseUnits } from "viem";
 import { networks } from "@/constants/networks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
@@ -10,11 +11,10 @@ import addresses from "@/constants/contracts";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 
-import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
-import { parseUnits } from "viem";
 
 type Props = {
   onCloseModal: () => void;
+  pool: string,
   tokenA: Currency,
   tokenB: Currency,
   amountA: number,
@@ -23,6 +23,7 @@ type Props = {
 
 function SwapModal({
   onCloseModal,
+  pool,
   tokenA,
   tokenB,
   amountA,
@@ -35,13 +36,6 @@ function SwapModal({
     functionName: "allowance",
     args: [account!, addresses.aggregatorContract],
     enabled: !!account && tokenA.isToken
-  });
-
-  const { data: poolAddress } = useContractRead({
-    address: addresses.syncswapClassicPoolFactory,
-    abi: SyncSwapPoolFactoryAbi,
-    functionName: "getPool",
-    args: [tokenA.wrapped.address, tokenB.wrapped.address],
   });
 
   const bigAmountA = useMemo(() => {
@@ -124,7 +118,7 @@ function SwapModal({
         <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
         :
         <SwapButton swapParam={{
-          poolAddress: poolAddress as string,
+          poolAddress: pool,
           tokenIn: tokenA.wrapped.address,
           tokenOut: tokenB.wrapped.address,
           amountIn: bigAmountA,
