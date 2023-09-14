@@ -9,6 +9,8 @@ const addresses : {
   crossChainSwap: "0x07231C3464eA825bf9490f4C673723E63ebD95F7",
   systemContract: "0x91d18e54DAf4F677cB28167158d6dd21F6aB3921",
 
+
+  
   aggregatorContract: "0xB918D6AA1014599987775b96a06341591F07a363",
   syncswapClassicPoolFactory: "0x46c8dc568ED604bB18C066Fc8d387859b7977836", // scroll
   syncswapStablePoolFactory: "0x441B24fc497317767a9D293931A33939953F251f"   // scroll
