@@ -10,11 +10,9 @@ import addresses from "@/constants/contracts";
 
 type Props = {
   tokenIn: Currency;
-  amountIn: number;
+  amountIn: bigint;
   onSuccess: () => void
 };
-
-const MAX_ALLOWANCE = BigInt("10000000000000000000000000000000000000000000000000000000000");
 
 const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   const { address: account, isConnected } = useAccount();
@@ -24,7 +22,7 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
     abi: erc20ABI,
     functionName: "approve",
     // args: [addresses.aggregatorContract, BigInt(amountIn) * BigInt(10 ^ tokenIn.decimals)],
-    args: [addresses.aggregatorContract, MAX_ALLOWANCE],
+    args: [addresses.aggregatorContract, amountIn],
   });
 
   const {

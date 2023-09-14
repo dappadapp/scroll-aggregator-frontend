@@ -1,6 +1,13 @@
 import type { Network } from "@/types";
 import React, { useState } from "react";
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, erc20ABI, useContractEvent } from "wagmi";
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+  erc20ABI,
+  useContractEvent,
+} from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 import { parseEther } from "ethers";
 import { toast } from "react-toastify";
@@ -17,8 +24,8 @@ export type SwapParam = {
   poolAddress: string;
   tokenIn: `0x${string}`;
   tokenOut: `0x${string}`;
-  amountIn: number;
-  amountOutMin: number;
+  amountIn: bigint;
+  amountOutMin: bigint;
   swapType: number;
   fee: number;
 };
@@ -32,26 +39,36 @@ const SwapButton: React.FC<Props> = ({ swapParam }) => {
     address: addresses.aggregatorContract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [[swapParam], parseEther(`${minTotalAmountOut || 0}`), convEth],
+    args: [
+      [swapParam],
+      parseEther(`${minTotalAmountOut || 0}`),
+      convEth,
+    ],
   });
 
-  const { writeAsync: onExecuteSwaps, error, isSuccess } = useContractWrite(config);
+  const {
+    writeAsync: onExecuteSwaps,
+    error,
+    isSuccess,
+  } = useContractWrite(config);
 
   useContractEvent({
     address: addresses.aggregatorContract,
     abi: AggregatorAbi,
-    eventName: 'SwapExecuted',
+    eventName: "SwapExecuted",
     listener(log) {
-      console.log(log)
+      console.log(log);
     },
-  })
+  });
 
-  const handleSwap = async () => {    
+  const handleSwap = async () => {
     if (!onExecuteSwaps)
-      return alert("Make sure you have enough GAS and you're on the correct network.");
-    if (!isSuccess) {
-      return alert("An unknown error occured. Please try again.");
-    }
+      return alert(
+        "Make sure you have enough GAS and you're on the correct network."
+      );
+    // if (!isSuccess) {
+    //   return alert("An unknown error occured. Please try again.");
+    // }
     try {
       setLoading(true);
       const { hash } = await onExecuteSwaps();

@@ -67,7 +67,7 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
-                  onChange={(e) => setSwapAmount(e.target.value)}
+                  onChange={(e) => setSwapAmount(+e.target.value)}
                   value={swapAmount}
                   type="number"
                   placeholder="Enter Amount"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { erc20ABI, useAccount, useContractRead, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { networks } from "@/constants/networks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,7 @@ import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 
 import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
+import { parseUnits } from "viem";
 
 type Props = {
   onCloseModal: () => void;
@@ -42,6 +43,14 @@ function SwapModal({
     functionName: "getPool",
     args: [tokenA.wrapped.address, tokenB.wrapped.address],
   });
+
+  const bigAmountA = useMemo(() => {
+    return parseUnits(amountA.toString(), tokenA.decimals)
+  }, [amountA, tokenA])
+
+  const bigAmountB = useMemo(() => {
+    return parseUnits(amountB.toString(), tokenB.decimals)
+  }, [amountB, tokenB])
 
   return (
     <div
@@ -111,15 +120,15 @@ function SwapModal({
             <span>WOOFI</span>
           </div>
         </div>
-        {allowance !== undefined && allowance < BigInt(amountA * (10 ^ tokenA.decimals)) ? 
-        <AllowButton tokenIn={tokenA} amountIn={amountA} onSuccess={refetch} />
+        {!allowance || allowance < bigAmountA ? 
+        <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
         :
         <SwapButton swapParam={{
           poolAddress: poolAddress as string,
           tokenIn: tokenA.wrapped.address,
           tokenOut: tokenB.wrapped.address,
-          amountIn: amountA,
-          amountOutMin: amountB,
+          amountIn: bigAmountA,
+          amountOutMin: bigAmountB,
           swapType: SWAP_TYPE.SYNCSWAP,
           fee: 0
         }} />
