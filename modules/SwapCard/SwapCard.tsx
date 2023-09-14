@@ -6,9 +6,10 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import TokenSelect from "@/components/TokenSelect";
 import useNativeCurrency from "@/hooks/useNativeCurrency";
-import { Currency, ERC20Token, Network } from "@/types";
+import { ChainId, Currency, ERC20Token, Network, Token } from "@/types";
 import SwapModal from "./SwapModal";
-import { SwapParam } from "./SwapButton";
+import Tokens from "@/constants/tokens";
+import _ from "lodash";
 
 import IconSlider from '@/assets/images/icon-sliders.svg'
 import IconRefresh from '@/assets/images/icon-refresh.svg'
@@ -28,7 +29,7 @@ const SwapCard: React.FC<Props> = () => {
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   //TODO: Add tokens
   const [tokenFrom, setTokenFrom] = useState<Currency>();
-  const [tokenTo, setTokenTo] = useState<Currency>();
+  const [tokenTo, setTokenTo] = useState<Currency | undefined>(Tokens[ChainId.SCROLL_TESTNET].mock);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
@@ -46,11 +47,12 @@ const SwapCard: React.FC<Props> = () => {
   }, [native])
   
   const handleSwitchToken = () => {
-
+    setTokenFrom(tokenTo);
+    setTokenTo(tokenFrom);
   }
 
   return (
-    <div className="relative h-full">
+    <div className="w-full max-w-[548px] relative p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center gap-2">
           <h1 className="font-semibold text-3xl">SWAP</h1>
@@ -117,7 +119,7 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
         
-        <Button variant="bordered" disabled={!tokenFrom || !tokenTo || !swapAmount} className="w-full p-4 rounded-lg text-xl font-semibold" onClick={() => isConnected ? setIsSwapModalOpen(true) : open()}>
+        <Button variant="bordered" disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount)} className="w-full p-4 rounded-lg text-xl font-semibold" onClick={() => isConnected ? setIsSwapModalOpen(true) : open()}>
           {isConnected ? 'SWAP' : 'CONNECT WALLET'}
         </Button>
       </div>

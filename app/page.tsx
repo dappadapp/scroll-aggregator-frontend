@@ -24,13 +24,11 @@ export default function Home({
           }
         >
           <Navbar />
-          <div
-            className="w-full h-full max-w-[548px] p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4"
-          >
+          
+          <div className="w-full h-full flex items-center">
             <SwapCard />
-
-            {/* TODO: Graphic  */}
           </div>
+            {/* TODO: Graphic  */}
           <Footer />
         </div>
       </div>
