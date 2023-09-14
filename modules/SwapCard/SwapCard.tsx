@@ -15,6 +15,7 @@ import IconSlider from '@/assets/images/icon-sliders.svg'
 import IconRefresh from '@/assets/images/icon-refresh.svg'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
+import { formatUnits, parseUnits } from "viem";
 
 type Props = {
 };
@@ -49,6 +50,13 @@ const SwapCard: React.FC<Props> = () => {
   const handleSwitchToken = () => {
     setTokenFrom(tokenTo);
     setTokenTo(tokenFrom);
+  }
+
+  const handleClickInputPercent = (percent: number) => {
+    if( !balanceFrom || !tokenFrom ) 
+      return;
+    const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals) 
+    setSwapAmount(parseInt(balance) * percent / 100);
   }
 
   return (
@@ -87,9 +95,9 @@ const SwapCard: React.FC<Props> = () => {
               />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {percentageButtons.map((button, index) => (
-                <Button className="font-inter text-sm" key={"perc-button-" + index}>
-                  {button}%
+              {percentageButtons.map((val, index) => (
+                <Button className="font-inter text-sm" key={"perc-button-" + index} onClick={() => handleClickInputPercent(val)}>
+                  {val}%
                 </Button>
               ))}
             </div>
