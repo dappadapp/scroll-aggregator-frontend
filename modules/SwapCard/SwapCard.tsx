@@ -41,6 +41,15 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenFrom,    
   })
 
+  const { data: balanceTo, isLoading: isLoadingBalanceTo } = useBalance({
+    address: address,
+    ...(!tokenTo?.isNative && {
+      token: tokenTo?.wrapped.address,
+    }),
+    chainId: tokenTo?.chainId,
+    enabled: !!tokenTo,    
+  })
+
   const native = useNativeCurrency()
 
   useEffect(() => {
@@ -111,14 +120,21 @@ const SwapCard: React.FC<Props> = () => {
           <span className="text-white/25">to</span>
           <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
             <div className="flex gap-4">
-              <Input
-                onChange={(e) => setReceiveAmount(e.target.value)}
-                value={receiveAmount}
-                type="number"
-                disabled
-                placeholder="Receive Amount"
-                className="crosschainswap-input w-full"
-              />
+              <div className="w-full">
+                <Input
+                  onChange={(e) => setReceiveAmount(e.target.value)}
+                  value={receiveAmount}
+                  type="number"
+                  disabled
+                  placeholder="Receive Amount"
+                  className="crosschainswap-input w-full"
+                />
+                {balanceTo &&
+                  <div className="mt-2">
+                    Balance: {balanceTo.formatted} {balanceTo.symbol}
+                  </div>
+                }
+              </div>
               <TokenSelect
                 onChange={setTokenTo}
                 token={tokenTo}
