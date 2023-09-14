@@ -29,6 +29,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <Script src="https://price-static.crypto.com/latest/public/static/widget/index.js" />
+        <script type="text/javascript" src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg" async={true}></script>
+
       </head>
       <body className={`${raleway.variable} ${inter.variable}`}>
         <Providers>{children}</Providers>
