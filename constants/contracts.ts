@@ -1,4 +1,6 @@
-const addresses : {
+import { ChainId } from "@/types";
+
+export const addresses : {
   [key: string]: `0x${string}`
 } = {
   connectorAddress: "0x00005e3125aba53c5652f9f0ce1a4cf91d8b15ea",
@@ -9,11 +11,19 @@ const addresses : {
   crossChainSwap: "0x07231C3464eA825bf9490f4C673723E63ebD95F7",
   systemContract: "0x91d18e54DAf4F677cB28167158d6dd21F6aB3921",
 
-
-  
-  aggregatorContract: "0xB918D6AA1014599987775b96a06341591F07a363",
   syncswapClassicPoolFactory: "0x46c8dc568ED604bB18C066Fc8d387859b7977836", // scroll
   syncswapStablePoolFactory: "0x441B24fc497317767a9D293931A33939953F251f"   // scroll
 };
 
-export default addresses;
+export const aggregator : {
+  [key: string]: {
+    contract: `0x${string}`,
+    poolFactory: `0x${string}`,
+  }    
+} = {
+  [ChainId.SCROLL_SEPOLIA]: {
+    contract: "0x1A8C9Cf33458Dd7556EEA2b2F903e559FDA916eD",
+    poolFactory: "0x2E7444aB4b3C469f5eba37574739133783e0a4CD"
+  }
+}
+

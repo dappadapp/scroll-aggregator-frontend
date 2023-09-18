@@ -12,9 +12,9 @@ import { waitForTransaction } from "@wagmi/core";
 import { parseEther } from "ethers";
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
+import useContract from "@/hooks/useContract";
 
 import AggregatorAbi from "@/constants/abis/aggregator.json";
-import addresses from "@/constants/contracts";
 
 type Props = {
   swapParam: SwapParam;
@@ -33,10 +33,11 @@ export type SwapParam = {
 const SwapButton: React.FC<Props> = ({ swapParam }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
-  const [convEth, setConvEth] = useState<boolean>(true);
+  const [convEth, setConvEth] = useState<boolean>(true);  
+  const contractAddr = useContract();
   
   const { config } = usePrepareContractWrite({
-    address: addresses.aggregatorContract,
+    address: contractAddr!.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
     args: [
@@ -44,6 +45,7 @@ const SwapButton: React.FC<Props> = ({ swapParam }) => {
       parseEther(`${minTotalAmountOut || 0}`),
       convEth,
     ],
+    enabled: !!contractAddr
   });
 
   const {
@@ -51,15 +53,6 @@ const SwapButton: React.FC<Props> = ({ swapParam }) => {
     error,
     isSuccess,
   } = useContractWrite(config);
-
-  useContractEvent({
-    address: addresses.aggregatorContract,
-    abi: AggregatorAbi,
-    eventName: "SwapExecuted",
-    listener(log) {
-      console.log(log);
-    },
-  });
 
   const handleSwap = async () => {
     if (!onExecuteSwaps)

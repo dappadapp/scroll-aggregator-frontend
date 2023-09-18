@@ -9,12 +9,12 @@ export enum ChainId {
   BSC_TESTNET = bscTestnet.id,
   ZKSYNC = zkSync.id,
   ZKSYNC_TESTNET = zkSyncTestnet.id,
-  SCROLL = scrollSepolia.id,
   SCROLL_TESTNET = scrollTestnet.id,
+  SCROLL_SEPOLIA = scrollSepolia.id,
 }
 
 export enum SWAP_TYPE {
-  SYNCSWAP = 1,
+  SPACEFI = 1,
   UNISWAP = 2,
   ECHO = 3,
   LEET = 4

@@ -7,7 +7,7 @@ import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { SwapToken } from "@/components/SwapToken";
 import { SwapSteps } from "@/components/SwapSteps";
 import { Currency, SWAP_TYPE } from "@/types";
-import addresses from "@/constants/contracts";
+import useContract from "@/hooks/useContract";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 
@@ -30,12 +30,13 @@ function SwapModal({
   amountB
 }: Props) {  
   const { address: account, isConnected } = useAccount();
+  const contractAddr = useContract();
   const { data: allowance, refetch } = useContractRead({
     address: tokenA.wrapped.address,
     abi: erc20ABI,
     functionName: "allowance",
-    args: [account!, addresses.aggregatorContract],
-    enabled: !!account && tokenA.isToken
+    args: [account!, contractAddr!.contract],
+    enabled: !!contractAddr && !!account && tokenA.isToken
   });
 
   const bigAmountA = useMemo(() => {
@@ -118,7 +119,7 @@ function SwapModal({
           tokenOut: tokenB.wrapped.address,
           amountIn: bigAmountA,
           amountOutMin: bigAmountB,
-          swapType: SWAP_TYPE.SYNCSWAP,
+          swapType: SWAP_TYPE.SPACEFI,
           fee: 0
         }} />
         }

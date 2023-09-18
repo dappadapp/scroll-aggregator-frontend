@@ -49,17 +49,17 @@ export const WETH9 = {
     "Wrapped Ether",
     "https://weth.io"
   ),
-  [ChainId.SCROLL]: new ERC20Token(
-    ChainId.SCROLL,
-    "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
+  [ChainId.SCROLL_TESTNET]: new ERC20Token(
+    ChainId.SCROLL_TESTNET,
+    "0x7160570bb153edd0ea1775ec2b2ac9b65f1ab61b",
     18,
     "WETH",
     "Wrapped Ether",
     "https://weth.io"
   ),
-  [ChainId.SCROLL_TESTNET]: new ERC20Token(
-    ChainId.SCROLL_TESTNET,
-    "0x7160570bb153edd0ea1775ec2b2ac9b65f1ab61b",
+  [ChainId.SCROLL_SEPOLIA]: new ERC20Token(
+    ChainId.SCROLL_SEPOLIA,
+    "0x5300000000000000000000000000000000000004",
     18,
     "WETH",
     "Wrapped Ether",
@@ -102,7 +102,8 @@ export const WNATIVE = {
   // [ChainId.ZKSYNC]: WETH9[ChainId.ZKSYNC],
   // [ChainId.ZKSYNC_TESTNET]: WETH9[ChainId.ZKSYNC_TESTNET],
   // [ChainId.SCROLL]: WETH9[ChainId.SCROLL],
-  [ChainId.SCROLL_TESTNET]: WETH9[ChainId.SCROLL_TESTNET],
+  // [ChainId.SCROLL_TESTNET]: WETH9[ChainId.SCROLL_TESTNET],
+  [ChainId.SCROLL_SEPOLIA]: WETH9[ChainId.SCROLL_SEPOLIA],
 } satisfies Record<ChainId, ERC20Token>;
 
 const ETHER = { name: "Ether", symbol: "ETH", decimals: 18 } as const;
@@ -122,7 +123,7 @@ export const NATIVE = {
   },
   [ChainId.ZKSYNC]: ETHER,
   [ChainId.ZKSYNC_TESTNET]: ETHER,
-  [ChainId.SCROLL]: ETHER,
+  [ChainId.SCROLL_SEPOLIA]: ETHER,
   [ChainId.SCROLL_TESTNET]: ETHER,
 } satisfies Record<
   ChainId,

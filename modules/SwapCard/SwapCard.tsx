@@ -9,10 +9,11 @@ import Button from "@/components/Button";
 import TokenSelect from "@/components/TokenSelect";
 import useNativeCurrency from "@/hooks/useNativeCurrency";
 import Tokens from "@/constants/tokens";
-import addresses from "@/constants/contracts";
+import useContract from "@/hooks/useContract";
 import { ChainId, Currency } from "@/types";
 import SwapModal from "./SwapModal";
 
+import SpaceFiScrollSepoliaPoolFactoryAbi from "@/constants/abis/spacefi.pool-factory.json"
 import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
 import SyncSwapClassicPool from "@/constants/abis/SyncSwapClassicPool.json"
 import SyncSwapStablePool from "@/constants/abis/SyncSwapStablePool.json"
@@ -28,13 +29,14 @@ const percentageButtons = [25, 50, 75, 100];
 
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
-  const { address, isConnected } = useAccount();  
+  const { address, isConnected } = useAccount();
+  const contractAddr = useContract()
   const [swapAmount, setSwapAmount] = useState(0);
   const [receiveAmount, setReceiveAmount] = useState(0);
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   //TODO: Add tokens
   const [tokenFrom, setTokenFrom] = useState<Currency>();
-  const [tokenTo, setTokenTo] = useState<Currency | undefined>(Tokens[ChainId.SCROLL_TESTNET].mock);
+  const [tokenTo, setTokenTo] = useState<Currency | undefined>(Tokens[ChainId.SCROLL_SEPOLIA].mock);
   const [isChangeFrom, setChangeFrom] = useState(true);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
@@ -56,11 +58,11 @@ const SwapCard: React.FC<Props> = () => {
   })
 
   const { data: poolAddress } = useContractRead({
-    address: addresses.syncswapClassicPoolFactory,
-    abi: SyncSwapPoolFactoryAbi,
-    functionName: "getPool",
+    address: contractAddr?.poolFactory,
+    abi: SpaceFiScrollSepoliaPoolFactoryAbi,
+    functionName: "getPair",
     args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-    enabled: !!tokenFrom && !!tokenTo
+    enabled: !!contractAddr && !!tokenFrom && !!tokenTo
   });
 
   const { data: outAmount } = useContractRead({
