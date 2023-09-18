@@ -14,6 +14,7 @@ import { ChainId, Currency } from "@/types";
 import SwapModal from "./SwapModal";
 
 import SpaceFiScrollSepoliaPoolFactoryAbi from "@/constants/abis/spacefi.pool-factory.json"
+import SpaceFiScrollSepoliaRouterAbi from "@/constants/abis/spacefi.router.json"
 import SyncSwapPoolFactoryAbi from "@/constants/abis/basePoolFactory.json"
 import SyncSwapClassicPool from "@/constants/abis/SyncSwapClassicPool.json"
 import SyncSwapStablePool from "@/constants/abis/SyncSwapStablePool.json"
@@ -65,34 +66,36 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!contractAddr && !!tokenFrom && !!tokenTo
   });
 
-  const { data: outAmount } = useContractRead({
-    address: poolAddress as `0x${string}`,
-    abi: SyncSwapClassicPool,
-    functionName: "getAmountOut",
-    args: [tokenFrom?.wrapped.address, parseUnits(`${swapAmount.toFixed(10)}`, tokenFrom?.decimals || 18), address],
-    enabled: !!poolAddress && !!tokenFrom && isChangeFrom
+  const { data: outAmounts } = useContractRead({
+    address: contractAddr?.router,
+    abi: SpaceFiScrollSepoliaRouterAbi,
+    functionName: "getAmountsOut",
+    args: [parseUnits(`${swapAmount.toFixed(10)}`, tokenFrom?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
+    enabled: !!tokenFrom && !!tokenTo && isChangeFrom
   });
 
-  const { data: inAmount } = useContractRead({
-    address: poolAddress as `0x${string}`,
-    abi: SyncSwapClassicPool,
-    functionName: "getAmountIn",
-    args: [tokenTo?.wrapped.address, parseUnits(`${receiveAmount.toFixed(10)}`, tokenTo?.decimals || 18), address],
-    enabled: !!poolAddress && !!tokenTo && !isChangeFrom
+  const { data: inAmounts } = useContractRead({
+    address: contractAddr?.router,
+    abi: SpaceFiScrollSepoliaRouterAbi,
+    functionName: "getAmountsIn",
+    args: [parseUnits(`${receiveAmount.toFixed(10)}`, tokenTo?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
+    enabled: !!tokenFrom && !!tokenTo && !isChangeFrom
   });
 
 
   useEffect(() => {
-    if( outAmount !== undefined && tokenTo && isChangeFrom ) {
-      setReceiveAmount(+(+formatUnits(outAmount as bigint, tokenTo.decimals)).toFixed(10))
+    if( !!outAmounts && tokenTo && isChangeFrom ) {
+      const amounts = outAmounts as bigint[];
+      setReceiveAmount(+(+formatUnits(amounts[1], tokenTo.decimals)).toFixed(10))
     }
-  }, [outAmount, tokenTo, isChangeFrom])
+  }, [outAmounts, tokenTo, isChangeFrom])
 
   useEffect(() => {
-    if( inAmount !== undefined && tokenFrom && !isChangeFrom  ) {
-      setSwapAmount(+formatUnits(inAmount as bigint, tokenFrom.decimals))
+    if( !!inAmounts && tokenFrom && !isChangeFrom  ) {
+      const amounts = inAmounts as bigint[];
+      setSwapAmount(+formatUnits(amounts[0], tokenFrom.decimals))
     }
-  }, [inAmount, tokenFrom, !isChangeFrom])
+  }, [inAmounts, tokenFrom, !isChangeFrom])
 
   const native = useNativeCurrency()
 

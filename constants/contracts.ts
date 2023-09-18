@@ -18,11 +18,13 @@ export const addresses : {
 export const aggregator : {
   [key: string]: {
     contract: `0x${string}`,
+    router: `0x${string}`,
     poolFactory: `0x${string}`,
   }    
 } = {
   [ChainId.SCROLL_SEPOLIA]: {
-    contract: "0x1A8C9Cf33458Dd7556EEA2b2F903e559FDA916eD",
+    contract: "0xCA3c42f9D37e7b1481fb61e83798d0778Af77c84",
+    router: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15",
     poolFactory: "0x2E7444aB4b3C469f5eba37574739133783e0a4CD"
   }
 }
