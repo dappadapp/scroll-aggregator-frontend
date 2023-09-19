@@ -193,7 +193,7 @@ const SwapCard: React.FC<Props> = () => {
   }
 
   return (
-    <div className="w-full max-w-[548px] relative p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-l-2xl mx-auto my-4">
+    <div className="w-full max-w-[548px] relative p-8 gap-2 flex flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center gap-2">
           <h1 className="font-semibold text-3xl">SWAP</h1>
@@ -261,7 +261,7 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
-                  onChange={(e) => setReceiveAmount(+e.target.value)}
+                  onChange={(e) => setReceiveAmount(e.target.value)}
                   onKeyDown={onKeyDownReceiveAmount}
                   value={receiveAmount}
                   type="number"

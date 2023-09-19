@@ -24,11 +24,11 @@ const Navbar: React.FC<Props> = (props) => {
             <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
               Swap
             </Link>
-            <Link href={"/bridge"} className={`${path === "/bride" ? "text-white" : ""}`}>
+            <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
               Bridge
             </Link>
             <a href="/">Docs</a>
-            <Link className={`${path === "/stats" ? "text-white" : ""}`} href={"/stats"}>
+            <Link className={`${path === "/" ? "text-white" : ""}`} href={"/"}>
               Stats
             </Link>
           </div>
