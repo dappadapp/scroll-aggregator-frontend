@@ -20,7 +20,7 @@ const TokenSelect = ({ token, onChange }: Props) => {
   const tokens: Currency[] = useMemo(() => {
     if (chain && Tokens[chain.id]) {
       const tokens = _.values(Tokens[chain.id]);
-      return tokens;
+      return [native, ...tokens];
     }
     return [];
   }, [chain]);

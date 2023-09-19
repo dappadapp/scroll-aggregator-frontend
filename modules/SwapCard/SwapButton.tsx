@@ -1,4 +1,4 @@
-import type { Network, SWAP_TYPE } from "@/types";
+import type { Currency, Network, SWAP_TYPE, Token } from "@/types";
 import React, { useState } from "react";
 import {
   useAccount,
@@ -18,6 +18,8 @@ import AggregatorAbi from "@/constants/abis/aggregator.json";
 
 type Props = {
   swapParam: SwapParam;
+  tokenIn: Currency;
+  tokenOut: Currency;
 };
 
 export type SwapParam = {
@@ -30,7 +32,7 @@ export type SwapParam = {
   fee: number;
 };
 
-const SwapButton: React.FC<Props> = ({ swapParam }) => {
+const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
   const [convEth, setConvEth] = useState<boolean>(true);  
@@ -45,6 +47,7 @@ const SwapButton: React.FC<Props> = ({ swapParam }) => {
       parseEther(`${minTotalAmountOut || 0}`),
       convEth,
     ],
+    value: tokenIn.isNative ? swapParam.amountIn : undefined,
     enabled: !!contractAddr
   });
 

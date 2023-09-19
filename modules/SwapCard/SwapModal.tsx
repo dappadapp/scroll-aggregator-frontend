@@ -112,18 +112,22 @@ function SwapModal({
             <span>SyncSwap</span>
           </div>
         </div>
-        {!allowance || allowance < bigAmountA ? 
+        {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? 
         <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
         :
-        <SwapButton swapParam={{
-          poolAddress: pool,
-          tokenIn: tokenA.wrapped.address,
-          tokenOut: tokenB.wrapped.address,
-          amountIn: bigAmountA,
-          amountOutMin: bigAmountB,
-          swapType: swapType,
-          fee: 0
-        }} />
+        <SwapButton 
+          swapParam={{
+            poolAddress: pool,
+            tokenIn: tokenA.wrapped.address,
+            tokenOut: tokenB.wrapped.address,
+            amountIn: bigAmountA,
+            amountOutMin: bigAmountB,
+            swapType: swapType,
+            fee: 0,
+          }}
+          tokenIn={tokenA}
+          tokenOut={tokenB}
+        />
         }
       </div>
     </div>
