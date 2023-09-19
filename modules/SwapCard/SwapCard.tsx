@@ -282,7 +282,7 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
         
-        <Button variant="bordered" disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount)} className="w-full p-4 rounded-lg text-xl font-semibold" onClick={() => isConnected ? setIsSwapModalOpen(true) : open()}>
+        <Button variant="bordered" disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount)} className="w-full p-4 rounded-lg text-xl font-semibold mt-4" onClick={() => isConnected ? setIsSwapModalOpen(true) : open()}>
           {isConnected ? 'SWAP' : 'CONNECT WALLET'}
         </Button>
       </div>
