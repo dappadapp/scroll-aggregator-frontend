@@ -36,7 +36,7 @@ const TokenSelect = ({ token, onChange }: Props) => {
       optionRenderer={defaultOptionRenderer}
       onSearch={handleSearch}
     >
-      <div className="flex items-center gap-2 w-full w-20">
+      <div className="flex items-center gap-2 w-20">
         {token && (
           <>
             <CurrencyLogo currency={token} />

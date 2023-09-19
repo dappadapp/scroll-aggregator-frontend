@@ -12,15 +12,14 @@ import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 
-
 type Props = {
   onCloseModal: () => void;
-  pool: string,
-  tokenA: Currency,
-  tokenB: Currency,
-  amountA: number,
-  amountB: number,
-  swapType: SWAP_TYPE
+  pool: string;
+  tokenA: Currency;
+  tokenB: Currency;
+  amountA: number;
+  amountB: number;
+  swapType: SWAP_TYPE;
 };
 
 function SwapModal({
@@ -30,8 +29,8 @@ function SwapModal({
   tokenB,
   amountA,
   amountB,
-  swapType
-}: Props) {  
+  swapType,
+}: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
   const { data: allowance, refetch } = useContractRead({
@@ -39,16 +38,16 @@ function SwapModal({
     abi: erc20ABI,
     functionName: "allowance",
     args: [account!, contractAddr!.contract],
-    enabled: !!contractAddr && !!account && tokenA.isToken
+    enabled: !!contractAddr && !!account && tokenA.isToken,
   });
 
   const bigAmountA = useMemo(() => {
-    return parseUnits(amountA.toString(), tokenA.decimals)
-  }, [amountA, tokenA])
+    return parseUnits(amountA.toString(), tokenA.decimals);
+  }, [amountA, tokenA]);
 
   const bigAmountB = useMemo(() => {
-    return parseUnits(amountB.toString(), tokenB.decimals)
-  }, [amountB, tokenB])
+    return parseUnits(amountB.toString(), tokenB.decimals);
+  }, [amountB, tokenB]);
 
   return (
     <div
@@ -62,7 +61,9 @@ function SwapModal({
         }
       >
         <div className="flex justify-between mb-4">
-          <h1 className={"text-sm md:text-lg text-[#C4C4CA]"}>Review swap details</h1>
+          <h1 className={"text-sm md:text-lg text-[#C4C4CA]"}>
+            Review swap details
+          </h1>
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
@@ -88,8 +89,11 @@ function SwapModal({
             tokenImage={`/chains/${networks[0].image}`}
             value={amountA}
           />
-     
-          <SwapSteps tokenImage={`/chains/${networks[0].image}`} value={amountB} />
+
+          <SwapSteps
+            tokenImage={`/chains/${networks[0].image}`}
+            value={amountB}
+          />
         </div>
         <div className="my-10 text-xs md:text-sm flex flex-col gap-2 text-[#AAA]">
           <div className="flex justify-between">
@@ -110,26 +114,36 @@ function SwapModal({
           </div>
           <div className="flex justify-between">
             <span>Liquidity source</span>
-            <span>SyncSwap</span>
+            <span>
+              {swapType === SWAP_TYPE.UNISWAP
+                ? "Uniswap"
+                : swapType === SWAP_TYPE.SPACEFI
+                ? "SpaceFi"
+                : ""}
+            </span>
           </div>
         </div>
-        {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? 
-        <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
-        :
-        <SwapButton 
-          swapParam={{
-            poolAddress: pool,
-            tokenIn: tokenA.wrapped.address,
-            tokenOut: tokenB.wrapped.address,
-            amountIn: bigAmountA,
-            amountOutMin: bigAmountB,
-            swapType: swapType,
-            fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
-          }}
-          tokenIn={tokenA}
-          tokenOut={tokenB}
-        />
-        }
+        {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
+          <AllowButton
+            tokenIn={tokenA}
+            amountIn={bigAmountA}
+            onSuccess={refetch}
+          />
+        ) : (
+          <SwapButton
+            swapParam={{
+              poolAddress: pool,
+              tokenIn: tokenA.wrapped.address,
+              tokenOut: tokenB.wrapped.address,
+              amountIn: bigAmountA,
+              amountOutMin: bigAmountB,
+              swapType: swapType,
+              fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
+            }}
+            tokenIn={tokenA}
+            tokenOut={tokenB}
+          />
+        )}
       </div>
     </div>
   );

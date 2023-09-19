@@ -13,13 +13,15 @@ export class Native extends NativeCurrency {
     decimals,
     name,
     symbol,
+    logo
   }: {
     chainId: number
     decimals: number
     symbol: string
     name: string
+    logo: string
   }) {
-    super(chainId, decimals, symbol, name)
+    super(chainId, decimals, symbol, name, logo)
   }
 
   public get wrapped(): Token {
@@ -33,9 +35,9 @@ export class Native extends NativeCurrency {
     if (chainId in this.cache) {
       return this.cache[chainId]
     }
-    const { decimals, name, symbol } = NATIVE[chainId as keyof typeof WNATIVE]
+    const { decimals, name, symbol, logo } = NATIVE[chainId as keyof typeof WNATIVE]
     // eslint-disable-next-line no-return-assign
-    return (this.cache[chainId] = new Native({ chainId, decimals, symbol, name }))
+    return (this.cache[chainId] = new Native({ chainId, decimals, symbol, name, logo }))
   }
 
   public equals(other: Currency): boolean {
