@@ -21,13 +21,16 @@ const Navbar: React.FC<Props> = (props) => {
         <ZetaGateLogo />
         <div className="flex flex-row justify-center mt-5 mb-5">
           <div className={"flex gap-4 md:text-base text-xs text-[#AAA]"}>
-            {/* <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
-              App
+            <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
+              Swap
+            </Link>
+            <Link href={"/bridge"} className={`${path === "/bride" ? "text-white" : ""}`}>
+              Bridge
             </Link>
             <a href="/">Docs</a>
             <Link className={`${path === "/stats" ? "text-white" : ""}`} href={"/stats"}>
               Stats
-            </Link> */}
+            </Link>
           </div>
         </div>
       </div>

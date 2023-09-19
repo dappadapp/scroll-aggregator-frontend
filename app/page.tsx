@@ -24,57 +24,27 @@ export default function Home({
           }
         >
           <Navbar />
-          
+
           <div className="w-full h-full flex items-center">
             <SwapCard />
           </div>
-            {/* TODO: Graphic  */}
+          {/* TODO: Graphic  */}
           <Footer />
         </div>
       </div>
 
-      {/* ANIMATION */}
-      <div className={"absolute w-screen h-full z-[-1]"}>
+      {/* BG */}
+      <div className="w-full -z-10 md: min-h-[115vh] absolute top-0 overflow-hidden">
         <div
-          className={
-            "flex relative items-center justify-between transition w-full h-full bg-animation"
-          }
-        >
-          <div
-            className={
-              "absolute translate-x-[-20%] left-0 w-1/2 h-full flex flex-col justify-between items-center side"
-            }
-          >
-            <span
-              className={
-                "absolute bg-[#FFA030]/50 top-0 left-1/2 h-[200px] aspect-square blur-[80px] rounded-full"
-              }
-            ></span>
-
-            <span
-              className={
-                "absolute bg-[#FFA030]/50 bottom-0 right-0 h-[200px] aspect-square blur-[80px] rounded-full"
-              }
-            ></span>
-          </div>
-          <div
-            className={
-              "absolute translate-x-[30%] right-0 w-1/2 h-full flex flex-col justify-between items-center side"
-            }
-          >
-            <span
-              className={
-                "absolute bg-[#FFA030]/50 top-[30%] left-0 h-[200px] aspect-square blur-[80px] rounded-full"
-              }
-            ></span>
-
-            <span
-              className={
-                "absolute bg-[#FFA030]/50 top-[60%] left-1/3 h-[200px] aspect-square blur-[80px] rounded-full"
-              }
-            ></span>
-          </div>
-        </div>
+          className={`absolute h-[120vh] blur-[300px] overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
+                left-0 translate-x-[-65%]
+            rounded-full`}
+        ></div>
+        <div
+          className={`absolute h-[120vh] blur-[300px]  overflow-hidden top-0 bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] aspect-square 
+                 right-0 translate-x-[65%]
+             rounded-full`}
+        ></div>
       </div>
       <ToastContainer position="top-right" theme="dark" />
     </div>
