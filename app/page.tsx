@@ -36,13 +36,13 @@ export default function Home({
       {/* BG */}
       <div className="w-full -z-10 md: min-h-[115vh] absolute top-0 overflow-hidden">
         <div
-          className={`absolute h-[90vh] blur-[300px] overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
-                left-0 translate-x-[-65%]
+          className={`absolute h-[120vh] blur-[300px] overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
+                left-0 translate-x-[-70%]
             rounded-full`}
         ></div>
         <div
-          className={`absolute h-[90vh] blur-[300px]  overflow-hidden top-0 bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] aspect-square 
-                 right-0 translate-x-[65%]
+          className={`absolute h-[120vh] blur-[300px]  overflow-hidden top-0 bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] aspect-square 
+                 right-0 translate-x-[70%]
              rounded-full`}
         ></div>
       </div>
