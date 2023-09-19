@@ -18,6 +18,8 @@
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.3",
     "@web3modal/ethereum": "^2.6.2",
     "@web3modal/react": "^2.6.2",
     "autoprefixer": "10.4.14",

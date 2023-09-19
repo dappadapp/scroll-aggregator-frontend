@@ -1,4 +1,6 @@
-import { ChainId } from "@/types";
+import { ChainId, SWAP_TYPE } from "@/types";
+
+export const UNISWAP_DEFAULT_FEE = 3000;
 
 export const addresses : {
   [key: string]: `0x${string}`
@@ -16,16 +18,28 @@ export const addresses : {
 };
 
 export const aggregator : {
-  [key: string]: {
+  [chain: string]: {
     contract: `0x${string}`,
-    router: `0x${string}`,
-    poolFactory: `0x${string}`,
+    spacefi: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
+    uniswap: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    }
   }    
 } = {
   [ChainId.SCROLL_SEPOLIA]: {
     contract: "0xCA3c42f9D37e7b1481fb61e83798d0778Af77c84",
-    router: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15",
-    poolFactory: "0x2E7444aB4b3C469f5eba37574739133783e0a4CD"
+    spacefi: {
+      router: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15",
+      poolFactory: "0x2E7444aB4b3C469f5eba37574739133783e0a4CD"
+    },
+    uniswap: {
+      router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2", //quoter contract
+      poolFactory: "0xB856587fe1cbA8600F75F1b1176E44250B11C788"
+    }
   }
 }
 

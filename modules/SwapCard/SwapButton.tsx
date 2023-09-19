@@ -1,4 +1,4 @@
-import type { Network } from "@/types";
+import type { Network, SWAP_TYPE } from "@/types";
 import React, { useState } from "react";
 import {
   useAccount,
@@ -26,7 +26,7 @@ export type SwapParam = {
   tokenOut: `0x${string}`;
   amountIn: bigint;
   amountOutMin: bigint;
-  swapType: number;
+  swapType: SWAP_TYPE;
   fee: number;
 };
 

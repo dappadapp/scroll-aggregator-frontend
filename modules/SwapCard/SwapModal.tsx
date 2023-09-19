@@ -19,6 +19,7 @@ type Props = {
   tokenB: Currency,
   amountA: number,
   amountB: number,
+  swapType: SWAP_TYPE
 };
 
 function SwapModal({
@@ -27,7 +28,8 @@ function SwapModal({
   tokenA,
   tokenB,
   amountA,
-  amountB
+  amountB,
+  swapType
 }: Props) {  
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
@@ -119,7 +121,7 @@ function SwapModal({
           tokenOut: tokenB.wrapped.address,
           amountIn: bigAmountA,
           amountOutMin: bigAmountB,
-          swapType: SWAP_TYPE.SPACEFI,
+          swapType: swapType,
           fee: 0
         }} />
         }
