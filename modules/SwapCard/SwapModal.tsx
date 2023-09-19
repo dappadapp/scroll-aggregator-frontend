@@ -10,6 +10,7 @@ import { Currency, SWAP_TYPE } from "@/types";
 import useContract from "@/hooks/useContract";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
+import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 
 
 type Props = {
@@ -123,7 +124,7 @@ function SwapModal({
             amountIn: bigAmountA,
             amountOutMin: bigAmountB,
             swapType: swapType,
-            fee: 0,
+            fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
           }}
           tokenIn={tokenA}
           tokenOut={tokenB}
