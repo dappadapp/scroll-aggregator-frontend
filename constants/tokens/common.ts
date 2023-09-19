@@ -189,7 +189,7 @@ export const USDT_ETH = new ERC20Token(
 export const USDT_SCROLL_SEPOLIA = new ERC20Token(
   ChainId.SCROLL_SEPOLIA,
   "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3",
-  0,
+  18,
   "USDT",
   "Tether USD",
   "https://tether.to/"
