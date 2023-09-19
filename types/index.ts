@@ -30,4 +30,5 @@ export interface Network {
   symbol?: string;
   wrappedNativeAddress: string;
   isTestnet?: boolean;
+  decimals?: number;
 }

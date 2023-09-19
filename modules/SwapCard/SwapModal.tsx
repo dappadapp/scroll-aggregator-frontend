@@ -38,15 +38,15 @@ function SwapModal({
     abi: erc20ABI,
     functionName: "allowance",
     args: [account!, contractAddr!.contract],
-    enabled: !!contractAddr && !!account && tokenA.isToken,
+    enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
 
   const bigAmountA = useMemo(() => {
-    return parseUnits(amountA.toString(), tokenA.decimals);
+    return parseUnits(amountA?.toString(), tokenA?.decimals);
   }, [amountA, tokenA]);
 
   const bigAmountB = useMemo(() => {
-    return parseUnits(amountB.toString(), tokenB.decimals);
+    return parseUnits(amountB?.toString(), tokenB?.decimals);
   }, [amountB, tokenB]);
 
   return (

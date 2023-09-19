@@ -7,7 +7,7 @@ export default function useNativeCurrency(): NativeCurrency {
   const { chain } = useNetwork()
   return useMemo(() => {
     if( chain )
-      return Native.onChain(chain.id)
+      return Native.onChain(534351 || chain.id)
     return Native.onChain(ChainId.SCROLL_SEPOLIA)
   }, [chain])
 }

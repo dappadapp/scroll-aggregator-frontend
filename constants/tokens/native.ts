@@ -32,9 +32,12 @@ export class Native extends NativeCurrency {
   private static cache: { [chainId: number]: Native } = {}
 
   public static onChain(chainId: number): Native {
+
+    console.log("chainId",chainId)
     if (chainId in this.cache) {
       return this.cache[chainId]
     }
+   
     const { decimals, name, symbol, logo } = NATIVE[chainId as keyof typeof WNATIVE]
     // eslint-disable-next-line no-return-assign
     return (this.cache[chainId] = new Native({ chainId, decimals, symbol, name, logo }))

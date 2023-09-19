@@ -8,6 +8,7 @@ import { Network } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import Loading from "@/assets/images/loading.svg";
+import Button from "./Button";
 
 interface NetworkItemProps {
   chain: Network;
@@ -15,7 +16,7 @@ interface NetworkItemProps {
   onClick?: (chain: Network) => void;
 }
 
-const NetworkItemRef : ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps> = ({
+const NetworkItemRef: ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps> = ({
   chain,
   className = "",
   onClick,
@@ -43,32 +44,40 @@ const NetworkItem = forwardRef(NetworkItemRef);
 interface NetworkSelectorProps {
 }
 
-const NetworkSelector : FC<NetworkSelectorProps> = () => {
-  const [ currentNetwork, setCurrentNetwork ] = useState<Network>(networks[0])
+const NetworkSelector: FC<NetworkSelectorProps> = () => {
+  const [currentNetwork, setCurrentNetwork] = useState<Network>(networks[0])
   const { chain } = useNetwork();
   const { switchNetwork, isLoading } = useSwitchNetwork();
 
   useEffect(() => {
     const newNetwork = networks.find((network) => network.chainId === chain?.id)
-    if( newNetwork )
+    if (newNetwork)
       setCurrentNetwork(newNetwork)
-    else if(switchNetwork)
+    else if (switchNetwork)
       switchNetwork(networks[0].chainId)
   }, [chain, switchNetwork])
 
   const handleChangeNetwork = (network: Network) => {
-    if( switchNetwork )
-      switchNetwork(network.chainId)  
+    if (switchNetwork)
+      switchNetwork(network.chainId)
   }
+
+
 
   return (
     <Menu as="div" className="relative inline-block">
       <div>
         <Menu.Button className="inline-flex justify-center items-center min-w-[200px] gap-2 p-3 bg-[#0A0A0A] rounded-lg border border-white/10">
-          <NetworkItem chain={currentNetwork} />
-          {isLoading &&
-            <Loading />
-          }
+          {chain?.id !== 534351 ? (
+            <p>Switch Scroll Sepolia</p>
+          )
+
+            : (
+              <Fragment>
+                <NetworkItem chain={currentNetwork} />
+                {isLoading && <Loading />}
+              </Fragment>
+            )}
           <span className="pointer-events-none inset-y-0 flex items-center">
             <FontAwesomeIcon icon={faAngleDown} />
           </span>
@@ -81,18 +90,22 @@ const NetworkSelector : FC<NetworkSelectorProps> = () => {
         leaveTo="opacity-0"
       >
         <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[320px] origin-top-right z-10 backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ">
-          {networks.map((network) => (
-            <Menu.Item as={Fragment} key={network.chainId}>
-              {({ active }) => (
-                <NetworkItem
-                  key={network.chainId}
-                  chain={network}
-                  className="group text-[#CACACA] select-none p-3 hover:bg-[#2B2B2B]"
-                  onClick={handleChangeNetwork}
-                />
-              )}
-            </Menu.Item>
-          ))}
+          {chain?.id !== 534351 ? (
+            null
+          ) : (
+            networks.map((network) => (
+              <Menu.Item as={Fragment} key={network.chainId}>
+                {({ active }) => (
+                  <NetworkItem
+                    key={network.chainId}
+                    chain={network}
+                    className="group text-[#CACACA] select-none p-3 hover:bg-[#2B2B2B]"
+                    onClick={handleChangeNetwork}
+                  />
+                )}
+              </Menu.Item>
+            ))
+          )}
         </Menu.Items>
       </Transition>
     </Menu>
