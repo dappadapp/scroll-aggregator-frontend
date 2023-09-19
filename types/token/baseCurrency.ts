@@ -35,6 +35,7 @@ export abstract class BaseCurrency {
    */
   public readonly name?: string
 
+  public readonly logo?: string
   /**
    * Constructs an instance of the base class `BaseCurrency`.
    * @param chainId the chain ID on which this currency resides
@@ -42,11 +43,12 @@ export abstract class BaseCurrency {
    * @param symbol symbol of the currency
    * @param name of the currency
    */
-  protected constructor(chainId: number, decimals: number, symbol: string, name?: string) {
+  protected constructor(chainId: number, decimals: number, symbol: string, name?: string, logo?: string) {
     this.chainId = chainId
     this.decimals = decimals
     this.symbol = symbol
     this.name = name
+    this.logo = logo
   }
 
   /**

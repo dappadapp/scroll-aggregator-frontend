@@ -7,6 +7,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.GOERLI]: new ERC20Token(
@@ -15,6 +16,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.BSC]: new ERC20Token(
@@ -23,6 +25,7 @@ export const WETH9 = {
     18,
     "ETH",
     "Binance-Peg Ethereum Token",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://ethereum.org"
   ),
   [ChainId.BSC_TESTNET]: new ERC20Token(
@@ -31,6 +34,7 @@ export const WETH9 = {
     18,
     "ETH",
     "ETH",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://ethereum.org"
   ),
   [ChainId.ZKSYNC]: new ERC20Token(
@@ -39,6 +43,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.ZKSYNC_TESTNET]: new ERC20Token(
@@ -47,6 +52,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.SCROLL_TESTNET]: new ERC20Token(
@@ -55,6 +61,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.SCROLL_SEPOLIA]: new ERC20Token(
@@ -63,6 +70,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
 };
@@ -106,20 +114,22 @@ export const WNATIVE = {
   [ChainId.SCROLL_SEPOLIA]: WETH9[ChainId.SCROLL_SEPOLIA],
 } satisfies Record<ChainId, ERC20Token>;
 
-const ETHER = { name: "Ether", symbol: "ETH", decimals: 18 } as const;
+const ETHER = { name: "Ether", symbol: "ETH", decimals: 18, logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026' } as const;
 
 export const NATIVE = {
   [ChainId.ETHEREUM]: ETHER,
-  [ChainId.GOERLI]: { name: "Goerli Ether", symbol: "GOR", decimals: 18 },
+  [ChainId.GOERLI]: { name: "Goerli Ether", symbol: "GOR", decimals: 18, logo: '' },
   [ChainId.BSC]: {
     name: "Binance Chain Native Token",
     symbol: "BNB",
     decimals: 18,
+    logo: ''
   },
   [ChainId.BSC_TESTNET]: {
     name: "Binance Chain Native Token",
     symbol: "tBNB",
     decimals: 18,
+    logo: ''
   },
   [ChainId.ZKSYNC]: ETHER,
   [ChainId.ZKSYNC_TESTNET]: ETHER,
@@ -131,6 +141,7 @@ export const NATIVE = {
     name: string;
     symbol: string;
     decimals: number;
+    logo?: string;
   }
 >;
 
@@ -192,6 +203,7 @@ export const USDT_SCROLL_SEPOLIA = new ERC20Token(
   18,
   "USDT",
   "Tether USD",
+  "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=026",
   "https://tether.to/"
 );
 

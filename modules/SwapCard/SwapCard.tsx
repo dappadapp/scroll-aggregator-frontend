@@ -86,7 +86,7 @@ const SwapCard: React.FC<Props> = () => {
       address: contractAddr?.spacefi.router,
       abi: SpaceFiRouterAbi,
       functionName: "getAmountsOut",
-      args: [parseUnits(`${swapAmount.toFixed(10)}`, tokenFrom?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
+      args: [parseUnits(swapAmount.toFixed(10), tokenFrom?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
       enabled: !!tokenFrom && !!tokenTo && isChangeFrom
     } : {
       address: contractAddr?.uniswap.router,
@@ -96,7 +96,7 @@ const SwapCard: React.FC<Props> = () => {
         tokenFrom?.wrapped.address,
         tokenTo?.wrapped.address,
         UNISWAP_DEFAULT_FEE,
-        parseUnits(`${swapAmount.toFixed(10)}`, tokenFrom?.decimals || 18),
+        parseUnits(swapAmount.toFixed(10), tokenFrom?.decimals || 18),
         0
       ],
       enabled: !!tokenFrom && !!tokenTo && address && isChangeFrom
@@ -108,7 +108,7 @@ const SwapCard: React.FC<Props> = () => {
       address: contractAddr?.spacefi.router,
       abi: SpaceFiRouterAbi,
       functionName: "getAmountsIn",
-      args: [parseUnits(`${receiveAmount.toFixed(10)}`, tokenTo?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
+      args: [parseUnits(receiveAmount.toFixed(10), tokenTo?.decimals || 18), [tokenFrom?.wrapped.address, tokenTo?.wrapped.address]],
       enabled: !!tokenFrom && !!tokenTo && !isChangeFrom
     } : {
       address: contractAddr?.uniswap.router,
@@ -118,7 +118,7 @@ const SwapCard: React.FC<Props> = () => {
         tokenFrom?.wrapped.address,
         tokenTo?.wrapped.address,
         UNISWAP_DEFAULT_FEE,
-        parseUnits(`${receiveAmount.toFixed(10)}`, tokenTo?.decimals || 18),
+        parseUnits(receiveAmount.toFixed(10), tokenTo?.decimals || 18),
         0
       ],
       enabled: !!tokenFrom && !!tokenTo && address && isChangeFrom
