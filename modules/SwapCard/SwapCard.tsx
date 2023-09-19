@@ -127,6 +127,10 @@ const SwapCard: React.FC<Props> = () => {
 
 
   useEffect(() => {
+    if(tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH"){
+    setSwapAmount(receiveAmount);
+  } else {
+
     if( !!outAmounts && tokenTo && isChangeFrom ) {
       // if( dexType === SWAP_TYPE.SPACEFI ) {
         const amounts = outAmounts as bigint[];
@@ -135,18 +139,31 @@ const SwapCard: React.FC<Props> = () => {
       //     setReceiveAmount(+(+formatUnits(outAmounts as bigint, tokenTo.decimals)).toFixed(10))
       // }
     }
+  }
   }, [outAmounts, tokenTo, isChangeFrom, dexType])
 
+
   useEffect(() => {
+
+    if(tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH"){
+      setReceiveAmount(swapAmount);
+     
+
+    }
+    else {
+
     if( !!inAmounts && tokenFrom && !isChangeFrom  ) {
-      // if( dexType === SWAP_TYPE.SPACEFI ) {
+     
         const amounts = inAmounts as bigint[];
         setSwapAmount(+formatUnits(amounts[0], tokenFrom.decimals))
+
+          // if( dexType === SWAP_TYPE.SPACEFI ) {
       // } else if( dexType === SWAP_TYPE.UNISWAP ) {
       //   setSwapAmount(+(+formatUnits(inAmounts as bigint, tokenFrom.decimals)).toFixed(10))
       // }
     }
-  }, [inAmounts, tokenFrom, !isChangeFrom, dexType])
+  }
+  }, [inAmounts, tokenFrom,tokenTo, !isChangeFrom, dexType,swapAmount])
 
   const native = useNativeCurrency()
 
