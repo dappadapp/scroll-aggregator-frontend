@@ -1,7 +1,7 @@
 "use client";
 import Providers from "@/provider/Providers";
 import type { Metadata } from "next";
-import { Inter, Raleway } from "next/font/google";
+import { Orbitron, Raleway } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import { ToastContainer } from "react-toastify";
 import CardNavbar from "@/components/CardNavbar";
 
-const inter = Inter({
+const inter = Orbitron({
   subsets: ["latin"],
   variable: "--font-inter",
 });
@@ -37,7 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           async={true}
         ></script>
       </head>
-      <body className={`${raleway.variable} ${inter.variable}`}>
+      <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
           <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
             <div
