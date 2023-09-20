@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
             <div
               className={
-                "container mx-auto px-3 pt-2 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-center flex-col"
+                "container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-center flex-col"
               }
             >
               <Navbar />

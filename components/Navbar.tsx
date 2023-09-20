@@ -54,7 +54,7 @@ const Navbar: React.FC<Props> = (props) => {
     <div className="flex flex-row items-center justify-between w-full">
       <div
         className={
-          "w-full hidden lg:flex flex-row items-center justify-between mt-2 lg:mt-10 gap-2"
+          "w-full hidden lg:flex flex-row items-center justify-between mt-2 lg:mt-2 gap-2"
         }
       >
         <ZetaGateLogo />
