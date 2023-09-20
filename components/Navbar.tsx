@@ -57,23 +57,8 @@ const Navbar: React.FC<Props> = (props) => {
           "w-full hidden lg:flex flex-row items-center justify-between mt-2 lg:mt-10 gap-2"
         }
       >
-        <div className="hidden lg:flex gap-6 items-center">
-          <ZetaGateLogo />
-          <div className="flex flex-row justify-center mt-5 mb-5">
-            <div className={"flex gap-4 lg:text-base text-xs text-[#AAA]"}>
-              <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
-                Swap
-              </Link>
-              <Link href={"/"} className={`${path === "/" ? "text-white" : ""}`}>
-                Bridge
-              </Link>
-              <a href="/">Docs</a>
-              <Link className={`${path === "/" ? "text-white" : ""}`} href={"/"}>
-                Stats
-              </Link>
-            </div>
-          </div>
-        </div>
+        <ZetaGateLogo />
+
         <div className="flex flex-col-reverse lg:flex-row gap-3">
           <NetworkSelector />
           <ConnectButton />
