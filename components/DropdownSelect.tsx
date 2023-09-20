@@ -17,13 +17,13 @@ type Props = {
 
 const DropdownSelect = ({
   value,
-  className = '',
-  dropdownClassName = '',
+  className = "",
+  dropdownClassName = "",
   onChange,
   options,
   optionRenderer,
   onSearch,
-  children
+  children,
 }: Props) => {
   return (
     <Listbox value={value} onChange={onChange}>
@@ -42,20 +42,22 @@ const DropdownSelect = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Listbox.Options className={`${dropdownClassName} absolute right-0 mt-1 z-20 flex flex-col items-center max-h-60 overflow-auto rounded-md bg-[#202020] backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}>
-            {onSearch && 
-            <input
-              type="text"
-              onChange={(e) => onSearch(e.target.value)}
-              className="my-1 w-5/6 px-1 py-1 text-xs md:text-base rounded-md bg-gray-700"
-              placeholder="Search"
-            />
-            }
+          <Listbox.Options
+            className={`${dropdownClassName} absolute right-0 mt-1 z-20 flex flex-col items-center max-h-60 overflow-auto rounded-md bg-[#dda15e] backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+          >
+            {onSearch && (
+              <input
+                type="text"
+                onChange={(e) => onSearch(e.target.value)}
+                className="my-1 w-5/6 px-1 py-1 text-xs md:text-base rounded-md text-black bg-[#dda15e]"
+                placeholder="Search"
+              />
+            )}
             {options.map((option, i) => (
               <Listbox.Option
                 key={i}
                 className={({ active }) =>
-                  `relative cursor-pointer text-[#CACACA] select-none w-full p-2 ${
+                  `relative cursor-pointer text-black select-none w-full p-2 ${
                     active ? "bg-[#2B2B2B]" : ""
                   }`
                 }

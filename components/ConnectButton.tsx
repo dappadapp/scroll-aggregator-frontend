@@ -13,7 +13,7 @@ const ConnectButton = () => {
   return (
     <button
       className={
-        "rounded-lg bg-[#FAC790] text-black tracking-wider duration-150  border-black/10 border transition px-3 py-1 sm:px-5 sm:py-2 lg:px-8 lg:py-3  font-semibold select-none text-sm sm:text-base"
+        "rounded-lg tracking-wider duration-150 bg-[#BC6C25] text-black border transition px-3 py-1 sm:px-5 sm:py-2 lg:px-8 lg:py-3 font-semibold select-none text-sm sm:text-base"
       }
       onClick={open}
     >
@@ -24,7 +24,7 @@ const ConnectButton = () => {
       ) : address ? (
         formatAddress(address)
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-black">
           <div>Connect Wallet</div>
           <FaWallet />
         </div>

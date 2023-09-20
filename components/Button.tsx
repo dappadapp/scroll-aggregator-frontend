@@ -9,11 +9,11 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[#FAC790]/[.04] text-white/50 hover:bg-[#FAC790] hover:text-black flex justify-center items-center",
+          "bg-[#dda15e]/[.20] text-black/50 hover:bg-[#dda15e] hover:text-black flex justify-center items-center",
         secondary: "bg-[#3AFF4242] text-white",
         disabled: "bg-[#202020] text-[#AAA]",
         bordered:
-          "bg-[#FAC790]/[.04] text-white/75 hover:bg-[#FAC790] hover:text-black border border-white/10",
+          "bg-[#dda15e]/[.40] text-black/50 hover:bg-[#dda15e] hover:text-black border border-white/10",
       },
     },
     defaultVariants: {

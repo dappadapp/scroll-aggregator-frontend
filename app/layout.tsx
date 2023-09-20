@@ -52,9 +52,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
               <Footer />
             </div>
-            <div className="w-full -z-10 h-0 lg:h-full bg-[#000814] absolute top-0 overflow-hidden">
+            <div className="w-full -z-10 h-0 lg:h-full bg-[#fefae0] absolute top-0 overflow-hidden">
               {/* <div
-                className={`absolute h-[0vh] md:h-[120vh] blur-[2px] bg-opacity-30 overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
+                className={`absolute h-[0vh] md:h-[120vh] blur-[50px] overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
                 left-0 md:translate-x-[-70%] translate-x-[-90%]
             rounded-full`}
               ></div>

@@ -15,19 +15,19 @@ function CardNavbar() {
         href={"/"}
         className={`transition-all ${
           path !== "/"
-            ? "text-white/40"
-            : "text-[#FAC790] px-6 py-2 rounded-lg bg-white bg-opacity-10"
+            ? " bg-[#dda15e]/[.20] text-black/50 "
+            : " px-6 py-2 rounded-lg bg-[#dda15e] text-black "
         }`}
       >
         Swap
       </Link>
-      <Link href={"/bridge"} className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
+      <Link href={"/bridge"} className={`${path !== "/bridge" ? "text-black/30" : ""}`}>
         Bridge
       </Link>
-      <Link href="/docs" className={`${path !== "/docs" ? "text-white/40" : ""}`}>
+      <Link href="/docs" className={`${path !== "/docs" ? "text-black/30" : ""}`}>
         Docs
       </Link>
-      <Link className={`${path !== "/stats" ? "text-white/40" : ""}`} href={"/stats"}>
+      <Link className={`${path !== "/stats" ? "text-black/30" : ""}`} href={"/stats"}>
         Stats
       </Link>
     </div>
