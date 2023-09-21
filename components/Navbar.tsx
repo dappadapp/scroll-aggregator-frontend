@@ -1,3 +1,4 @@
+"use client";
 import React, { Fragment, useState } from "react";
 import ZetaGateLogo from "./Logo";
 import Link from "next/link";
