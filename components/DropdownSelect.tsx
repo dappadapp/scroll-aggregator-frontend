@@ -18,11 +18,13 @@ const DropdownSelect = ({
   value,
   className = "",
   dropdownClassName = "",
+  className = "",
+  dropdownClassName = "",
   onChange,
   options,
   optionRenderer,
   onSearch,
-  children
+  children,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);

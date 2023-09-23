@@ -1,3 +1,4 @@
+"use client";
 import React, { Fragment, useState } from "react";
 import ZetaGateLogo from "./Logo";
 import Link from "next/link";
@@ -67,7 +68,7 @@ const Navbar: React.FC<Props> = (props) => {
 
       {/* Mobile */}
       <div className="flex lg:hidden  items-center self-center z-50">
-        <FaBars onClick={() => setMenuOpen((prev) => !prev)} />
+        <FaBars className="w-8 h-8" onClick={() => setMenuOpen((prev) => !prev)} />
       </div>
       <div
         className={`fixed self-start top-0 left-0 right-0 h-[100vh] z-[51] bg-black opacity-90 ${
@@ -80,6 +81,8 @@ const Navbar: React.FC<Props> = (props) => {
             isMenuOpen ? "w-full h-[90vh] px-8" : "max-w-[0px] px-0"
           }`}
         >
+          <ZetaGateLogo />
+
           {menu}
         </nav>
       </div>

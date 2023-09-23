@@ -1,4 +1,3 @@
-"use client";
 import Providers from "@/provider/Providers";
 import type { Metadata } from "next";
 import { Orbitron, Raleway } from "next/font/google";
@@ -6,10 +5,8 @@ import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "react-toastify/dist/ReactToastify.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { ToastContainer } from "react-toastify";
-import CardNavbar from "@/components/CardNavbar";
+import Container from "@/container/container";
 
 const inter = Orbitron({
   subsets: ["latin"],
