@@ -47,11 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     });
         `}
         </Script>
-
-        <meta
-          http-equiv="Content-Security-Policy"
-          content="default-src 'self' http: https: data: blob: 'unsafe-inline' wss://relay.walletconnect.com wss://sock.zkl.app;"
-        />      </head>
+         </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
           <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
