@@ -47,6 +47,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     });
         `}
         </Script>
+
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: http: ws: wss: 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: http: https:; connect-src ws: wss: https: http:" />
       </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
