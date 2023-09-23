@@ -48,8 +48,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
         </Script>
 
-        <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;" />
-      </head>
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="default-src 'self' http: https: data: blob: 'unsafe-inline' wss://relay.walletconnect.com wss://sock.zkl.app;"
+        />      </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
           <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
