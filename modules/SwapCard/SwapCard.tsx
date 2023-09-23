@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
-import _ from "lodash";
+import _, { set } from "lodash";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -24,6 +24,9 @@ import IconRefresh from "@/assets/images/icon-refresh.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
 import { toFixedValue } from "@/utils/address";
+import { connectWebSocket, emitData } from '@/utils/websocket';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { ethers } from "ethers";
 
 type Props = {};
 
@@ -34,7 +37,7 @@ const SwapCard: React.FC<Props> = () => {
   const { address, isConnected } = useAccount();
   const contractAddr = useContract();
   const [swapAmount, setSwapAmount] = useState(0);
-  const [receiveAmount, setReceiveAmount] = useState(0);
+  const [receiveAmount, setReceiveAmount] = useState("0");
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.UNISWAP);
   //TODO: Add tokens
@@ -43,6 +46,7 @@ const SwapCard: React.FC<Props> = () => {
     Tokens[ChainId.SCROLL_SEPOLIA].mock
   );
   const [isChangeFrom, setChangeFrom] = useState(true);
+  const [rate, setRate] = useState("0");
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
@@ -62,112 +66,98 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
+
+  const [socketUrl, setSocketUrl] = useState('wss://sock.zkl.app/session/' + address);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    onOpen: () => console.log('opened'),
+    //Will attempt to reconnect on all close events, such as server shutting down
+    shouldReconnect: (closeEvent) => true,
+  });
+
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
+
+
+
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
-          address: contractAddr?.spacefi.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
+        address: contractAddr?.spacefi.poolFactory,
+        abi: SpaceFiPoolFactoryAbi,
+        functionName: "getPair",
+        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
       : {
-          address: contractAddr?.uniswap.poolFactory,
-          abi: UniswapPoolFactoryAbi,
-          functionName: "getPool",
-          args: [
-            tokenFrom?.wrapped.address,
-            tokenTo?.wrapped.address,
-            UNISWAP_DEFAULT_FEE,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
+        address: contractAddr?.uniswap.poolFactory,
+        abi: UniswapPoolFactoryAbi,
+        functionName: "getPool",
+        args: [
+          tokenFrom?.wrapped.address,
+          tokenTo?.wrapped.address,
+          UNISWAP_DEFAULT_FEE,
+        ],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
   );
 
-  const { data: outAmounts } = useContractRead(
-    true
-      ? {
-          address: contractAddr?.spacefi.router,
-          abi: SpaceFiRouterAbi,
-          functionName: "getAmountsOut",
-          args: [
-            parseUnits(swapAmount.toFixed(10), tokenFrom?.decimals || 18),
-            [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-          ],
-          enabled: !!tokenFrom && !!tokenTo && isChangeFrom,
-        }
-      : {
-          address: contractAddr?.uniswap.router,
-          abi: UniswapQuoterAbi,
-          functionName: "quoteExactInputSingle",
-          args: [
-            tokenFrom?.wrapped.address,
-            tokenTo?.wrapped.address,
-            UNISWAP_DEFAULT_FEE,
-            parseUnits(swapAmount.toFixed(10), tokenFrom?.decimals || 18),
-            0,
-          ],
-          enabled: !!tokenFrom && !!tokenTo && address && isChangeFrom,
-        }
-  );
+  const handleINChange = (e: any) => {
+    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
+      setSwapAmount(e.target.value);
+      setReceiveAmount(e.target.value);
+    } else {
+      setSwapAmount(e.target.value);
+    }
 
-  const { data: inAmounts } = useContractRead(
-    true
-      ? {
-          address: contractAddr?.spacefi.router,
-          abi: SpaceFiRouterAbi,
-          functionName: "getAmountsIn",
-          args: [
-            parseUnits(receiveAmount.toFixed(10), tokenTo?.decimals || 18),
-            [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-          ],
-          enabled: !!tokenFrom && !!tokenTo && !isChangeFrom,
-        }
-      : {
-          address: contractAddr?.uniswap.router,
-          abi: UniswapQuoterAbi,
-          functionName: "quoteExactOutputSingle",
-          args: [
-            tokenFrom?.wrapped.address,
-            tokenTo?.wrapped.address,
-            UNISWAP_DEFAULT_FEE,
-            parseUnits(receiveAmount.toFixed(10), tokenTo?.decimals || 18),
-            0,
-          ],
-          enabled: !!tokenFrom && !!tokenTo && address && isChangeFrom,
-        }
-  );
+  };
+
+  const handleOUTChange = (e: any) => {
+    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
+      setSwapAmount(e.target.value);
+      setReceiveAmount(e.target.value);
+    } else {
+      setReceiveAmount(e.target.value);
+    }
+  };
+
 
   useEffect(() => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
-      setSwapAmount(receiveAmount);
-    } else {
-      if (!!outAmounts && tokenTo && isChangeFrom) {
-        // if( dexType === SWAP_TYPE.SPACEFI ) {
-        const amounts = outAmounts as bigint[];
-        setReceiveAmount(+(+formatUnits(amounts[1], tokenTo.decimals)).toFixed(10));
-        // } else if( dexType === SWAP_TYPE.UNISWAP ) {
-        //     setReceiveAmount(+(+formatUnits(outAmounts as bigint, tokenTo.decimals)).toFixed(10))
-        // }
+
+    sendMessage(JSON.stringify({
+      amount: '' + swapAmount,
+      from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+      to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+      type: 'IN',
+    }));
+
+    if (lastMessage && lastMessage?.data !== "undefined" && lastMessage?.data !== undefined && lastMessage?.data !== "") {
+
+      const msgData = JSON.parse(lastMessage?.data);
+      console.log("msgData", msgData);
+
+      if (msgData) {
+        setReceiveAmount((+ethers.formatEther((msgData?.amount))).toFixed(6).toString());
+
+        setDexType(msgData?.dex === 'space-fi' ? SWAP_TYPE.SPACEFI : SWAP_TYPE.UNISWAP);
       }
     }
-  }, [outAmounts, tokenTo, isChangeFrom, dexType]);
-
-  useEffect(() => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
-      setReceiveAmount(swapAmount);
-    } else {
-      if (!!inAmounts && tokenFrom && !isChangeFrom) {
-        const amounts = inAmounts as bigint[];
-        setSwapAmount(+formatUnits(amounts[0], tokenFrom.decimals));
-
-        // if( dexType === SWAP_TYPE.SPACEFI ) {
-        // } else if( dexType === SWAP_TYPE.UNISWAP ) {
-        //   setSwapAmount(+(+formatUnits(inAmounts as bigint, tokenFrom.decimals)).toFixed(10))
-        // }
+    else {
+      if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") { }
+      else {
+        //setReceiveAmount("0");
       }
     }
-  }, [inAmounts, tokenFrom, tokenTo, !isChangeFrom, dexType, swapAmount]);
+
+  }, [swapAmount, tokenFrom, tokenTo, lastMessage]);
+
 
   const native = useNativeCurrency();
 
@@ -206,28 +196,15 @@ const SwapCard: React.FC<Props> = () => {
           <Button className="p-3 w-12 h-12 rounded-lg">
             <IconRefresh />
           </Button>
-          <DropdownSelect
-            value={dexType}
-            onChange={(v) => setDexType(v.value)}
-            className="px-4 py-3"
-            options={[
-              { title: "SpaceFi", value: SWAP_TYPE.SPACEFI },
-              { title: "Uniswap", value: SWAP_TYPE.UNISWAP },
-            ]}
-            optionRenderer={(v) => v.title}
-          >
-            <div className="flex items-center gap-2 w-full w-20">
-              {dexType === SWAP_TYPE.SPACEFI ? "SpaceFi" : "Uniswap"}
-            </div>
-          </DropdownSelect>
+
         </div>
         <div className="relative w-full flex flex-col">
           <span className="text-white/25">from</span>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 z-100">
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
-                  onChange={(e) => setSwapAmount(+e.target.value)}
+                  onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
                   value={swapAmount}
                   type="number"
@@ -256,16 +233,16 @@ const SwapCard: React.FC<Props> = () => {
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center z-10 bg-white/[.04] hover:bg-opacity-40 transition-all "
+            className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all z-[-1]"
           >
-            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6" />
+            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 z-[-1]" />
           </button>
           <span className="text-white/25">to</span>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 z-50">
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
-                  onChange={(e) => setReceiveAmount(e.target.value)}
+                  onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
                   value={receiveAmount}
                   type="number"
@@ -292,7 +269,7 @@ const SwapCard: React.FC<Props> = () => {
           {isConnected ? "SWAP" : "CONNECT WALLET"}
         </Button>
       </div>
-      {tokenFrom && tokenTo && isSwapModalOpen && poolAddress ? (
+      {tokenFrom && tokenTo && isSwapModalOpen ? (
         <SwapModal
           pool={poolAddress as string}
           tokenA={tokenFrom}
@@ -300,6 +277,7 @@ const SwapCard: React.FC<Props> = () => {
           amountA={swapAmount}
           amountB={receiveAmount}
           swapType={dexType}
+          rate={rate}
           onCloseModal={() => setIsSwapModalOpen(false)}
         />
       ) : null}

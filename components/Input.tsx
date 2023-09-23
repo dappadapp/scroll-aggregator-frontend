@@ -27,7 +27,7 @@ const Input: React.FC<Props> = ({
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent tracking-wide`}
     />
   );
 };

@@ -8,7 +8,7 @@ function CardNavbar() {
   return (
     <div
       className={
-        "hidden lg:flex gap-4 lg:text-base text-xs items-baseline text-[#382c2c] bg-white bg-opacity-5 shadow-sm shadow-[#FAC790] rounded-2xl p-3"
+        "hidden lg:flex gap-4 lg:text-base text-xs items-baseline text-[#382c2c] bg-white bg-opacity-5 shadow-sm shadow-[#FAC790] rounded-2xl p-3 mt-5"
       }
     >
       <Link
@@ -21,13 +21,16 @@ function CardNavbar() {
       >
         Swap
       </Link>
-      <Link href={"/bridge"} className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
+      <Link href={"https://faucet.aggre.io/"} target="_blank" className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
+        Faucet
+      </Link>
+      <Link href={"#"} className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
         Bridge
       </Link>
-      <Link href="/docs" className={`${path !== "/docs" ? "text-white/40" : ""}`}>
+      <Link href="#" className={`${path !== "/docs" ? "text-white/40" : ""}`}>
         Docs
       </Link>
-      <Link className={`${path !== "/stats" ? "text-white/40" : ""}`} href={"/stats"}>
+      <Link className={`${path !== "/stats" ? "text-white/40" : ""}`} href={"#"}>
         Stats
       </Link>
     </div>

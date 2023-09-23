@@ -37,7 +37,7 @@ export const aggregator : {
       poolFactory: "0x2E7444aB4b3C469f5eba37574739133783e0a4CD"
     },
     uniswap: {
-      router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2", //quoter contract
+      router: "0x17AFD0263D6909Ba1F9a8EAC697f76532365Fb95", //quoter contract
       poolFactory: "0xB856587fe1cbA8600F75F1b1176E44250B11C788"
     }
   }

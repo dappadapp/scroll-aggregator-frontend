@@ -11,9 +11,10 @@ import _ from "lodash";
 type Props = {
   token?: Currency;
   onChange: (token: any) => void;
+  className?: string;
 };
 
-const TokenSelect = ({ token, onChange }: Props) => {
+const TokenSelect = ({ token, onChange, className }: Props) => {
   const { chain } = useNetwork();
   const native = useNativeCurrency();
 
@@ -25,22 +26,23 @@ const TokenSelect = ({ token, onChange }: Props) => {
     return [];
   }, [chain]);
 
-  const handleSearch = (v: string) => {};
+  const handleSearch = (v: string) => { };
 
   return (
     <DropdownSelect
       value={token}
       onChange={onChange}
-      className="px-4 py-3"
+      className={`z-50 px-4 py-3`}
+      dropdownClassName={""}
       options={tokens}
       optionRenderer={defaultOptionRenderer}
       onSearch={handleSearch}
     >
-      <div className="flex items-center gap-2 w-20">
+      <div className="flex items-center gap-3 w-24">
         {token && (
           <>
             <CurrencyLogo currency={token} />
-            <span className="block truncate text-xs md:text-base font-medium">
+            <span className={`${className} block truncate text-xs md:text-base font-medium z-50`}>
               {token?.symbol}
             </span>
           </>
@@ -52,9 +54,8 @@ const TokenSelect = ({ token, onChange }: Props) => {
 
 const defaultOptionRenderer = (option: Currency, selected: any) => (
   <div
-    className={`flex items-center gap-2 p-1 ${
-      selected ? "bg-[#2B2B2B] rounded-lg" : ""
-    }`}
+    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""
+      }`}
   >
     <CurrencyLogo currency={option} />
     <span className="block truncate text-xs md:text-base font-medium">

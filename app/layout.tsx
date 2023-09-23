@@ -20,11 +20,6 @@ const raleway = Raleway({
   variable: "--font-raleway",
 });
 
-export const metadata: Metadata = {
-  title: "Aggre",
-  description:
-    "Unlock the full potential of the Scroll blockchain with AGGRE, the world's first aggregator dedicated to Scroll. AGGRE provides a unified gateway to explore, trade, and harness the power of Scroll's decentralized ecosystem.",
-};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -36,6 +31,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg"
           async={true}
         ></script>
+
+<Script
+          id="google-analytics"
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-61SJVDE3XK`}
+        />
+        <Script strategy="lazyOnload" id="google-analytics">
+          {`
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    gtag('config', 'G-61SJVDE3XK', {
+                    page_path: window.location.pathname,
+                    });
+        `}
+        </Script>
       </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
@@ -46,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               }
             >
               <Navbar />
-              <div className="w-full h-full flex-col flex items-center">
+              <div className="w-full h-full flex-col flex items-center mb-5">
                 <CardNavbar />
                 {children}
               </div>
