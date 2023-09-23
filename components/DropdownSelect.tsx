@@ -18,8 +18,6 @@ const DropdownSelect = ({
   value,
   className = "",
   dropdownClassName = "",
-  className = "",
-  dropdownClassName = "",
   onChange,
   options,
   optionRenderer,
