@@ -7,6 +7,9 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import Container from "@/container/container";
+import Navbar from "@/components/Navbar";
+import CardNavbar from "@/components/CardNavbar";
+import Footer from "@/components/Footer";
 
 const inter = Orbitron({
   subsets: ["latin"],
