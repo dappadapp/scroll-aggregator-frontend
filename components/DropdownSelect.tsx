@@ -1,4 +1,4 @@
-import { Fragment, useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Listbox, Transition } from "@headlessui/react";
@@ -25,20 +25,22 @@ const DropdownSelect = ({
   children,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Add event listener to detect clicks outside of the dropdown
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
-    // Attach the event listener
+    // Attach the event listener when the component mounts
     document.addEventListener("mousedown", handleClickOutside);
 
-    // Clean up the event listener on unmount
+    // Clean up the event listener when the component unmounts
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -52,7 +54,7 @@ const DropdownSelect = ({
     <Listbox value={value} onChange={onChange}>
       <div className="relative inline-block" ref={dropdownRef}>
         <div
-          className={`${className} relative cursor-pointer bg-white/5 rounded-lg focus:outline-none z-[10]`}
+          className={`${className} relative cursor-pointer bg-white/5 rounded-lg focus:outline-none`}
           onClick={toggleDropdown}
         >
           <div className="flex items-center justify-between p-2">
@@ -91,7 +93,7 @@ const DropdownSelect = ({
                 <Listbox.Option
                   key={i}
                   className={({ active }) =>
-                    `cursor-pointer select-none w-full p-2 z-100 ${value === option ? "bg-[#2B2B2B] text-blue-500" : ""
+                    `cursor-pointer select-none w-full p-2 ${value === option ? "bg-[#2B2B2B] text-blue-500" : ""
                     } ${active ? "bg-gray-700" : ""}`
                   }
                   value={option}
