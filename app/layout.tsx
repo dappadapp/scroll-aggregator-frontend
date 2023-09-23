@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           async={true}
         ></script>
 
-<Script
+        <Script
           id="google-analytics"
           strategy="lazyOnload"
           src={`https://www.googletagmanager.com/gtag/js?id=G-61SJVDE3XK`}
@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
         </Script>
 
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: http: ws: wss: 'unsafe-eval' 'unsafe-inline'; img-src 'self' data: http: https:; connect-src ws: wss: https: http:" />
+        <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;" />
       </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
