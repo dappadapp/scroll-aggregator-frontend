@@ -11,7 +11,7 @@ import useContract from "@/hooks/useContract";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
-import { fetchFeeData } from '@wagmi/core'
+import { fetchFeeData } from "@wagmi/core";
 type Props = {
   onCloseModal: () => void;
   pool: string;
@@ -21,6 +21,7 @@ type Props = {
   amountB: string;
   swapType: SWAP_TYPE;
   rate: string;
+  swapSuccess: () => void;
 };
 
 function SwapModal({
@@ -32,6 +33,7 @@ function SwapModal({
   amountB,
   swapType,
   rate,
+  swapSuccess,
 }: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
@@ -56,20 +58,17 @@ function SwapModal({
     if (isConnected) {
       getFee();
     }
-  }, [isConnected, account])
-
+  }, [isConnected, account]);
 
   const getFee = async () => {
     const feeData = await fetchFeeData({
       chainId: networks[0].chainId,
       formatUnits: "ether",
-    })
-    if (feeData)
-      setFee(feeData?.formatted?.gasPrice ?? "0")
+    });
+    if (feeData) setFee(feeData?.formatted?.gasPrice ?? "0");
 
-    console.log("feeData", feeData)
-  }
-
+    console.log("feeData", feeData);
+  };
 
   return (
     <div
@@ -83,9 +82,7 @@ function SwapModal({
         }
       >
         <div className="flex justify-between mb-8">
-          <h1 className={"text-sm md:text-lg "}>
-            Review swap details
-          </h1>
+          <h1 className={"text-sm md:text-lg "}>Review swap details</h1>
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
@@ -109,8 +106,8 @@ function SwapModal({
           <span>Liquidity source</span>
 
           <span>
-            {swapType === SWAP_TYPE.UNISWAP
-              ? <div className="flex items-center">
+            {swapType === SWAP_TYPE.UNISWAP ? (
+              <div className="flex items-center">
                 <img
                   src="https://avatars.githubusercontent.com/u/36115574?s=200&v=4"
                   className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
@@ -118,16 +115,18 @@ function SwapModal({
                 />
                 <p className="inline-block mt-1">Uniswap</p>
               </div>
-              : swapType === SWAP_TYPE.SPACEFI
-                ? <div className="flex items-center">
-                  <img
-                    src=" https://raw.githubusercontent.com/SpaceFinance/default-token-list/master/assets/0x4E2D4F33d759976381D9DeE04B197bF52F6bC1FC.png"
-                    className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                    alt="Uniswap"
-                  />
-                  <p className="inline-block">SpaceFi</p>
-                </div>
-                : ""}
+            ) : swapType === SWAP_TYPE.SPACEFI ? (
+              <div className="flex items-center">
+                <img
+                  src=" https://raw.githubusercontent.com/SpaceFinance/default-token-list/master/assets/0x4E2D4F33d759976381D9DeE04B197bF52F6bC1FC.png"
+                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  alt="Uniswap"
+                />
+                <p className="inline-block">SpaceFi</p>
+              </div>
+            ) : (
+              ""
+            )}
           </span>
         </div>
 
@@ -141,7 +140,10 @@ function SwapModal({
 
           <div className="flex justify-between">
             <span>Minimum Receive</span>
-            <span> {(+amountB - +amountB * 1 / 100).toFixed(4)} {tokenB?.symbol}</span>
+            <span>
+              {" "}
+              {(+amountB - (+amountB * 1) / 100).toFixed(4)} {tokenB?.symbol}
+            </span>
           </div>
           <div className="flex justify-between">
             <span>Slippage tolerance</span>
@@ -149,16 +151,13 @@ function SwapModal({
           </div>
           <div className="flex justify-between">
             <span>Rate</span>
-            <span>1 ETH = {rate} {tokenB?.symbol}</span>
+            <span>
+              1 ETH = {rate} {tokenB?.symbol}
+            </span>
           </div>
-
         </div>
         {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
-          <AllowButton
-            tokenIn={tokenA}
-            amountIn={bigAmountA}
-            onSuccess={refetch}
-          />
+          <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
         ) : (
           <SwapButton
             swapParam={{
@@ -170,6 +169,7 @@ function SwapModal({
               swapType: swapType,
               fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
             }}
+            swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
             tokenOut={tokenB}
           />

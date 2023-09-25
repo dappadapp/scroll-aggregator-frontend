@@ -7,7 +7,6 @@ import _, { set } from "lodash";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import TokenSelect from "@/components/TokenSelect";
-import DropdownSelect from "@/components/DropdownSelect";
 import useNativeCurrency from "@/hooks/useNativeCurrency";
 import Tokens from "@/constants/tokens";
 import useContract from "@/hooks/useContract";
@@ -24,9 +23,10 @@ import IconRefresh from "@/assets/images/icon-refresh.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
 import { toFixedValue } from "@/utils/address";
-import { connectWebSocket, emitData } from '@/utils/websocket';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { connectWebSocket, emitData } from "@/utils/websocket";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import { ethers } from "ethers";
+import SlippageButton from "./SlippageButton";
 import axios from "axios";
 
 type Props = {};
@@ -46,6 +46,7 @@ const SwapCard: React.FC<Props> = () => {
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
     Tokens[ChainId.SCROLL_SEPOLIA].usdt
   );
+  const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
 
@@ -74,23 +75,23 @@ const SwapCard: React.FC<Props> = () => {
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
-        address: contractAddr?.spacefi.poolFactory,
-        abi: SpaceFiPoolFactoryAbi,
-        functionName: "getPair",
-        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
+          address: contractAddr?.spacefi.poolFactory,
+          abi: SpaceFiPoolFactoryAbi,
+          functionName: "getPair",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
       : {
-        address: contractAddr?.uniswap.poolFactory,
-        abi: UniswapPoolFactoryAbi,
-        functionName: "getPool",
-        args: [
-          tokenFrom?.wrapped.address,
-          tokenTo?.wrapped.address,
-          UNISWAP_DEFAULT_FEE,
-        ],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
+          address: contractAddr?.uniswap.poolFactory,
+          abi: UniswapPoolFactoryAbi,
+          functionName: "getPool",
+          args: [
+            tokenFrom?.wrapped.address,
+            tokenTo?.wrapped.address,
+            UNISWAP_DEFAULT_FEE,
+          ],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
   );
 
   const handleINChange = (e: any) => {
@@ -100,7 +101,6 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       setSwapAmount(e.target.value);
     }
-
   };
 
   const handleOUTChange = (e: any) => {
@@ -147,8 +147,9 @@ const SwapCard: React.FC<Props> = () => {
   }, [native]);
 
   const handleSwitchToken = () => {
-    setTokenFrom(tokenTo);
+    let tokenToA = tokenTo;
     setTokenTo(tokenFrom);
+    setTokenFrom(tokenToA);
   };
 
   const handleClickInputPercent = (percent: number) => {
@@ -174,15 +175,17 @@ const SwapCard: React.FC<Props> = () => {
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>
-          <Button className="p-3 w-12 h-12 rounded-lg ms-auto">
-            <IconSlider />
-          </Button>
-          <Button className="p-3 w-12 h-12 rounded-lg" onClick={handleTest}>
-            <IconRefresh />
-          </Button>
-
+          <div className="flex">
+            <SlippageButton
+              onChangeSlippage={(slippageValue: number) => setSlippage(slippageValue)}
+              slippage={slippage}
+            />
+            <Button className="p-3 w-12 h-12 rounded-lg">
+              <IconRefresh />
+            </Button>
+          </div>
         </div>
         <div className="relative w-full flex flex-col">
           <span className="text-white/25">from</span>
@@ -219,7 +222,7 @@ const SwapCard: React.FC<Props> = () => {
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-10 h-10 p-2 my-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all z-[-1]"
+            className="w-10 h-10 p-2 my-5 cursor-pointer z-10 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
             <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 z-[-1]" />
           </button>
@@ -263,6 +266,10 @@ const SwapCard: React.FC<Props> = () => {
           amountA={swapAmount}
           amountB={receiveAmount}
           swapType={dexType}
+          swapSuccess={() => {
+            setSwapAmount(0);
+            setReceiveAmount("0");
+          }}
           rate={rate}
           onCloseModal={() => setIsSwapModalOpen(false)}
         />

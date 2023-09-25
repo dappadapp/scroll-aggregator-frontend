@@ -58,8 +58,9 @@ const Navbar: React.FC<Props> = (props) => {
           "w-full hidden lg:flex flex-row items-center justify-between mt-2 lg:mt-2 gap-2"
         }
       >
-        <ZetaGateLogo />
-
+        <Link href={"/"}>
+          <ZetaGateLogo />
+        </Link>
         <div className="flex flex-col-reverse lg:flex-row gap-3">
           <NetworkSelector />
           <ConnectButton />

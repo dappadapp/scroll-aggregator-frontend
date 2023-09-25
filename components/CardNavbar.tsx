@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -14,24 +14,41 @@ function CardNavbar() {
     >
       <Link
         href={"/"}
-        className={`transition-all ${
+        className={`transition-all  ${
           path !== "/"
             ? "text-white/40"
-            : "text-[#FAC790] px-6 py-2 rounded-lg bg-white bg-opacity-10"
+            : "text-[#FAC790] rounded-lg bg-white bg-opacity-10 px-6 py-2"
         }`}
       >
         Swap
       </Link>
-      <Link href={"https://faucet.aggre.io/"} target="_blank" className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
+      <Link
+        href={"https://faucet.aggre.io/"}
+        target="_blank"
+        className={`transition-all ${path !== "/faucet" ? "text-white/40" : ""}`}
+      >
         Faucet
       </Link>
-      <Link href={"#"} className={`${path !== "/bridge" ? "text-white/40" : ""}`}>
+      <Link
+        href={"/bridge"}
+        className={`transition-all py-2 ${
+          path !== "/bridge"
+            ? "text-white/40"
+            : "text-[#FAC790] rounded-lg bg-white bg-opacity-10 px-6 "
+        }`}
+      >
         Bridge
       </Link>
-      <Link href="#" className={`${path !== "/docs" ? "text-white/40" : ""}`}>
+      <Link
+        href="#"
+        className={`transition-all ${path !== "/docs" ? "text-white/40" : ""}`}
+      >
         Docs
       </Link>
-      <Link className={`${path !== "/stats" ? "text-white/40" : ""}`} href={"#"}>
+      <Link
+        className={`transition-all ${path !== "/stats" ? "text-white/40" : ""}`}
+        href={"#"}
+      >
         Stats
       </Link>
     </div>

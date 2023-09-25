@@ -21,6 +21,7 @@ type Props = {
   swapParam: SwapParam;
   tokenIn: Currency;
   tokenOut: Currency;
+  swapSuccess: () => void;
 };
 
 export type SwapParam = {
@@ -33,102 +34,74 @@ export type SwapParam = {
   fee: number;
 };
 
-const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut }) => {
+const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
-  const [convEth, setConvEth] = useState<boolean>(true);  
+  const [convEth, setConvEth] = useState<boolean>(true);
   const contractAddr = useContract();
-  
+
   const { config } = usePrepareContractWrite({
     address: contractAddr!.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [
-      [swapParam],
-      parseEther(`${minTotalAmountOut || 0}`),
-      convEth,
-    ],
+    args: [[swapParam], parseEther(`${minTotalAmountOut || 0}`), convEth],
     value: tokenIn.isNative ? swapParam.amountIn : undefined,
-    enabled: !!contractAddr
+    enabled: !!contractAddr,
   });
 
   const { config: configDeposit } = usePrepareContractWrite({
     address: "0x5300000000000000000000000000000000000004",
     abi: WETHAbi,
     functionName: "deposit",
-    args: [
- 
-    ],
+    args: [],
     value: swapParam.amountIn,
-    enabled: !!contractAddr
+    enabled: !!contractAddr,
   });
 
   const { config: configWithdraw } = usePrepareContractWrite({
     address: "0x5300000000000000000000000000000000000004",
     abi: WETHAbi,
     functionName: "withdraw",
-    args: [
-      swapParam.amountIn
-    ],
-    value:  undefined,
-    enabled: !!contractAddr
+    args: [swapParam.amountIn],
+    value: undefined,
+    enabled: !!contractAddr,
   });
 
-  const {
-    writeAsync: onExecuteSwaps,
-    error,
-    isSuccess,
-  } = useContractWrite(config);
+  const { writeAsync: onExecuteSwaps, error, isSuccess } = useContractWrite(config);
 
+  const { writeAsync: onDeposit } = useContractWrite(configDeposit);
 
-  const {
-    writeAsync: onDeposit,
-
-  } = useContractWrite(configDeposit);
-
-  const {
-    writeAsync: onWithdraw,
-
-  } = useContractWrite(configWithdraw);
+  const { writeAsync: onWithdraw } = useContractWrite(configWithdraw);
 
   const handleSwap = async () => {
-    if(tokenIn?.symbol == "WETH" && tokenOut?.symbol == "ETH"){
+    if (tokenIn?.symbol == "WETH" && tokenOut?.symbol == "ETH") {
       handleWithdraw();
-    }
-    else if(tokenIn?.symbol == "ETH" && tokenOut?.symbol == "WETH"){
+    } else if (tokenIn?.symbol == "ETH" && tokenOut?.symbol == "WETH") {
       handleDeposit();
+    } else {
+      if (!onExecuteSwaps)
+        return alert("Make sure you have enough GAS and you're on the correct network.");
+      // if (!isSuccess) {
+      //   return alert("An unknown error occured. Please try again.");
+      // }
+      try {
+        setLoading(true);
+        const { hash } = await onExecuteSwaps();
+        toast("Swap transaction sent!");
+
+        await waitForTransaction({ hash });
+        toast("Swap successful!");
+      } catch (e) {
+        console.log("an error occured while swapping: ", e);
+      } finally {
+        setLoading(false);
+      }
     }
-    else {
-
-   
-
-    if (!onExecuteSwaps)
-      return alert(
-        "Make sure you have enough GAS and you're on the correct network."
-      );
-    // if (!isSuccess) {
-    //   return alert("An unknown error occured. Please try again.");
-    // }
-    try {
-      setLoading(true);
-      const { hash } = await onExecuteSwaps();
-      toast("Swap transaction sent!");
-
-      await waitForTransaction({ hash });
-      toast("Swap successful!");
-    } catch (e) {
-      console.log("an error occured while swapping: ", e);
-    } finally {
-      setLoading(false);
-    }
-  }
   };
 
   const handleDeposit = async () => {
     if (!onDeposit)
-      return alert(
-        "Make sure you have enough GAS and you're on the correct network."
-      );
+      return alert("Make sure you have enough GAS and you're on the correct network.");
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
     // }
@@ -148,9 +121,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut }) => {
 
   const handleWithdraw = async () => {
     if (!onWithdraw)
-      return alert(
-        "Make sure you have enough GAS and you're on the correct network."
-      );
+      return alert("Make sure you have enough GAS and you're on the correct network.");
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
     // }
@@ -161,6 +132,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut }) => {
 
       await waitForTransaction({ hash });
       toast("Swap successful!");
+      swapSuccess();
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
