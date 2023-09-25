@@ -68,10 +68,6 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-
-
-
-
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
@@ -113,32 +109,26 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   const postReferenceMint = async () => {
-
-    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) 
-        return;
-
+    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) return;
     else {
-
       const exchangeRate = await axios.post("/api/exchange", {
         amount: swapAmount.toString(),
         from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
         to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-        type: 'IN',
+        type: "IN",
       });
 
-      console.log("exchangeRate", ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+      console.log(
+        "exchangeRate",
+        ethers.utils.formatUnits(exchangeRate?.data.amount, 18)
+      );
       setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
     }
-
-  }
-
+  };
 
   useEffect(() => {
-
     postReferenceMint();
-
   }, [swapAmount, tokenFrom, tokenTo]);
-
 
   const native = useNativeCurrency();
 
@@ -167,10 +157,7 @@ const SwapCard: React.FC<Props> = () => {
     setChangeFrom(false);
   };
 
-  function handleTest(event: any): void {
-
-
-  }
+  function handleTest(event: any): void {}
 
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
@@ -182,15 +169,15 @@ const SwapCard: React.FC<Props> = () => {
               onChangeSlippage={(slippageValue: number) => setSlippage(slippageValue)}
               slippage={slippage}
             />
-            <Button className="p-3 w-12 h-12 rounded-lg">
+            {/* <Button className="p-3 w-12 h-12 rounded-lg">
               <IconRefresh />
-            </Button>
+            </Button> */}
           </div>
         </div>
         <div className="relative w-full flex flex-col">
           <span className="text-white/25">from</span>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 z-51">
-            <div className="flex gap-4 z-51">
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 ">
+            <div className="flex gap-4 ">
               <div className="w-full">
                 <Input
                   onChange={(e) => handleINChange(e)}
@@ -222,13 +209,13 @@ const SwapCard: React.FC<Props> = () => {
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-10 h-10 p-2 my-5 cursor-pointer z-10 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
+            className="w-10 h-10 p-2 my-5 cursor-pointer mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
             <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 z-[-1]" />
           </button>
           <span className="text-white/25">to</span>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 z-50">
-            <div className="flex gap-4 z-50">
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
+            <div className="flex gap-4">
               <div className="w-full">
                 <Input
                   onChange={(e) => handleOUTChange(e)}
