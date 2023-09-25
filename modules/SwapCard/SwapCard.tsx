@@ -27,6 +27,7 @@ import { toFixedValue } from "@/utils/address";
 import { connectWebSocket, emitData } from '@/utils/websocket';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 import { ethers } from "ethers";
+import axios from "axios";
 
 type Props = {};
 
@@ -67,23 +68,6 @@ const SwapCard: React.FC<Props> = () => {
   });
 
 
-  const [socketUrl, setSocketUrl] = useState('wss://sock.zkl.app/session/' + address);
-  const [messageHistory, setMessageHistory] = useState([]);
-
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
-    onOpen: () => console.log('opened'),
-    //Will attempt to reconnect on all close events, such as server shutting down
-    shouldReconnect: (closeEvent) => true,
-  });
-
-
-  const connectionStatus = {
-    [ReadyState.CONNECTING]: 'Connecting',
-    [ReadyState.OPEN]: 'Open',
-    [ReadyState.CLOSING]: 'Closing',
-    [ReadyState.CLOSED]: 'Closed',
-    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
-  }[readyState];
 
 
 
@@ -128,35 +112,32 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
+  const postReferenceMint = async () => {
+
+    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) 
+        return;
+
+    else {
+
+      const exchangeRate = await axios.post("/api/exchange", {
+        amount: swapAmount.toString(),
+        from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+        to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+        type: 'IN',
+      });
+
+      console.log("exchangeRate", ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+      setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+    }
+
+  }
+
 
   useEffect(() => {
 
-    sendMessage(JSON.stringify({
-      amount: '' + swapAmount,
-      from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-      to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-      type: 'IN',
-    }));
+    postReferenceMint();
 
-    if (lastMessage && lastMessage?.data !== "undefined" && lastMessage?.data !== undefined && lastMessage?.data !== "") {
-
-      const msgData = JSON.parse(lastMessage?.data);
-      console.log("msgData", msgData);
-
-      if (msgData) {
-        setReceiveAmount((+ethers.formatEther((msgData?.amount))).toFixed(6).toString());
-
-        setDexType(msgData?.dex === 'space-fi' ? SWAP_TYPE.SPACEFI : SWAP_TYPE.UNISWAP);
-      }
-    }
-    else {
-      if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") { }
-      else {
-        //setReceiveAmount("0");
-      }
-    }
-
-  }, [swapAmount, tokenFrom, tokenTo, lastMessage]);
+  }, [swapAmount, tokenFrom, tokenTo]);
 
 
   const native = useNativeCurrency();
@@ -185,6 +166,11 @@ const SwapCard: React.FC<Props> = () => {
     setChangeFrom(false);
   };
 
+  function handleTest(event: any): void {
+
+
+  }
+
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
@@ -193,7 +179,7 @@ const SwapCard: React.FC<Props> = () => {
           <Button className="p-3 w-12 h-12 rounded-lg ms-auto">
             <IconSlider />
           </Button>
-          <Button className="p-3 w-12 h-12 rounded-lg">
+          <Button className="p-3 w-12 h-12 rounded-lg" onClick={handleTest}>
             <IconRefresh />
           </Button>
 
@@ -244,7 +230,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={receiveAmount}
+                  value={Number(rate).toFixed(5) || receiveAmount}
                   type="number"
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
