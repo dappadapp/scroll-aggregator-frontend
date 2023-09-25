@@ -15,7 +15,7 @@ export const Widget = () => {
           "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);",
         borderRadius: "16px",
         border: "1px solid rgba(255,255,255,0.10)",
-        backgroundColor: "rgba(255,255,255,0.05)",
+        backgroundColor: "#0D1520",
         height: "auto",
         marginTop: "16px",
         marginBottom: "16px",
