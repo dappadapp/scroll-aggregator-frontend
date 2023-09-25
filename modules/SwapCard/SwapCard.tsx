@@ -26,6 +26,7 @@ import { toFixedValue } from "@/utils/address";
 import { connectWebSocket, emitData } from "@/utils/websocket";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { ethers } from "ethers";
+import SlippageButton from "./SlippageButton";
 
 type Props = {};
 
@@ -44,6 +45,7 @@ const SwapCard: React.FC<Props> = () => {
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
     Tokens[ChainId.SCROLL_SEPOLIA].usdt
   );
+  const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
 
@@ -164,7 +166,6 @@ const SwapCard: React.FC<Props> = () => {
     let tokenToA = tokenTo;
     setTokenTo(tokenFrom);
     setTokenFrom(tokenToA);
-    console.log("ssasas");
   };
 
   const handleClickInputPercent = (percent: number) => {
@@ -185,14 +186,17 @@ const SwapCard: React.FC<Props> = () => {
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>
-          <Button className="p-3 w-12 h-12 rounded-lg ms-auto">
-            <IconSlider />
-          </Button>
-          <Button className="p-3 w-12 h-12 rounded-lg">
-            <IconRefresh />
-          </Button>
+          <div className="flex">
+            <SlippageButton
+              onChangeSlippage={(slippageValue: number) => setSlippage(slippageValue)}
+              slippage={slippage}
+            />
+            <Button className="p-3 w-12 h-12 rounded-lg">
+              <IconRefresh />
+            </Button>
+          </div>
         </div>
         <div className="relative w-full flex flex-col">
           <span className="text-white/25">from</span>
@@ -275,7 +279,7 @@ const SwapCard: React.FC<Props> = () => {
           swapType={dexType}
           swapSuccess={() => {
             setSwapAmount(0);
-            setReceiveAmount(0);
+            setReceiveAmount("0");
           }}
           rate={rate}
           onCloseModal={() => setIsSwapModalOpen(false)}

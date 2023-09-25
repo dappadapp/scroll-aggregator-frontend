@@ -26,13 +26,13 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
     return [];
   }, [chain]);
 
-  const handleSearch = (v: string) => { };
+  const handleSearch = (v: string) => {};
 
   return (
     <DropdownSelect
       value={token}
       onChange={onChange}
-      className={`z-50 px-4 py-3`}
+      className={`z-[49] px-4 py-3`}
       dropdownClassName={""}
       options={tokens}
       optionRenderer={defaultOptionRenderer}
@@ -42,7 +42,9 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
         {token && (
           <>
             <CurrencyLogo currency={token} />
-            <span className={`${className} block truncate text-xs md:text-base font-medium z-50`}>
+            <span
+              className={`${className} block truncate text-xs md:text-base font-medium z-50`}
+            >
               {token?.symbol}
             </span>
           </>
@@ -54,8 +56,7 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
 
 const defaultOptionRenderer = (option: Currency, selected: any) => (
   <div
-    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""
-      }`}
+    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""}`}
   >
     <CurrencyLogo currency={option} />
     <span className="block truncate text-xs md:text-base font-medium">
