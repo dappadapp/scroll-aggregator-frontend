@@ -9,10 +9,11 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-white/[.04] text-white/50 hover:bg-white/20 hover:text-black flex justify-center items-center",
+          "bg-[#FAC790]/[.04] text-white/50 hover:bg-[#FAC790] hover:text-black flex justify-center items-center",
         secondary: "bg-[#3AFF4242] text-white",
         disabled: "bg-[#202020] text-[#AAA]",
-        bordered: "bg-white/[.04] text-white/75 border border-white/10"
+        bordered:
+          "bg-[#FAC790]/[.04] text-white/75 hover:bg-[#FAC790] hover:text-black border border-white/10",
       },
     },
     defaultVariants: {
@@ -44,9 +45,7 @@ const Button: React.FC<Props> = ({
       className={cn(buttonVariants({ variant, className }))}
     >
       {children}
-      {loading &&
-        <LoadingIcon className="w-5 h-5 animate-spin ms-2" />
-      }
+      {loading && <LoadingIcon className="w-5 h-5 animate-spin ms-2" />}
     </button>
   );
 };

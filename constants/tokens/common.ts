@@ -7,6 +7,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.GOERLI]: new ERC20Token(
@@ -15,6 +16,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.BSC]: new ERC20Token(
@@ -23,6 +25,7 @@ export const WETH9 = {
     18,
     "ETH",
     "Binance-Peg Ethereum Token",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://ethereum.org"
   ),
   [ChainId.BSC_TESTNET]: new ERC20Token(
@@ -31,6 +34,7 @@ export const WETH9 = {
     18,
     "ETH",
     "ETH",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://ethereum.org"
   ),
   [ChainId.ZKSYNC]: new ERC20Token(
@@ -39,6 +43,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.ZKSYNC_TESTNET]: new ERC20Token(
@@ -47,14 +52,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
-    "https://weth.io"
-  ),
-  [ChainId.SCROLL]: new ERC20Token(
-    ChainId.SCROLL,
-    "0x5AEa5775959fBC2557Cc8789bC1bf90A239D9a91",
-    18,
-    "WETH",
-    "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
   [ChainId.SCROLL_TESTNET]: new ERC20Token(
@@ -63,6 +61,16 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
+    "https://weth.io"
+  ),
+  [ChainId.SCROLL_SEPOLIA]: new ERC20Token(
+    ChainId.SCROLL_SEPOLIA,
+    "0x5300000000000000000000000000000000000004",
+    18,
+    "WETH",
+    "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
 };
@@ -102,27 +110,30 @@ export const WNATIVE = {
   // [ChainId.ZKSYNC]: WETH9[ChainId.ZKSYNC],
   // [ChainId.ZKSYNC_TESTNET]: WETH9[ChainId.ZKSYNC_TESTNET],
   // [ChainId.SCROLL]: WETH9[ChainId.SCROLL],
-  [ChainId.SCROLL_TESTNET]: WETH9[ChainId.SCROLL_TESTNET],
+  // [ChainId.SCROLL_TESTNET]: WETH9[ChainId.SCROLL_TESTNET],
+  [ChainId.SCROLL_SEPOLIA]: WETH9[ChainId.SCROLL_SEPOLIA],
 } satisfies Record<ChainId, ERC20Token>;
 
-const ETHER = { name: "Ether", symbol: "ETH", decimals: 18 } as const;
+const ETHER = { name: "Ether", symbol: "ETH", decimals: 18, logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026' } as const;
 
 export const NATIVE = {
   [ChainId.ETHEREUM]: ETHER,
-  [ChainId.GOERLI]: { name: "Goerli Ether", symbol: "GOR", decimals: 18 },
+  [ChainId.GOERLI]: { name: "Goerli Ether", symbol: "GOR", decimals: 18, logo: '' },
   [ChainId.BSC]: {
     name: "Binance Chain Native Token",
     symbol: "BNB",
     decimals: 18,
+    logo: ''
   },
   [ChainId.BSC_TESTNET]: {
     name: "Binance Chain Native Token",
     symbol: "tBNB",
     decimals: 18,
+    logo: ''
   },
   [ChainId.ZKSYNC]: ETHER,
   [ChainId.ZKSYNC_TESTNET]: ETHER,
-  [ChainId.SCROLL]: ETHER,
+  [ChainId.SCROLL_SEPOLIA]: ETHER,
   [ChainId.SCROLL_TESTNET]: ETHER,
 } satisfies Record<
   ChainId,
@@ -130,6 +141,7 @@ export const NATIVE = {
     name: string;
     symbol: string;
     decimals: number;
+    logo?: string;
   }
 >;
 
@@ -182,6 +194,16 @@ export const USDT_ETH = new ERC20Token(
   6,
   "USDT",
   "Tether USD",
+  "https://tether.to/"
+);
+
+export const USDT_SCROLL_SEPOLIA = new ERC20Token(
+  ChainId.SCROLL_SEPOLIA,
+  "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3",
+  18,
+  "USDT",
+  "Tether USD",
+  "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=026",
   "https://tether.to/"
 );
 
@@ -259,6 +281,7 @@ export const USDC = {
 export const USDT = {
   [ChainId.BSC]: USDT_BSC,
   [ChainId.ETHEREUM]: USDT_ETH,
+  [ChainId.SCROLL_SEPOLIA]: USDT_SCROLL_SEPOLIA
 };
 
 export const WBTC_ETH = new ERC20Token(

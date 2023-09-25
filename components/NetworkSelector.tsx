@@ -1,4 +1,11 @@
-import React, { FC, ForwardRefRenderFunction, Fragment, forwardRef, useEffect, useState } from "react";
+import React, {
+  FC,
+  ForwardRefRenderFunction,
+  Fragment,
+  forwardRef,
+  useEffect,
+  useState,
+} from "react";
 import { useNetwork, useSwitchNetwork } from "wagmi";
 import Image from "next/image";
 import { Menu, Transition } from "@headlessui/react";
@@ -8,6 +15,7 @@ import { Network } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import Loading from "@/assets/images/loading.svg";
+import Button from "./Button";
 
 interface NetworkItemProps {
   chain: Network;
@@ -15,11 +23,10 @@ interface NetworkItemProps {
   onClick?: (chain: Network) => void;
 }
 
-const NetworkItemRef : ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps> = ({
-  chain,
-  className = "",
-  onClick,
-}, ref) => (
+const NetworkItemRef: ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps> = (
+  { chain, className = "", onClick },
+  ref
+) => (
   <div
     className={`${className} flex items-center gap-2 cursor-pointer`}
     ref={ref}
@@ -32,43 +39,41 @@ const NetworkItemRef : ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps
       height={25}
       className="rounded-full w-4 h-4 md:w-6 md:h-6"
     />
-    <span className="block truncate text-xs md:text-base font-medium">
-      {chain.name}
-    </span>
+    <span className="block truncate text-xs md:text-base font-medium">{chain.name}</span>
   </div>
 );
 
 const NetworkItem = forwardRef(NetworkItemRef);
 
-interface NetworkSelectorProps {
-}
+interface NetworkSelectorProps {}
 
-const NetworkSelector : FC<NetworkSelectorProps> = () => {
-  const [ currentNetwork, setCurrentNetwork ] = useState<Network>(networks[0])
+const NetworkSelector: FC<NetworkSelectorProps> = () => {
+  const [currentNetwork, setCurrentNetwork] = useState<Network>(networks[0]);
   const { chain } = useNetwork();
   const { switchNetwork, isLoading } = useSwitchNetwork();
 
   useEffect(() => {
-    const newNetwork = networks.find((network) => network.chainId === chain?.id)
-    if( newNetwork )
-      setCurrentNetwork(newNetwork)
-    else if(switchNetwork)
-      switchNetwork(networks[0].chainId)
-  }, [chain, switchNetwork])
+    const newNetwork = networks.find((network) => network.chainId === chain?.id);
+    if (newNetwork) setCurrentNetwork(newNetwork);
+    else if (switchNetwork) switchNetwork(networks[0].chainId);
+  }, [chain, switchNetwork]);
 
   const handleChangeNetwork = (network: Network) => {
-    if( switchNetwork )
-      switchNetwork(network.chainId)  
-  }
+    if (switchNetwork) switchNetwork(network.chainId);
+  };
 
   return (
     <Menu as="div" className="relative inline-block">
       <div>
-        <Menu.Button className="inline-flex justify-center items-center min-w-[200px] gap-2 p-3 bg-[#0A0A0A] rounded-lg border border-white/10">
-          <NetworkItem chain={currentNetwork} />
-          {isLoading &&
-            <Loading />
-          }
+        <Menu.Button className="inline-flex justify-center items-center min-w-[200px] gap-2 p-3 text-xs lg:text-base bg-[#0A0A0A] rounded-lg border border-white/10">
+          {chain?.id !== 534351 ? (
+            <p>Switch Scroll Sepolia</p>
+          ) : (
+            <Fragment>
+              <NetworkItem chain={currentNetwork} />
+              {isLoading && <Loading />}
+            </Fragment>
+          )}
           <span className="pointer-events-none inset-y-0 flex items-center">
             <FontAwesomeIcon icon={faAngleDown} />
           </span>
@@ -80,19 +85,21 @@ const NetworkSelector : FC<NetworkSelectorProps> = () => {
         leaveFrom="opacity-100"
         leaveTo="opacity-0"
       >
-        <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[320px] origin-top-right z-10 backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ">
-          {networks.map((network) => (
-            <Menu.Item as={Fragment} key={network.chainId}>
-              {({ active }) => (
-                <NetworkItem
-                  key={network.chainId}
-                  chain={network}
-                  className="group text-[#CACACA] select-none p-3 hover:bg-[#2B2B2B]"
-                  onClick={handleChangeNetwork}
-                />
-              )}
-            </Menu.Item>
-          ))}
+        <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[200px] origin-top-right z-10 backdrop-blur-xl py-1 md:text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm ">
+          {chain?.id !== 534351
+            ? null
+            : networks.map((network) => (
+                <Menu.Item as={Fragment} key={network.chainId}>
+                  {({ active }) => (
+                    <NetworkItem
+                      key={network.chainId}
+                      chain={network}
+                      className="group text-[#CACACA] select-none p-3 hover:bg-[#2B2B2B]"
+                      onClick={handleChangeNetwork}
+                    />
+                  )}
+                </Menu.Item>
+              ))}
         </Menu.Items>
       </Transition>
     </Menu>

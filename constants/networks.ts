@@ -1,5 +1,5 @@
 import { Network } from "@/types";
-import { goerli, bscTestnet, scrollTestnet, zkSyncTestnet } from "wagmi/chains";
+import { goerli, bscTestnet, scrollTestnet, scrollSepolia, zkSyncTestnet } from "wagmi/chains";
 
 export const networks: Network[] = [
   // {
@@ -24,23 +24,33 @@ export const networks: Network[] = [
   //   isTestnet: true,
   // },
   {
-    name: scrollTestnet.name,
-    chainId: scrollTestnet.id,
+    name: scrollSepolia.name,
+    chainId: scrollSepolia.id,
     wrappedNativeAddress: "test",
     blockConfirmation: 3,
     colorClass: "bg-[#EFB90A]",
     image: "scroll.svg",
-    symbol: scrollTestnet.nativeCurrency.symbol,
+    symbol: scrollSepolia.nativeCurrency.symbol,
     isTestnet: true,
   },
-  {
-    name: zkSyncTestnet.name,
-    chainId: zkSyncTestnet.id,
-    wrappedNativeAddress: "test",
-    blockConfirmation: 3,
-    colorClass: "bg-[#EFB90A]",
-    image: "zksync-era.svg",
-    symbol: zkSyncTestnet.nativeCurrency.symbol,
-    isTestnet: true,
-  },
+  // {
+  //   name: scrollTestnet.name,
+  //   chainId: scrollTestnet.id,
+  //   wrappedNativeAddress: "test",
+  //   blockConfirmation: 3,
+  //   colorClass: "bg-[#EFB90A]",
+  //   image: "scroll.svg",
+  //   symbol: scrollTestnet.nativeCurrency.symbol,
+  //   isTestnet: true,
+  // },
+  // {
+  //   name: zkSyncTestnet.name,
+  //   chainId: zkSyncTestnet.id,
+  //   wrappedNativeAddress: "test",
+  //   blockConfirmation: 3,
+  //   colorClass: "bg-[#EFB90A]",
+  //   image: "zksync-era.svg",
+  //   symbol: zkSyncTestnet.nativeCurrency.symbol,
+  //   isTestnet: true,
+  // },
 ];

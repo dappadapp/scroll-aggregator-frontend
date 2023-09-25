@@ -9,6 +9,7 @@ export interface SerializedToken {
   decimals: number
   symbol: string
   name?: string
+  logo?: string
   projectLink?: string
 }
 
@@ -33,9 +34,10 @@ export class Token extends BaseCurrency {
     decimals: number,
     symbol: string,
     name?: string,
+    logo?: string,
     projectLink?: string
   ) {
-    super(chainId, decimals, symbol, name)
+    super(chainId, decimals, symbol, name, logo)
     this.address = address
     this.projectLink = projectLink
   }
@@ -72,6 +74,7 @@ export class Token extends BaseCurrency {
       decimals: this.decimals,
       symbol: this.symbol,
       name: this.name,
+      logo: this.logo,
       projectLink: this.projectLink,
     }
   }
@@ -84,8 +87,9 @@ export class ERC20Token extends Token {
     decimals: number,
     symbol: string,
     name?: string,
+    logo?: string,
     projectLink?: string
   ) {
-    super(chainId, validateAndParseAddress(address), decimals, symbol, name, projectLink)
+    super(chainId, validateAndParseAddress(address), decimals, symbol, name, logo, projectLink)
   }
 }

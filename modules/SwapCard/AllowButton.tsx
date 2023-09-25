@@ -5,8 +5,7 @@ import { waitForTransaction } from "@wagmi/core";
 import { parseEther } from "ethers";
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
-
-import addresses from "@/constants/contracts";
+import useContract from "@/hooks/useContract";
 
 type Props = {
   tokenIn: Currency;
@@ -16,13 +15,14 @@ type Props = {
 
 const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   const { address: account, isConnected } = useAccount();
+  const contractAddr = useContract();
 
   const { config: configApprove } = usePrepareContractWrite({
     address: tokenIn.wrapped.address,
     abi: erc20ABI,
     functionName: "approve",
-    // args: [addresses.aggregatorContract, BigInt(amountIn) * BigInt(10 ^ tokenIn.decimals)],
-    args: [addresses.aggregatorContract, amountIn],
+    args: [contractAddr!.contract, amountIn],
+    enabled: !!contractAddr
   });
 
   const {

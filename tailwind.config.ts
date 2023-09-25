@@ -19,7 +19,8 @@ const config: Config = {
       },
       fontFamily: {
         inter: 'var(--font-inter)',
-        raleway: 'var(--font-raleway)'
+       
+        
       }
     },
   },
