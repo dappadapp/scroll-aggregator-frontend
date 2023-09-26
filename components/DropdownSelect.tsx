@@ -29,10 +29,7 @@ const DropdownSelect = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -52,13 +49,13 @@ const DropdownSelect = ({
 
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="relative inline-block" ref={dropdownRef}>
+      <div className="static inline-block lg:max-w-none" ref={dropdownRef}>
         <div
-          className={`${className} relative cursor-pointer bg-white/5 rounded-lg focus:outline-none`}
+          className={`${className} static cursor-pointer bg-white/5 rounded-lg focus:outline-none`}
           onClick={toggleDropdown}
         >
           <div className="flex items-center justify-between p-2">
-            <div className="text-lg">{children}</div>
+            <div className="text-sm lg:text-lg">{children}</div>
             <FontAwesomeIcon icon={faAngleDown} className="ml-2" />
           </div>
         </div>
@@ -71,7 +68,9 @@ const DropdownSelect = ({
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-0"
         >
-          <div className={` ${className} ${dropdownClassName} absolute right-0 top-full mt-2 w-64 max-h-60 overflow-y-auto rounded-md bg-gray-900 bg-opacity-90 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}>
+          <div
+            className={` ${className} ${dropdownClassName} absolute right-0 top-full mt-2 w-64 max-h-60 overflow-y-auto rounded-md bg-gray-900 bg-opacity-90 backdrop-blur-md text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+          >
             {onSearch && (
               <div className="p-2">
                 <div className="relative">
@@ -88,13 +87,14 @@ const DropdownSelect = ({
                 </div>
               </div>
             )}
-            <ul className="list-none">
+            <ul className="list-none sticky">
               {options.map((option, i) => (
                 <Listbox.Option
                   key={i}
                   className={({ active }) =>
-                    `cursor-pointer select-none w-full p-2 ${value === option ? "bg-[#2B2B2B] text-blue-500" : ""
-                    } ${active ? "bg-gray-700" : ""}`
+                    `cursor-pointer select-none w-full p-2 ${
+                      value === option ? "bg-gray-700 p-2 text-blue-500" : ""
+                    }`
                   }
                   value={option}
                 >

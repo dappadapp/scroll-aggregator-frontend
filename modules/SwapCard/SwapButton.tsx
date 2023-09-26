@@ -1,13 +1,6 @@
-import type { Currency, Network, SWAP_TYPE, Token } from "@/types";
+import type { Currency, SWAP_TYPE } from "@/types";
 import React, { useState } from "react";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  erc20ABI,
-  useContractEvent,
-} from "wagmi";
+import { useContractWrite, usePrepareContractWrite } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 import { parseUnits } from "@/utils/address"
 import { toast } from "react-toastify";
@@ -92,6 +85,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
 
         await waitForTransaction({ hash });
         toast("Swap successful!");
+        swapSuccess();
       } catch (e) {
         console.log("an error occured while swapping: ", e);
       } finally {
@@ -113,6 +107,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
 
       await waitForTransaction({ hash });
       toast("Swap successful!");
+      swapSuccess();
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {

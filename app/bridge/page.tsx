@@ -8,7 +8,7 @@ import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { ToastContainer } from "react-toastify";
 
-export const LiFiWidgetNext = dynamic(
+const LiFiWidgetNext = dynamic(
   () => import("../../components/BridgeWidget").then((module) => module.Widget) as any,
   {
     ssr: false,
@@ -16,12 +16,14 @@ export const LiFiWidgetNext = dynamic(
   }
 );
 
-const Bridge: NextPage = () => {
+export default function Bridge({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   return (
     <div className="w-full h-full flex items-center">
       <LiFiWidgetNext />
     </div>
   );
-};
-
-export default Bridge;
+}

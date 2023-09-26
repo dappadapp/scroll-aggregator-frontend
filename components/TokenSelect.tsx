@@ -32,18 +32,18 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
     <DropdownSelect
       value={token}
       onChange={onChange}
-      className={`z-[49] px-4 py-3`}
+      className={`px-2 py-2 lg:px-4 lg:py-3`}
       dropdownClassName={""}
       options={tokens}
       optionRenderer={defaultOptionRenderer}
       onSearch={handleSearch}
     >
-      <div className="flex items-center gap-3 w-24">
+      <div className="flex items-center gap-3 w-20 lg:w-24 ">
         {token && (
           <>
             <CurrencyLogo currency={token} />
             <span
-              className={`${className} block truncate text-xs md:text-base font-medium z-50`}
+              className={`${className} block truncate text-xs md:text-base font-medium `}
             >
               {token?.symbol}
             </span>
@@ -56,7 +56,7 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
 
 const defaultOptionRenderer = (option: Currency, selected: any) => (
   <div
-    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""}`}
+    className={`flex items-center gap-2 p-1 hover:bg-gray-700 hover:text-blue-500 rounded-lg`}
   >
     <CurrencyLogo currency={option} />
     <span className="block truncate text-xs md:text-base font-medium">

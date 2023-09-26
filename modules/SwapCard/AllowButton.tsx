@@ -1,8 +1,7 @@
-import type { Currency, Network } from "@/types";
-import React, { useState } from "react";
-import { useAccount, useContractRead, useContractWrite, usePrepareContractWrite, erc20ABI } from "wagmi";
+import type { Currency } from "@/types";
+import React from "react";
+import { useAccount, useContractWrite, usePrepareContractWrite, erc20ABI } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
-import { parseEther } from "ethers";
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
 import useContract from "@/hooks/useContract";
@@ -10,7 +9,7 @@ import useContract from "@/hooks/useContract";
 type Props = {
   tokenIn: Currency;
   amountIn: bigint;
-  onSuccess: () => void
+  onSuccess: () => void;
 };
 
 const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
@@ -22,30 +21,28 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
     abi: erc20ABI,
     functionName: "approve",
     args: [contractAddr!.contract, amountIn],
-    enabled: !!contractAddr
+    enabled: !!contractAddr,
   });
 
   const {
     data: writeContractResult,
     writeAsync: approveAsync,
     error,
-    isLoading
+    isLoading,
   } = useContractWrite(configApprove);
 
   const handleAllowance = async () => {
-    if( approveAsync ) {
-      try { 
+    if (approveAsync) {
+      try {
         const { hash } = await approveAsync();
         await waitForTransaction({ hash });
         toast("Approved!");
         onSuccess();
-      } catch(e) {
-
-      }
+      } catch (e) {}
     } else {
       return toast("Failed to approve!");
     }
-  }
+  };
 
   return (
     <Button className="w-full" onClick={handleAllowance} loading={isLoading}>
