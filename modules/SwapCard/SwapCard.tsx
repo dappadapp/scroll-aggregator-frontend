@@ -69,9 +69,6 @@ const SwapCard: React.FC<Props> = () => {
   });
 
 
-
-
-
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
@@ -112,7 +109,7 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const postReferenceMint = async () => {
+  const getCurrentRate = async () => {
 
     if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) 
         return;
@@ -125,8 +122,34 @@ const SwapCard: React.FC<Props> = () => {
         to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
         type: 'IN',
       });
+   
+      setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+    }
 
-      console.log("exchangeRate", ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+  }
+
+
+  useEffect(() => {
+
+    getCurrentRate();
+
+  }, [swapAmount, tokenFrom, tokenTo]);
+
+
+  const getTokenRate = async () => {
+
+    if (!tokenFrom || !tokenTo) 
+        return;
+
+    else {
+
+      const exchangeRate = await axios.post("/api/exchange", {
+        amount: "1",
+        from: tokenFrom.wrapped.address,
+        to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+        type: 'IN',
+      });
+   
       setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
     }
 
@@ -135,7 +158,8 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
 
-    postReferenceMint();
+    getCurrentRate();
+    getTokenRate();
 
   }, [swapAmount, tokenFrom, tokenTo]);
 
@@ -167,13 +191,22 @@ const SwapCard: React.FC<Props> = () => {
     setChangeFrom(false);
   };
 
-  function handleTest(event: any): void {
-
-
-  }
 
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+ <iframe
+  src="https://faucet.aggre.io/"
+  style={{ border: "0px #ffffff none" }}
+  name="myiFrame"
+  scrolling="no"
+  frameBorder={1}
+
+  height="400px"
+  width="600px"
+
+/>
+
+
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center justify-between gap-2">
           <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>
@@ -233,7 +266,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={Number(rate).toFixed(5) || receiveAmount}
+                  value={Number(receiveAmount).toFixed(5) }
                   type="number"
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
@@ -264,16 +297,19 @@ const SwapCard: React.FC<Props> = () => {
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={swapAmount}
-          amountB={receiveAmount}
+          amountB={Number(receiveAmount).toFixed(5)}
           swapType={dexType}
           swapSuccess={() => {
             setSwapAmount(0);
             setReceiveAmount("0");
           }}
-          rate={rate}
+          rate={Number(rate).toFixed(4)}
           onCloseModal={() => setIsSwapModalOpen(false)}
+          slippage={slippage}
         />
       ) : null}
+
+
     </div>
   );
 };

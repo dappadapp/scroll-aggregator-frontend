@@ -9,13 +9,14 @@ import {
   useContractEvent,
 } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
-import { parseEther } from "ethers";
+import { parseUnits } from "@/utils/address"
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
 import useContract from "@/hooks/useContract";
 
 import AggregatorAbi from "@/constants/abis/aggregator.json";
 import WETHAbi from "@/constants/abis/weth.json";
+
 
 type Props = {
   swapParam: SwapParam;
@@ -44,7 +45,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     address: contractAddr!.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [[swapParam], parseEther(`${minTotalAmountOut || 0}`), convEth],
+    args: [[swapParam], parseUnits(`${minTotalAmountOut || 0}`,18), convEth],
     value: tokenIn.isNative ? swapParam.amountIn : undefined,
     enabled: !!contractAddr,
   });

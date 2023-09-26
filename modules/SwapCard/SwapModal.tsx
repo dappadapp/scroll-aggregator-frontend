@@ -22,6 +22,7 @@ type Props = {
   swapType: SWAP_TYPE;
   rate: string;
   swapSuccess: () => void;
+  slippage: number;
 };
 
 function SwapModal({
@@ -34,6 +35,7 @@ function SwapModal({
   swapType,
   rate,
   swapSuccess,
+  slippage,
 }: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
@@ -142,15 +144,15 @@ function SwapModal({
             <span>Minimum Receive</span>
             <span>
               {" "}
-              {(+amountB - (+amountB * 1) / 100).toFixed(4)} {tokenB?.symbol}
+              {(+amountB - (+amountB * slippage) / 100).toFixed(4)} {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
             <span>Slippage tolerance</span>
-            <span>1%</span>
+            <span>{slippage}%</span>
           </div>
           <div className="flex justify-between">
-            <span>Rate</span>
+            <span>Current Rate</span>
             <span>
               1 ETH = {rate} {tokenB?.symbol}
             </span>
