@@ -256,6 +256,7 @@ const SwapCard: React.FC<Props> = () => {
           swapSuccess={() => {
             setSwapAmount(0);
             setReceiveAmount("0");
+            setIsSwapModalOpen(false);
           }}
           rate={rate}
           onCloseModal={() => setIsSwapModalOpen(false)}

@@ -21,8 +21,8 @@ export default function SlippageButton(props: Props) {
           <>
             <Popover.Button
               className={`
-                ${open ? "bg-[#FAC790] text-black" : "bg-[#FAC790]/[.04] text-white/50"}
-                 transition-all p-3 w-12 h-12 rounded-lg hover:bg-[#FAC790] focus:outline-none hover:text-black flex justify-center items-center`}
+                ${open ? " text-white/50 bg-white/40" : "bg-[#FAC790] text-black"}
+                 transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-white/40 hover:text-white/50 text-black flex justify-center items-center`}
             >
               <IconSlider />
             </Popover.Button>

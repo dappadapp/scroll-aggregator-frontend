@@ -84,6 +84,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
 
         await waitForTransaction({ hash });
         toast("Swap successful!");
+        swapSuccess();
       } catch (e) {
         console.log("an error occured while swapping: ", e);
       } finally {
@@ -105,6 +106,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
 
       await waitForTransaction({ hash });
       toast("Swap successful!");
+      swapSuccess();
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
