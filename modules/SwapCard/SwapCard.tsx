@@ -44,7 +44,9 @@ const SwapCard: React.FC<Props> = () => {
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
-  const inputRef = useRef(null);
+  const getCurrentRateTimeout = useRef<any>(null);
+  const getTokenRateTimeout = useRef<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
@@ -63,7 +65,6 @@ const SwapCard: React.FC<Props> = () => {
     chainId: tokenTo?.chainId,
     enabled: !!tokenTo,
   });
-
 
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
@@ -105,55 +106,47 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const getCurrentRate = async () => {
+  const getCurrentRate = () => {
+    clearTimeout(getCurrentRateTimeout.current!);
+    getCurrentRateTimeout.current = setTimeout(async () => {
+      if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) return;
+      else {
+        setIsLoading(true);
 
-    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) 
-        return;
-
-    else {
-      const exchangeRate = await axios.post("/api/exchange", {
-        amount: swapAmount.toString(),
-        from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-        to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-        type: "IN",
-      });
-   
-      setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
-    }
-
-  }
-
-
+        const exchangeRate = await axios.post("/api/exchange", {
+          amount: swapAmount.toString(),
+          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+          type: "IN",
+        });
+        setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+        setIsLoading(false);
+      }
+    }, 200);
+  };
   useEffect(() => {
-
     getCurrentRate();
-
   }, [swapAmount, tokenFrom, tokenTo]);
 
-
   const getTokenRate = async () => {
-
-    if (!tokenFrom || !tokenTo) 
-        return;
-
-    else {
-
-      const exchangeRate = await axios.post("/api/exchange", {
-        amount: "1",
-        from: tokenFrom.wrapped.address,
-        to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-        type: 'IN',
-      });
-   
-      setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
-    }
+    clearTimeout(getTokenRateTimeout.current!);
+    getTokenRateTimeout.current = setTimeout(async () => {
+      if (!tokenFrom || !tokenTo) return;
+      else {
+        const exchangeRate = await axios.post("/api/exchange", {
+          amount: "1",
+          from: tokenFrom.wrapped.address,
+          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+          type: "IN",
+        });
+        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+      }
+    }, 200);
   };
 
   useEffect(() => {
-
     getCurrentRate();
     getTokenRate();
-
   }, [swapAmount, tokenFrom, tokenTo]);
 
   const native = useNativeCurrency();
@@ -182,7 +175,6 @@ const SwapCard: React.FC<Props> = () => {
   const onKeyDownReceiveAmount = () => {
     setChangeFrom(false);
   };
-
 
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
@@ -245,8 +237,9 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={Number(receiveAmount).toFixed(5) }
+                  value={Number(receiveAmount).toFixed(5)}
                   type="number"
+                  loading={isLoading}
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
                 />
@@ -288,8 +281,6 @@ const SwapCard: React.FC<Props> = () => {
           slippage={slippage}
         />
       ) : null}
-
-
     </div>
   );
 };

@@ -6,6 +6,7 @@ type Props = {
   type?: React.HTMLInputTypeAttribute;
   className?: string;
   disabled?: boolean;
+  loading?: boolean;
   onChange?: (event: any) => void;
   onKeyDown?: (event: any) => void;
 };
@@ -18,8 +19,9 @@ const Input: React.FC<Props> = ({
   disabled,
   onChange,
   onKeyDown,
+  loading,
 }) => {
-  return (
+  return !loading ? (
     <input
       onChange={onChange}
       onKeyDown={onKeyDown}
@@ -29,6 +31,10 @@ const Input: React.FC<Props> = ({
       disabled={disabled}
       className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-b border-white/[.20] bg-transparent tracking-wide`}
     />
+  ) : (
+    <div
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-b border-white/[.20] bg-slate-400 h-[40.8px] tracking-wide animate-pulse`}
+    ></div>
   );
 };
 
