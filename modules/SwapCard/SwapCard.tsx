@@ -64,6 +64,7 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
+
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
@@ -104,8 +105,11 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const postReferenceMint = async () => {
-    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) return;
+  const getCurrentRate = async () => {
+
+    if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) 
+        return;
+
     else {
       const exchangeRate = await axios.post("/api/exchange", {
         amount: swapAmount.toString(),
@@ -113,17 +117,43 @@ const SwapCard: React.FC<Props> = () => {
         to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
         type: "IN",
       });
+   
+      setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+    }
 
-      console.log(
-        "exchangeRate",
-        ethers.utils.formatUnits(exchangeRate?.data.amount, 18)
-      );
+  }
+
+
+  useEffect(() => {
+
+    getCurrentRate();
+
+  }, [swapAmount, tokenFrom, tokenTo]);
+
+
+  const getTokenRate = async () => {
+
+    if (!tokenFrom || !tokenTo) 
+        return;
+
+    else {
+
+      const exchangeRate = await axios.post("/api/exchange", {
+        amount: "1",
+        from: tokenFrom.wrapped.address,
+        to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+        type: 'IN',
+      });
+   
       setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
     }
   };
 
   useEffect(() => {
-    postReferenceMint();
+
+    getCurrentRate();
+    getTokenRate();
+
   }, [swapAmount, tokenFrom, tokenTo]);
 
   const native = useNativeCurrency();
@@ -153,7 +183,6 @@ const SwapCard: React.FC<Props> = () => {
     setChangeFrom(false);
   };
 
-  function handleTest(event: any): void {}
 
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
@@ -216,7 +245,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={Number(rate).toFixed(5) || receiveAmount}
+                  value={Number(receiveAmount).toFixed(5) }
                   type="number"
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
@@ -247,17 +276,20 @@ const SwapCard: React.FC<Props> = () => {
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={swapAmount}
-          amountB={receiveAmount}
+          amountB={Number(receiveAmount).toFixed(5)}
           swapType={dexType}
           swapSuccess={() => {
             setSwapAmount(0);
             setReceiveAmount("0");
             setIsSwapModalOpen(false);
           }}
-          rate={rate}
+          rate={Number(rate).toFixed(4)}
           onCloseModal={() => setIsSwapModalOpen(false)}
+          slippage={slippage}
         />
       ) : null}
+
+
     </div>
   );
 };
