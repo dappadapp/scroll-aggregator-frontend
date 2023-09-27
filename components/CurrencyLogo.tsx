@@ -16,7 +16,7 @@ export function CurrencyLogo({
       src={currency?.logo}
       alt={`${currency?.symbol ?? "token"} logo`}
       style={style}
-      className={`rounded-full w-4 h-4 lg:w-${size} lg:h-${size}`}
+      className={`rounded-full w-10 h-${size} lg:w-${size} lg:h-${size}`}
     />
   ) : (
     <div className={`bg-white/10 rounded-full w-${size} h-${size}`} />
