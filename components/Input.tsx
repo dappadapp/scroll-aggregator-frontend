@@ -33,7 +33,7 @@ const Input: React.FC<Props> = ({
     />
   ) : (
     <div
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-b border-white/[.20] bg-slate-400 bg-opacity-40 h-[40.8px] tracking-wide animate-pulse blur-blurry`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-b border-white/[.20] bg-slate-200 bg-opacity-25 h-[30.8px] tracking-wide animate-pulse`}
     ></div>
   );
 };
