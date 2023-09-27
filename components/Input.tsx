@@ -12,12 +12,12 @@ type Props = {
 
 const Input: React.FC<Props> = ({
   value,
-  className = '',
+  className = "",
   placeholder,
   type,
   disabled,
   onChange,
-  onKeyDown
+  onKeyDown,
 }) => {
   return (
     <input
@@ -27,7 +27,7 @@ const Input: React.FC<Props> = ({
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-none bg-transparent tracking-wide`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-base border-b border-white/[.20] bg-transparent tracking-wide`}
     />
   );
 };

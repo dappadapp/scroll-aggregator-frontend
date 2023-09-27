@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
@@ -17,14 +17,9 @@ import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 import SpaceFiPoolFactoryAbi from "@/constants/abis/spacefi.pool-factory.json";
 import SpaceFiRouterAbi from "@/constants/abis/spacefi.router.json";
 import { abi as UniswapPoolFactoryAbi } from "@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json";
-import { abi as UniswapQuoterAbi } from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
-import IconSlider from "@/assets/images/icon-sliders.svg";
-import IconRefresh from "@/assets/images/icon-refresh.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
 import { toFixedValue } from "@/utils/address";
-import { connectWebSocket, emitData } from "@/utils/websocket";
-import useWebSocket, { ReadyState } from "react-use-websocket";
 import { ethers } from "ethers";
 import SlippageButton from "./SlippageButton";
 import axios from "axios";
@@ -49,6 +44,7 @@ const SwapCard: React.FC<Props> = () => {
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
+  const inputRef = useRef(null);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,

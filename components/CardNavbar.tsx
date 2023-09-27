@@ -39,7 +39,7 @@ function CardNavbar() {
       >
         Bridge
       </Link>
-      <Link
+      {/* <Link
         href="#"
         className={`transition-all ${path !== "/docs" ? "text-white/40" : ""}`}
       >
@@ -50,7 +50,7 @@ function CardNavbar() {
         href={"#"}
       >
         Stats
-      </Link>
+      </Link> */}
     </div>
   );
 }
