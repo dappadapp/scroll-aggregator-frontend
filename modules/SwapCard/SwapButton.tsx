@@ -1,15 +1,15 @@
-import type { Currency, SWAP_TYPE } from "@/types";
+import { Currency, SWAP_TYPE } from "@/types";
 import React, { useState } from "react";
-import { useContractWrite, usePrepareContractWrite } from "wagmi";
+import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
-import { parseUnits } from "@/utils/address"
+import { parseUnits } from "@/utils/address";
 import { toast } from "react-toastify";
 import Button from "@/components/Button";
 import useContract from "@/hooks/useContract";
 
 import AggregatorAbi from "@/constants/abis/aggregator.json";
 import WETHAbi from "@/constants/abis/weth.json";
-
+import axios from "axios";
 
 type Props = {
   swapParam: SwapParam;
@@ -33,12 +33,13 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
   const [convEth, setConvEth] = useState<boolean>(true);
   const contractAddr = useContract();
+  const { address: userWallet } = useAccount();
 
   const { config } = usePrepareContractWrite({
     address: contractAddr!.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [[swapParam], parseUnits(`${minTotalAmountOut || 0}`,18), convEth],
+    args: [[swapParam], parseUnits(`${minTotalAmountOut || 0}`, 18), convEth],
     value: tokenIn.isNative ? swapParam.amountIn : undefined,
     enabled: !!contractAddr,
   });
@@ -82,10 +83,19 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
         setLoading(true);
         const { hash } = await onExecuteSwaps();
         toast("Swap transaction sent!");
-
-        await waitForTransaction({ hash });
+        const txData = await waitForTransaction({ hash });
         toast("Swap successful!");
         swapSuccess();
+        await axios.post("/api/create", {
+          wallet: userWallet,
+          txHash: hash,
+          fromTokenAddress: swapParam.tokenIn,
+          toTokenAddress: swapParam.tokenOut,
+          fromAmount: Number(swapParam.amountOutMin).toString(),
+          toAmount: Number(swapParam.amountIn).toString(),
+          chainId: tokenIn.chainId.toString(),
+          sourceDex: swapParam.poolAddress,
+        });
       } catch (e) {
         console.log("an error occured while swapping: ", e);
       } finally {
@@ -104,10 +114,19 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
       setLoading(true);
       const { hash } = await onDeposit();
       toast("Swap transaction sent!");
-
       await waitForTransaction({ hash });
       toast("Swap successful!");
       swapSuccess();
+      await axios.post("/api/create", {
+        wallet: userWallet,
+        txHash: hash,
+        fromTokenAddress: swapParam.tokenIn,
+        toTokenAddress: swapParam.tokenOut,
+        fromAmount: Number(swapParam.amountOutMin).toString(),
+        toAmount: Number(swapParam.amountIn).toString(),
+        chainId: tokenIn.chainId.toString(),
+        sourceDex: swapParam.poolAddress,
+      });
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
@@ -129,6 +148,16 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
       await waitForTransaction({ hash });
       toast("Swap successful!");
       swapSuccess();
+      await axios.post("/api/create", {
+        wallet: userWallet,
+        txHash: hash,
+        fromTokenAddress: swapParam.tokenIn,
+        toTokenAddress: swapParam.tokenOut,
+        fromAmount: Number(swapParam.amountOutMin).toString(),
+        toAmount: Number(swapParam.amountIn).toString(),
+        chainId: tokenIn.chainId.toString(),
+        sourceDex: swapParam.poolAddress,
+      });
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {

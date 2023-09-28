@@ -22,7 +22,7 @@ export default function Bridge({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   return (
-    <div className="w-full h-full flex items-center">
+    <div className="w-full h-full flex items-center mx-auto px-2 lg:px-0">
       <LiFiWidgetNext />
     </div>
   );

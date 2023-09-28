@@ -2,8 +2,10 @@
 import { LiFiWidget, WidgetConfig } from "@lifi/widget";
 import { WidgetEvents } from "./WidgetEvents";
 import { useEffect, useMemo } from "react";
+import useMobileDetect from "@/hooks/useMobileDetect";
 
 export const Widget = () => {
+  const { isMobile } = useMobileDetect();
   const widgetConfig: WidgetConfig = useMemo(
     () => ({
       integrator: "nextjs-example",
@@ -19,8 +21,10 @@ export const Widget = () => {
         height: "auto",
         marginTop: "16px",
         marginBottom: "16px",
-        width: "800px",
+        width: isMobile() ? "300px" : "800px",
+        minWidth: isMobile() ? "300px" : "375px",
       },
+
       theme: {
         palette: {
           primary: { main: "rgba(0,0,0,0.10)" },
@@ -48,11 +52,14 @@ export const Widget = () => {
   );
 
   useEffect(() => {
-    let elementId = document.querySelector('[id^="widget-relative-container"]')?.id;
-    let element = document.getElementById(elementId!);
-    element?.classList.add("w-full");
-    element?.classList.add("!max-w-[548px]");
-  }, []);
+    console.log(isMobile());
+    if (typeof window !== undefined) {
+      let elementId = document.querySelector('[id^="widget-relative-container"]')?.id;
+      let element = document.getElementById(elementId!);
+      element?.classList.add("w-full");
+      element?.classList.add("!max-w-[548px]");
+    }
+  }, [window, document]);
 
   return (
     <>
