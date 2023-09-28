@@ -86,8 +86,10 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     } else if (tokenIn?.symbol == "ETH" && tokenOut?.symbol == "WETH") {
       handleDeposit();
     } else {
-      if (!onExecuteSwaps)
-        return alert("Make sure you have enough GAS and you're on the correct network.");
+      if (!onExecuteSwaps) {
+        toast.error("Make sure you have enough GAS and you're on the correct network.");
+        return;
+      }
       // if (!isSuccess) {
       //   return alert("An unknown error occured. Please try again.");
       // }
@@ -108,8 +110,11 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   };
 
   const handleDeposit = async () => {
-    if (!onDeposit)
-      return alert("Make sure you have enough GAS and you're on the correct network.");
+    if (!onDeposit) {
+      toast.error("Make sure you have enough GAS and you're on the correct network.");
+      return;
+    }
+
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
     // }
@@ -129,8 +134,10 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   };
 
   const handleWithdraw = async () => {
-    if (!onWithdraw)
-      return alert("Make sure you have enough GAS and you're on the correct network.");
+    if (!onWithdraw) {
+      toast.error("Make sure you have enough GAS and you're on the correct network.");
+      return;
+    }
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
     // }
