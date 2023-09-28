@@ -67,6 +67,18 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   const { writeAsync: onDeposit } = useContractWrite(configDeposit);
 
   const { writeAsync: onWithdraw } = useContractWrite(configWithdraw);
+  const postCreateSwap = async (hash: string) => {
+    await axios.post("/api/create", {
+      wallet: userWallet,
+      txHash: hash,
+      fromTokenAddress: swapParam.tokenIn,
+      toTokenAddress: swapParam.tokenOut,
+      fromAmount: Number(swapParam.amountOutMin).toString(),
+      toAmount: Number(swapParam.amountIn).toString(),
+      chainId: tokenIn.chainId.toString(),
+      sourceDex: swapParam.poolAddress,
+    });
+  };
 
   const handleSwap = async () => {
     if (tokenIn?.symbol == "WETH" && tokenOut?.symbol == "ETH") {
@@ -86,16 +98,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
         const txData = await waitForTransaction({ hash });
         toast("Swap successful!");
         swapSuccess();
-        await axios.post("/api/create", {
-          wallet: userWallet,
-          txHash: hash,
-          fromTokenAddress: swapParam.tokenIn,
-          toTokenAddress: swapParam.tokenOut,
-          fromAmount: Number(swapParam.amountOutMin).toString(),
-          toAmount: Number(swapParam.amountIn).toString(),
-          chainId: tokenIn.chainId.toString(),
-          sourceDex: swapParam.poolAddress,
-        });
+        await postCreateSwap(hash);
       } catch (e) {
         console.log("an error occured while swapping: ", e);
       } finally {
@@ -117,16 +120,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
       await waitForTransaction({ hash });
       toast("Swap successful!");
       swapSuccess();
-      await axios.post("/api/create", {
-        wallet: userWallet,
-        txHash: hash,
-        fromTokenAddress: swapParam.tokenIn,
-        toTokenAddress: swapParam.tokenOut,
-        fromAmount: Number(swapParam.amountOutMin).toString(),
-        toAmount: Number(swapParam.amountIn).toString(),
-        chainId: tokenIn.chainId.toString(),
-        sourceDex: swapParam.poolAddress,
-      });
+      await postCreateSwap(hash);
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
@@ -144,20 +138,10 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
       setLoading(true);
       const { hash } = await onWithdraw();
       toast("Swap transaction sent!");
-
       await waitForTransaction({ hash });
       toast("Swap successful!");
       swapSuccess();
-      await axios.post("/api/create", {
-        wallet: userWallet,
-        txHash: hash,
-        fromTokenAddress: swapParam.tokenIn,
-        toTokenAddress: swapParam.tokenOut,
-        fromAmount: Number(swapParam.amountOutMin).toString(),
-        toAmount: Number(swapParam.amountIn).toString(),
-        chainId: tokenIn.chainId.toString(),
-        sourceDex: swapParam.poolAddress,
-      });
+      await postCreateSwap(hash);
     } catch (e) {
       console.log("an error occured while swapping: ", e);
     } finally {
