@@ -1,19 +1,16 @@
 "use client";
 import React from "react";
-import dynamic from "next/dynamic";
+import FaucetCard from "@/modules/FaucetCard/components/FaucetCard";
+import axios, { config } from "@/modules/FaucetCard/configure";
 
-const SwapCard: any = dynamic(() => import("@/modules/SwapCard/SwapCard"), {
-  ssr: false,
-});
-
-export default function Home({
+export default function Faucet({
   searchParams,
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   return (
     <div className="w-full h-full flex items-center">
-      <SwapCard />
+      <FaucetCard axios={axios} config={config} />
     </div>
   );
 }

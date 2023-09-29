@@ -23,9 +23,12 @@ function CardNavbar() {
         Swap
       </Link>
       <Link
-        href={"https://faucet.aggre.io/"}
-        target="_blank"
-        className={`transition-all ${path !== "/faucet" ? "text-white/40" : ""}`}
+        href={"/faucet"}
+        className={`transition-all py-2 ${
+          path !== "/faucet"
+            ? "text-white/40"
+            : "text-[#FAC790] rounded-lg bg-white bg-opacity-10 px-6 "
+        }`}
       >
         Faucet
       </Link>
