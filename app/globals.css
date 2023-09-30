@@ -41,3 +41,14 @@ input[type="number"] {
 .MuiBox-root {
   height: auto !important;
 }
+.select-dropdown {
+  display: flex;
+  align-items: center;
+}
+
+.select-dropdown > img {
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  margin-right: 10px;
+}

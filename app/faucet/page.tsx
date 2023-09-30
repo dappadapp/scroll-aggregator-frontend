@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import FaucetCard from "@/modules/FaucetCard/components/FaucetCard";
+import FaucetCard from "@/modules/FaucetCard/FaucetCard";
 import axios, { config } from "@/modules/FaucetCard/configure";
 
 export default function Faucet({

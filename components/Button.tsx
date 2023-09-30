@@ -11,7 +11,7 @@ export const buttonVariants = cva(
         primary:
           "hover:bg-[#FAC790]/[.04] hover:text-white/50 bg-[#FAC790] text-black flex justify-center items-center",
         secondary: "bg-[#3AFF4242] text-white",
-        disabled: "bg-[#202020] text-[#AAA]",
+        disabled: "bg-[#202020] text-[#AAA] cursor-not-allowed",
         bordered:
           "bg-[#FAC790]/[.04] text-white/75 hover:bg-[#FAC790] hover:text-black border border-white/10",
       },

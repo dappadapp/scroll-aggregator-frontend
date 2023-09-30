@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactElement } from "react";
 import { BigNumber, ethers } from "ethers";
 import { ClipLoader } from "react-spinners";
 import Select from "react-select";
 
-import "./styles/FaucetCard.css";
 import ReCaptcha from "./ReCaptcha";
 import queryString from "query-string";
-import { DropdownOption } from "./types";
-import { connectAccount } from "./Metamask";
 import { AxiosResponse } from "axios";
 import { useAccount } from "wagmi";
+import Button from "@/components/Button";
+import Input from "@/components/Input";
 
+type DropdownOption = {
+  label: ReactElement<any, any>;
+  value: number;
+  search: string;
+};
 const FaucetCard = (props: any) => {
   const [chain, setChain] = useState<number | null>(null);
   const [token, setToken] = useState<number | null>(null);
@@ -50,7 +54,6 @@ const FaucetCard = (props: any) => {
       )
     );
     updateChainConfigs();
-    connectAccount(updateAddress, false);
   }, []);
 
   // Update balance whenver chain changes or after transaction is processed
@@ -385,20 +388,17 @@ const FaucetCard = (props: any) => {
   const customStyles = {
     control: (base: any, state: { isFocused: any }) => ({
       ...base,
-      background: "#333",
+      background: "rgba(255,255,255,0.05)",
       borderRadius: state.isFocused ? "5px 5px 0 0" : 5,
-      borderColor: state.isFocused ? "white" : "#333",
-      boxShadow: null,
-      "&:hover": {
-        borderColor: "white",
-      },
+      border: "none",
     }),
     menu: (base: any) => ({
       ...base,
       borderRadius: 0,
       marginTop: 0,
-      background: "rgb(45, 45, 45)",
+      background: "rgba(17,24,39,0.9);",
       color: "white",
+      backdropFilter: "blur(12px)",
     }),
     menuList: (base: any) => ({
       ...base,
@@ -418,7 +418,8 @@ const FaucetCard = (props: any) => {
     }),
     option: (styles: any, { isFocused, isSelected }: any) => ({
       ...styles,
-      background: isFocused ? "black" : isSelected ? "#333" : undefined,
+      background: isFocused ? "rgb(55 65 81)" : isSelected ? "rgb(55 65 81)" : undefined,
+      color: isFocused || isSelected ? "rgb(59 130 246)" : undefined,
       zIndex: 1,
     }),
     input: (base: any) => ({
@@ -486,11 +487,11 @@ const FaucetCard = (props: any) => {
   };
 
   return (
-    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
-      <div className="box-content">
-        <div className="box-header">
-          <span>
-            <span style={{ color: "grey" }}>Select Network</span>
+    <div className="w-full tracking-widest max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+      <div className="p-4">
+        <div className="w-full">
+          <span className="flex justify-between">
+            <span className="text-gray-500 text-[13px}">Select Network</span>
           </span>
           <ChainDropdown /> <br />
           <div>
@@ -501,7 +502,9 @@ const FaucetCard = (props: any) => {
                   {chainConfigs[token!]?.TOKEN}
                 </span> */}
 
-              <span style={{ color: "grey", fontSize: "12px" }}>Select Token</span>
+              <span className="flex justify-between">
+                <span className="text-gray-500 text-[13px}">Select Network</span>
+              </span>
 
               <TokenDropdown />
             </div>
@@ -511,35 +514,34 @@ const FaucetCard = (props: any) => {
         <br />
 
         <div style={{ display: sendTokenResponse?.txHash ? "none" : "block" }}>
-          <p className="rate-limit-text">
+          <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5">
             Drops are limited to
-            <span>
+            <span className="font-medium ml-0.5">
               {chainConfigs[token!]?.RATELIMIT?.MAX_LIMIT} request in{" "}
               {toString(chainConfigs[token!]?.RATELIMIT?.WINDOW_SIZE)}.
             </span>
           </p>
 
-          <div className="address-input">
-            <input
-              placeholder="Hexadecimal Address (0x...)"
-              value={inputAddress || ""}
-              onChange={(e) => updateAddress(e.target.value)}
-              autoFocus
-            />
-          </div>
+          <Input
+            placeholder="Hexadecimal Address (0x...)"
+            value={inputAddress || ""}
+            onChange={(e) => updateAddress(e.target.value)}
+          />
           <span className="rate-limit-text" style={{ color: "red" }}>
             {sendTokenResponse?.message}
           </span>
 
           <div className="v2-recaptcha" style={{ marginTop: "10px" }}></div>
 
-          <div className="beta-alert">
+          <div className="text-[#ff5252] text-sm text-center rounded mt-5">
             <p>This is a testnet faucet. Funds are not real.</p>
           </div>
 
-          <button
-            className={shouldAllowSend ? "send-button" : "send-button-disabled"}
+          <Button
+            disabled={!shouldAllowSend}
             onClick={sendToken}
+            variant={shouldAllowSend ? "primary" : "disabled"}
+            className={`w-full  mt-3`}
           >
             {isLoading ? (
               <ClipLoader size="20px" speedMultiplier={0.3} color="403F40" />
@@ -549,14 +551,16 @@ const FaucetCard = (props: any) => {
                 {chainConfigs[token || 0]?.TOKEN}
               </span>
             )}
-          </button>
+          </Button>
         </div>
 
         <div style={{ display: sendTokenResponse?.txHash ? "block" : "none" }}>
           <p className="rate-limit-text">{sendTokenResponse?.message}</p>
 
           <div>
-            <span className="bold-text">Transaction ID</span>
+            <span className="text-sm font-semibold text-[rgba(255, 255, 255, 0.536)]">
+              Transaction ID
+            </span>
             <p className="rate-limit-text">
               <a
                 target={"_blank"}
@@ -568,7 +572,10 @@ const FaucetCard = (props: any) => {
             </p>
           </div>
 
-          <button className="back-button" onClick={back}>
+          <button
+            className="text-[white] h-9 w-[100px] rounded bg-[rgba(255,255,255,0.15)] cursor-pointer uppercase mt-2.5 px-4 py-0 border-0 hover:bg-[#333]"
+            onClick={back}
+          >
             Back
           </button>
         </div>
