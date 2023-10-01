@@ -64,16 +64,10 @@ const FaucetCard = (props: any) => {
   // Make REQUEST button disabled if either address is not valid or balance is low
   useEffect(() => {
     if (address) {
-      if (
-        BigInt(balance) >
-        calculateBaseUnit(
-          chainConfigs[token!]?.DRIP_AMOUNT,
-          chainConfigs[token!]?.DECIMALS
-        )
-      ) {
+    
         setShouldAllowSend(true);
         return;
-      }
+      
     }
 
     setShouldAllowSend(false);
@@ -187,7 +181,7 @@ const FaucetCard = (props: any) => {
     } else {
       setChain(0);
     }
-  }, [window.location.search, options, totalTokens]);
+  }, [ options, totalTokens]);
 
   // API calls
   async function updateChainConfigs(): Promise<void> {
@@ -332,9 +326,7 @@ const FaucetCard = (props: any) => {
   };
 
   async function sendToken(): Promise<void> {
-    if (!shouldAllowSend) {
-      return;
-    }
+
     let data: any;
     try {
       setIsLoading(true);
@@ -538,9 +530,9 @@ const FaucetCard = (props: any) => {
           </div>
 
           <Button
-            disabled={!shouldAllowSend}
+           
             onClick={sendToken}
-            variant={shouldAllowSend ? "primary" : "disabled"}
+           
             className={`w-full  mt-3`}
           >
             {isLoading ? (
