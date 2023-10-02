@@ -20,7 +20,6 @@ const raleway = Raleway({
   variable: "--font-raleway",
 });
 
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -47,17 +46,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     });
         `}
         </Script>
-         </head>
+      </head>
       <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
         <Providers>
           <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
             <div
               className={
-                "container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-center flex-col"
+                "container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-between flex-col"
               }
             >
               <Navbar />
-              <div className="w-full h-full flex-col flex items-center mb-5">
+              <div className="w-full h-full min-h-[70vh] relative flex-col flex items-center mb-5">
                 <CardNavbar />
                 {children}
               </div>

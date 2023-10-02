@@ -9,7 +9,7 @@ function CardNavbar() {
   return (
     <div
       className={
-        "hidden lg:flex gap-4 lg:text-base text-xs items-baseline text-[#382c2c] bg-white bg-opacity-5 shadow-sm shadow-[#FAC790] rounded-2xl p-3 mt-5"
+        "hidden lg:flex gap-4 lg:text-base text-xs items-baseline text-[#382c2c] relative top-0 bg-white bg-opacity-5 shadow-sm shadow-[#FAC790] rounded-2xl p-3 mt-5"
       }
     >
       <Link

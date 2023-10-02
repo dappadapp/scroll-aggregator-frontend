@@ -9,7 +9,7 @@ function Container({ children }: { children: React.ReactNode }) {
     <>
       <div className="container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-center flex-col">
         <Navbar />
-        <div className="w-full h-full flex-col flex items-center">
+        <div className="w-full h-full min-h-screen flex-col flex items-center">
           <CardNavbar />
           {children}
         </div>

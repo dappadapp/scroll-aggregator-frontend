@@ -549,7 +549,7 @@ const FaucetCard = (props: any) => {
             <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5 break-all">
               <a
                 target={"_blank"}
-                href={chainConfigs[token!]?.EXPLORER + "/tx/" + sendTokenResponse?.txHash}
+                href={"https://sepolia.scrollscan.dev/tx/" + sendTokenResponse?.txHash}
                 rel="noreferrer"
               >
                 {sendTokenResponse?.txHash}
