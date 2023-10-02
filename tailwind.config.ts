@@ -18,7 +18,7 @@ const config: Config = {
         "panel": "rgba(255,255,255,0.04)"
       },
       fontFamily: {
-        inter: 'var(--font-quicksand)',
+        inter: 'var(--font-arimo)',
        
         
       }
