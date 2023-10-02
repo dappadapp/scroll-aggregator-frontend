@@ -20,7 +20,7 @@ const Footer = () => {
           <FontAwesomeIcon icon={faTwitter} />
         </a>
         <a
-          href={"https://discord.gg/a6pQcrZQ"}
+          href={"https://discord.gg/dwBpDBVewX"}
           target="_blank"
           className={"hover:text-gray-100 transition-all"}
         >
