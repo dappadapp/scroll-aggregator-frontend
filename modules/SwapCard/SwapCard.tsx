@@ -215,7 +215,7 @@ const SwapCard: React.FC<Props> = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {percentageButtons.map((val, index) => (
                 <Button
-                  className="font-inter text-sm"
+                  className="font-monteserrat text-sm"
                   key={"perc-button-" + index}
                   onClick={() => handleClickInputPercent(val)}
                 >

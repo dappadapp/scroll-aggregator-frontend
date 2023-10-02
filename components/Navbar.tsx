@@ -18,17 +18,21 @@ const menuItems = [
     href: "/",
   },
   {
+    title: "Faucet",
+    href: "/faucet",
+  },
+  {
     title: "Bridge",
     href: "/bridge",
   },
-  {
-    title: "Stats",
-    href: "/stats",
-  },
-  {
-    title: "Docs",
-    href: "/docs",
-  },
+  // {
+  //   title: "Stats",
+  //   href: "/stats",
+  // },
+  // {
+  //   title: "Docs",
+  //   href: "/docs",
+  // },
 ];
 const Navbar: React.FC<Props> = (props) => {
   const path = usePathname();

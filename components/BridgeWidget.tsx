@@ -44,7 +44,7 @@ export const Widget = () => {
           borderRadiusSecondary: 0,
         },
         typography: {
-          fontFamily: "'__Orbitron_888b92', '__Orbitron_Fallback_888b92'",
+          fontFamily: "'__Montserrat_d1047c', '__Montserrat_Fallback_d1047c'",
         },
       },
     }),

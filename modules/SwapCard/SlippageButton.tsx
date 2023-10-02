@@ -42,7 +42,7 @@ export default function SlippageButton(props: Props) {
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                       {percentageButtons.map((val, index) => (
                         <Button
-                          className={`font-inter text-sm ${
+                          className={`font-monteserrat text-sm ${
                             selectedSlippage === val ? "bg-[#FAC790] text-black" : ""
                           }`}
                           key={"perc-button-" + index}
