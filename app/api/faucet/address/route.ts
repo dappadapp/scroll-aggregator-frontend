@@ -1,14 +1,12 @@
 import axios from "axios";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
-export async function GET(request: NextApiRequest) {
-  const query = request.query;
-  const { chain } = query;
+export async function GET(request: NextRequest) {
+  console.log("chainchain", request.nextUrl.searchParams);
   const response = await axios
     .get(`https://faucet.aggre.io/api/faucetAddress`, {
       params: {
-        chain,
+        chain: request.nextUrl.searchParams.get("chain"),
       },
     })
     .catch((e) => console.log("errorrrr", e));
