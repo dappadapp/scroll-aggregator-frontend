@@ -5,7 +5,7 @@ import Select from "react-select";
 
 import ReCaptcha from "./ReCaptcha";
 import queryString from "query-string";
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useAccount } from "wagmi";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -64,10 +64,8 @@ const FaucetCard = (props: any) => {
   // Make REQUEST button disabled if either address is not valid or balance is low
   useEffect(() => {
     if (address) {
-    
-        setShouldAllowSend(true);
-        return;
-      
+      setShouldAllowSend(true);
+      return;
     }
 
     setShouldAllowSend(false);
@@ -181,13 +179,11 @@ const FaucetCard = (props: any) => {
     } else {
       setChain(0);
     }
-  }, [ options, totalTokens]);
+  }, [options, totalTokens]);
 
   // API calls
   async function updateChainConfigs(): Promise<void> {
-    const response: AxiosResponse = await props.axios.get(
-      props.config.api.getChainConfigs
-    );
+    const response: AxiosResponse = await axios.get("/api/faucet/chain-configs");
     setChainConfigs(response?.data?.configs);
   }
 
@@ -211,17 +207,17 @@ const FaucetCard = (props: any) => {
     if ((chain || chain == 0) && chainConfigs.length > 0) {
       let { chain, erc20 } = getChainParams();
 
-      const response: AxiosResponse = await props.axios.get(props.config.api.getBalance, {
-        params: {
-          chain,
-          erc20,
-        },
-        signal: controller.signal,
-      });
+      // const response: AxiosResponse = await axios.get("/api/faucet/balance", {
+      //   params: {
+      //     chain,
+      //     erc20,
+      //   },
+      //   signal: controller.signal,
+      // });
 
-      if (response?.data?.balance || response?.data?.balance == 0) {
-        setBalance(response?.data?.balance);
-      }
+      // if (response?.data?.balance || response?.data?.balance == 0) {
+      //   setBalance(response?.data?.balance);
+      // }
     }
   }
 
@@ -229,14 +225,11 @@ const FaucetCard = (props: any) => {
     if ((chain || chain == 0) && chainConfigs.length > 0) {
       let { chain } = getChainParams();
 
-      const response: AxiosResponse = await props.axios.get(
-        props.config.api.faucetAddress,
-        {
-          params: {
-            chain,
-          },
-        }
-      );
+      const response: AxiosResponse = await axios.get("/api/faucet/address", {
+        params: {
+          chain,
+        },
+      });
 
       if (response?.data) {
         setFaucetAddress(response?.data?.address);
@@ -276,6 +269,10 @@ const FaucetCard = (props: any) => {
       return null;
     }
   }
+  useEffect(() => {
+    if (!account) return;
+    updateAddress(account);
+  }, [account]);
 
   function updateAddress(addr: any): void {
     setInputAddress(addr!);
@@ -326,7 +323,6 @@ const FaucetCard = (props: any) => {
   };
 
   async function sendToken(): Promise<void> {
-
     let data: any;
     try {
       setIsLoading(true);
@@ -334,8 +330,8 @@ const FaucetCard = (props: any) => {
       const { token, v2Token } = await getCaptchaToken();
 
       let { chain, erc20 } = getChainParams();
-
-      const response = await props.axios.post(props.config.api.sendToken, {
+      console.log(address);
+      const response = await axios.post("/api/faucet", {
         address,
         token,
         v2Token,
@@ -529,12 +525,7 @@ const FaucetCard = (props: any) => {
             <p>This is a testnet faucet. Funds are not real.</p>
           </div>
 
-          <Button
-           
-            onClick={sendToken}
-           
-            className={`w-full  mt-3`}
-          >
+          <Button onClick={sendToken} className={`w-full  mt-3`}>
             {isLoading ? (
               <ClipLoader size="20px" speedMultiplier={0.3} color="403F40" />
             ) : (
@@ -547,13 +538,15 @@ const FaucetCard = (props: any) => {
         </div>
 
         <div style={{ display: sendTokenResponse?.txHash ? "block" : "none" }}>
-          <p className="rate-limit-text">{sendTokenResponse?.message}</p>
+          <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5">
+            {sendTokenResponse?.message}
+          </p>
 
           <div>
             <span className="text-sm font-semibold text-[rgba(255, 255, 255, 0.536)]">
               Transaction ID
             </span>
-            <p className="rate-limit-text">
+            <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5 break-all">
               <a
                 target={"_blank"}
                 href={chainConfigs[token!]?.EXPLORER + "/tx/" + sendTokenResponse?.txHash}
