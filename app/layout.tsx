@@ -1,6 +1,6 @@
 import Providers from "@/provider/Providers";
 import type { Metadata } from "next";
-import { Orbitron, Raleway } from "next/font/google";
+import { Orbitron, Raleway, Quicksand } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -18,6 +18,11 @@ const inter = Orbitron({
 const raleway = Raleway({
   subsets: ["latin"],
   variable: "--font-raleway",
+});
+
+const quicksand = Quicksand({
+  subsets: ["latin"],
+  variable: "--font-quicksand",
 });
 
 
@@ -48,9 +53,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
         </Script>
          </head>
-      <body className={`${raleway.variable} ${inter.className} tracking-wider`}>
+      <body className={`${quicksand.variable} ${inter.className} tracking-wider`}>
         <Providers>
-          <div className={"relative w-full min-h-screen overflow-x-hidden font-raleway"}>
+          <div className={"relative w-full min-h-screen overflow-x-hidden font-quicksand"}>
             <div
               className={
                 "container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-center flex-col"
