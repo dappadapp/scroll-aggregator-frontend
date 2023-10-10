@@ -27,6 +27,10 @@ export const aggregator : {
     uniswap: {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
+    },
+    iziswap: {
+      router: `0x${string}`,
+      liquidityManager: `0x${string}`,
     }
   }    
 } = {
@@ -39,6 +43,11 @@ export const aggregator : {
     uniswap: {
       router: "0x17AFD0263D6909Ba1F9a8EAC697f76532365Fb95", //quoter contract
       poolFactory: "0xB856587fe1cbA8600F75F1b1176E44250B11C788"
+    },
+    iziswap: {
+      router: "0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3", //quoter
+      // router: "0x77132b63429718Db2B6ad8D942eE13A198f6Ab49", //swap router
+      liquidityManager: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15"
     }
   }
 }

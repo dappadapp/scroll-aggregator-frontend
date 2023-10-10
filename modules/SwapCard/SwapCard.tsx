@@ -46,7 +46,8 @@ const SwapCard: React.FC<Props> = () => {
   const [rate, setRate] = useState("0");
   const getCurrentRateTimeout = useRef<any>(null);
   const getTokenRateTimeout = useRef<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSwapAmount, setIsLoadingSwapAmount] = useState(false);
+  const [isLoadingReceiveAmount, setIsLoadingReceiveAmount] = useState(false);
 
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
@@ -89,7 +90,7 @@ const SwapCard: React.FC<Props> = () => {
   );
 
   const handleINChange = (e: any) => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
+    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH" || tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH") {
       setSwapAmount(e.target.value);
       setReceiveAmount(e.target.value);
     } else {
@@ -98,7 +99,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   const handleOUTChange = (e: any) => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") {
+    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH" || tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH") {
       setSwapAmount(e.target.value);
       setReceiveAmount(e.target.value);
     } else {
@@ -111,7 +112,7 @@ const SwapCard: React.FC<Props> = () => {
     getCurrentRateTimeout.current = setTimeout(async () => {
       if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) return;
       else {
-        setIsLoading(true);
+        setIsLoadingReceiveAmount(true);
 
         const exchangeRate = await axios.post("/api/exchange", {
           amount: swapAmount.toString(),
@@ -120,34 +121,39 @@ const SwapCard: React.FC<Props> = () => {
           type: "IN",
         });
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
-        setIsLoading(false);
+        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+        setIsLoadingReceiveAmount(false);
       }
     }, 200);
   };
+
   useEffect(() => {
+    if(!isChangeFrom) return;
     getCurrentRate();
   }, [swapAmount, tokenFrom, tokenTo]);
+
+  useEffect(() => {
+    if(isChangeFrom) return;
+    getTokenRate();
+  }, [receiveAmount, tokenFrom, tokenTo]);
 
   const getTokenRate = async () => {
     clearTimeout(getTokenRateTimeout.current!);
     getTokenRateTimeout.current = setTimeout(async () => {
       if (!tokenFrom || !tokenTo) return;
       else {
+        setIsLoadingSwapAmount(true);
         const exchangeRate = await axios.post("/api/exchange", {
-          amount: "1",
-          from: tokenFrom.wrapped.address,
+          amount: receiveAmount.toString(),
+          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-          type: "IN",
+          type: "OUT",
         });
-        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+        setSwapAmount(Number(ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
+        setIsLoadingSwapAmount(false);
       }
     }, 200);
   };
-
-  useEffect(() => {
-    getCurrentRate();
-    getTokenRate();
-  }, [swapAmount, tokenFrom, tokenTo]);
 
   const native = useNativeCurrency();
 
@@ -199,8 +205,9 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
-                  value={swapAmount}
+                  value={Number(swapAmount).toFixed(5)}
                   type="number"
+                  loading={isLoadingSwapAmount}
                   placeholder="Enter Amount"
                   className="w-full crosschainswap-input"
                 />
@@ -239,7 +246,7 @@ const SwapCard: React.FC<Props> = () => {
                   onKeyDown={onKeyDownReceiveAmount}
                   value={Number(receiveAmount).toFixed(5)}
                   type="number"
-                  loading={isLoading}
+                  loading={isLoadingReceiveAmount}
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
                 />

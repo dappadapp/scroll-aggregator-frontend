@@ -2,10 +2,13 @@ import axios from "axios";
 import { NextResponse } from "next/server";
 import { parseUnits } from "@/utils/address";
 import SpaceFiAbi from "@/constants/abis/spacefi.json";
+import IziSwapQuoterAbi from "@/constants/abis/iziSwapQuoter.json";
 import Web3 from "web3";
 import { ethers } from "ethers";
 import quoter2 from "@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json";
 import quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
+import { generatePath } from "@/utils/path";
+import { usePublicClient } from "wagmi";
 
 interface Dex {
   name: string;
@@ -37,9 +40,7 @@ export async function POST(request: Request) {
       outFunction: "getAmountsOut",
       async runInFunction(amount: any, from: any, to: any) {
         const contract = new ethers.Contract(this.router, this.abi, provider);
-        const pars = parseUnits(amount, 18);
-        const data = await contract.getAmountsIn(pars, [from, to]);
-
+        const data = await contract.getAmountsIn(parseUnits(amount, 18), [from, to]);
         return BigInt(data?.[0]);
       },
       async runOutFunction(amount: any, from: any, to: any) {
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
       id: "uniswap",
       router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
       abi: quoter.abi, // Replace with the actual ABI
-      fee: 10000,
+      fee: 3000,
       inFunction: "quoteExactInputSingle",
       outFunction: "quoteExactOutputSingle",
       async runOutFunction(amount: any, from: any, to: any) {
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
         );
         const params = [from, to, parseUnits(amount, 18), this.fee, 0];
 
-        const res = await contract.quoteExactInputSingle.staticCall(params);
+        const res = await contract.callStatic.quoteExactInputSingle(params);
 
         return BigInt(res.amountOut);
       },
@@ -78,6 +79,35 @@ export async function POST(request: Request) {
         const data = await contract.callStatic.quoteExactOutputSingle(params);
 
         return BigInt(data.amountIn);
+      },
+    },
+    iziswap: {
+      name: "Iziswap",
+      id: "iziswap",
+      router: "0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3",
+      abi: IziSwapQuoterAbi,
+      fee: 3000,
+      inFunction: "swapDesire",
+      outFunction: "swapAmount",
+      async runInFunction(amount: any, from: any, to: any) {
+        const contract = new ethers.Contract(
+          this.router,
+          IziSwapQuoterAbi,
+          provider
+        );
+
+        const { cost, } = await contract.callStatic.swapDesire(parseUnits(amount, 18), generatePath(from, to, this.fee));
+        return BigInt(cost);
+      },
+      async runOutFunction(amount: any, from: any, to: any) {
+        const contract = new ethers.Contract(
+          this.router,
+          IziSwapQuoterAbi,
+          provider
+        );
+        
+        const { acquire, } = await contract.callStatic.swapAmount(parseUnits(amount, 18), generatePath(from, to, this.fee));
+        return BigInt(acquire);
       },
     },
   };
