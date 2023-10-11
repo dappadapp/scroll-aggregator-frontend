@@ -90,16 +90,23 @@ const SwapCard: React.FC<Props> = () => {
   );
 
   const handleINChange = (e: any) => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH" || tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH") {
+    if (
+      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+    ) {
       setSwapAmount(e.target.value);
       setReceiveAmount(e.target.value);
     } else {
+      console.log(e.target.value);
       setSwapAmount(e.target.value);
     }
   };
 
   const handleOUTChange = (e: any) => {
-    if (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH" || tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH") {
+    if (
+      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+    ) {
       setSwapAmount(e.target.value);
       setReceiveAmount(e.target.value);
     } else {
@@ -128,12 +135,12 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    if(!isChangeFrom) return;
+    if (!isChangeFrom) return;
     getCurrentRate();
   }, [swapAmount, tokenFrom, tokenTo]);
 
   useEffect(() => {
-    if(isChangeFrom) return;
+    if (isChangeFrom) return;
     getTokenRate();
   }, [receiveAmount, tokenFrom, tokenTo]);
 
@@ -205,7 +212,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
-                  value={Number(swapAmount).toFixed(5)}
+                  value={parseFloat(Number(swapAmount).toFixed(5))}
                   type="number"
                   loading={isLoadingSwapAmount}
                   placeholder="Enter Amount"
@@ -244,7 +251,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={Number(receiveAmount).toFixed(5)}
+                  value={parseFloat(Number(receiveAmount).toFixed(5))}
                   type="number"
                   loading={isLoadingReceiveAmount}
                   placeholder="Receive Amount"
