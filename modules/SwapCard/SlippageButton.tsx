@@ -21,7 +21,7 @@ export default function SlippageButton(props: Props) {
           <>
             <Popover.Button
               className={`
-                ${open ? " text-white/50 bg-white/40" : "bg-[#FAC790] text-black"}
+                ${open ? " text-white/50 bg-white/40" : "bg-[#FAD5C3] text-black"}
                  transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-white/40 hover:text-white/50 text-black flex justify-center items-center`}
             >
               <IconSlider />
@@ -43,7 +43,7 @@ export default function SlippageButton(props: Props) {
                       {percentageButtons.map((val, index) => (
                         <Button
                           className={`font-monteserrat text-sm ${
-                            selectedSlippage === val ? "bg-[#FAC790] text-black" : ""
+                            selectedSlippage === val ? "bg-[#FAD5C3] text-black" : ""
                           }`}
                           key={"perc-button-" + index}
                           onClick={() => {

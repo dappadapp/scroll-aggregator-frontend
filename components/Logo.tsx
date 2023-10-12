@@ -5,7 +5,7 @@ import Image from "next/image";
 const Logo = () => {
   return (
     <div className="select-none">
-      <Image src={LogoSvg} alt="Aggregator" width={320} height={200} />
+      <Image src={LogoSvg} alt="Aggregator" width={250} height={180} />
     </div>
   );
 };

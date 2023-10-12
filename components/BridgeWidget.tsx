@@ -11,7 +11,7 @@ export const Widget = () => {
       integrator: "nextjs-example",
       containerStyle: {
         "--tw-shadow-colored": "0 1px 2px 0 var(--tw-shadow-color)",
-        "--tw-shadow-color": "#FAC790",
+        "--tw-shadow-color": "#FAD5C3",
         "--tw-shadow": "var(--tw-shadow-colored)",
         boxShadow:
           "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);",

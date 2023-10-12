@@ -1,6 +1,6 @@
 import Providers from "@/provider/Providers";
 import type { Metadata } from "next";
-import { Orbitron, Raleway, Montserrat } from "next/font/google";
+import { Orbitron, Raleway, Montserrat,League_Spartan } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -22,9 +22,11 @@ const raleway = Raleway({
 
 const monteserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-arimo",
+  variable: "--font-spartan",
   weight: "500",
 });
+
+const spartan =  League_Spartan({ subsets: ["latin"], variable: "--font-spartan",  weight: "500", display: 'swap' });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -53,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
         </Script>
       </head>
-      <body className={`${monteserrat.variable} ${monteserrat.className} tracking-wider`}>
+      <body className={`${spartan.variable} ${spartan.className} tracking-wider text-[19px]`}>
         <Providers>
           <div
             className={"relative w-full min-h-screen overflow-x-hidden font-quicksand"}

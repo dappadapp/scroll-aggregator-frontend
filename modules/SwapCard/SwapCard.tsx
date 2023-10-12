@@ -183,7 +183,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAD5C3] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center justify-between gap-2">
           <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>

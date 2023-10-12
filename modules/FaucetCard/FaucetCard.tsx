@@ -475,7 +475,7 @@ const FaucetCard = (props: any) => {
   };
 
   return (
-    <div className="w-full tracking-widest max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAC790] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+    <div className="w-full tracking-widest max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAD5C3] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
       <div className="p-4">
         <div className="w-full">
           <span className="flex justify-between">

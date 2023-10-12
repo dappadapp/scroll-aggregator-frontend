@@ -12,7 +12,7 @@ const ConnectButton = ({ className }: { className?: string }) => {
 
   return (
     <button
-      className={`${className} rounded-lg bg-[#FAC790] text-black tracking-wider duration-150  border-black/10 border transition px-3 py-1 sm:px-5 sm:py-2 lg:px-8 lg:py-3  font-semibold select-none text-sm sm:text-base`}
+      className={`${className} rounded-lg bg-[#FAD5C3] text-black tracking-wider duration-150  border-black/10 border transition px-3 py-1 sm:px-5 sm:py-2 lg:px-8 lg:py-3  font-semibold select-none text-sm sm:text-base`}
       onClick={open}
     >
       {isConnecting ? (
