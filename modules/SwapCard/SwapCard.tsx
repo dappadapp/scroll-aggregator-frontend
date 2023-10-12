@@ -124,12 +124,19 @@ const SwapCard: React.FC<Props> = () => {
       else {
         setIsLoadingReceiveAmount(true);
 
+        console.log("tokenFrom", tokenFrom);
+
+        console.log("tokenTo", tokenTo);
+
         const exchangeRate = await axios.post("/api/exchange", {
           amount: swapAmount.toString(),
           from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "IN",
         });
+
+       
+        setDexType(exchangeRate?.data?.dex);
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setIsLoadingReceiveAmount(false);
@@ -159,6 +166,7 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "OUT",
         });
+        setDexType(exchangeRate?.data?.dex);
         setSwapAmount(Number(ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
         setIsLoadingSwapAmount(false);
       }
@@ -228,8 +236,6 @@ const SwapCard: React.FC<Props> = () => {
                   placeholder="Enter Amount"
                   className="w-full crosschainswap-input h-10" // Increase the height here
                 />
-
-
               </div>
               <TokenSelect onChange={setTokenFrom} token={tokenFrom} />
             </div>
@@ -250,7 +256,6 @@ const SwapCard: React.FC<Props> = () => {
             className="w-10 h-10 p-2 my-5 cursor-pointer mt-5 mb-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
             <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80" />
-
           </button>
           <div className="flex justify-between items-center space-x-2 mt-4">
             <span className="text-white opacity-80">to</span>
@@ -273,13 +278,11 @@ const SwapCard: React.FC<Props> = () => {
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
                 />
-
               </div>
               <TokenSelect onChange={setTokenTo} token={tokenTo} />
             </div>
           </div>
         </div>
-
         <Button
           variant="bordered"
           disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount) && chain?.id === 534351}

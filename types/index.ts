@@ -14,8 +14,8 @@ export enum ChainId {
 }
 
 export enum SWAP_TYPE {
-  SPACEFI = 1,
-  UNISWAP = 2,
+  SPACEFI = "space-fi",
+  UNISWAP = "uniswap",
   ECHO = 3,
   LEET = 4
 }

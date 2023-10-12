@@ -131,6 +131,8 @@ export async function POST(request: Request) {
             amount: outAmount.toString(),
           });
         }
+
+        console.log("temp", temp);
       } catch (e) {
         console.log("error " + e);
       }
@@ -147,20 +149,23 @@ export async function POST(request: Request) {
     
          */
 
-    if (type === "IN") {
-      temp.sort((a, b) => {
-        return a.amount < b.amount ? 1 : a.amount > b.amount ? -1 : 0;
-      });
-    } else if (type === "OUT") {
-      temp.sort((a, b) => {
-        return a.amount < b.amount ? 1 : a.amount > b.amount ? -1 : 0;
-      });
-    }
+                            if (type === "IN") {
+                              temp.sort((a, b) => {
+                                return a.amount < b.amount ? -1 : a.amount > b.amount ? 1 : 0;
+                              });
+                            } else if (type === "OUT") {
+                              temp.sort((a, b) => {
+                                return a.amount < b.amount ? 1 : a.amount > b.amount ? -1 : 0;
+                              });
+                            }
+                            
 
     return temp[0];
   }
 
   const res = await getBestExchange(data?.amount, data?.from, data?.to, data?.type);
+
+  console.log("res", res);
 
   return NextResponse.json(res);
 }
