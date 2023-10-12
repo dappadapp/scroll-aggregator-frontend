@@ -85,9 +85,7 @@ const FaucetCard = (props: any) => {
           {chain.NAME}
 
           {chain.CONTRACTADDRESS && (
-            <span
-              style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}
-            >
+            <span style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}>
               {chainConfigs[chainToIndex(chain.HOSTID) || 0]?.NAME}
             </span>
           )}
@@ -115,12 +113,21 @@ const FaucetCard = (props: any) => {
 
       let item = (
         <div className="select-dropdown">
-          <img alt={chain.NAME[0]} src={chain.CONTRACTADDRESS === "0x5300000000000000000000000000000000000004" ? "./eth.png" : (chain.CONTRACTADDRESS === "0x87225C02F104a353d7dA0708907Ec18d1e74ce27" ? "./mock.png" : chain.CONTRACTADDRESS === "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3" ? "./tether.png" : "./eth.png" ) } />
+          <img
+            alt={chain.NAME[0]}
+            src={
+              chain.CONTRACTADDRESS === "0x5300000000000000000000000000000000000004"
+                ? "./eth.png"
+                : chain.CONTRACTADDRESS === "0x87225C02F104a353d7dA0708907Ec18d1e74ce27"
+                ? "./mock.png"
+                : chain.CONTRACTADDRESS === "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3"
+                ? "./tether.png"
+                : "./eth.png"
+            }
+          />
           {chain.ID == ch ? chain.TOKEN : chain.NAME}
 
-          <span
-            style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}
-          >
+          <span style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}>
             {chain.CONTRACTADDRESS ? "ERC20" : "Native"}
           </span>
         </div>
@@ -340,8 +347,9 @@ const FaucetCard = (props: any) => {
       });
       data = response?.data;
     } catch (err: any) {
-      console.log("err",err);
+      console.log("err", err);
       data = err?.response?.data || err;
+      data.message = "Please try again in 24 hours.";
     }
 
     //ifCaptchaFailed(data);
@@ -380,7 +388,6 @@ const FaucetCard = (props: any) => {
       background: "rgba(255,255,255,0.04)",
       borderRadius: state.isFocused ? "5px 5px 0 0" : 5,
       border: "none",
-     
     }),
     menu: (base: any) => ({
       ...base,
@@ -478,11 +485,11 @@ const FaucetCard = (props: any) => {
 
   return (
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FFE7DD] flex-col relative border-r border-white/10 bg-white/[.01] rounded-xl mx-auto my-4">
-       <h1 className="text-white font-semibold text-xl lg:text-3xl ml-4 mb-4 mt-4">FAUCET</h1>
+      <h1 className="text-white font-semibold text-xl lg:text-3xl ml-4 mb-4 mt-4">
+        FAUCET
+      </h1>
       <div className="p-4">
-     
         <div className="w-full">
-       
           <span className="flex justify-between">
             <span className="text-white mb-2">Select Network</span>
           </span>
