@@ -124,10 +124,6 @@ const SwapCard: React.FC<Props> = () => {
       else {
         setIsLoadingReceiveAmount(true);
 
-        console.log("tokenFrom", tokenFrom);
-
-        console.log("tokenTo", tokenTo);
-
         const exchangeRate = await axios.post("/api/exchange", {
           amount: swapAmount.toString(),
           from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
@@ -136,7 +132,7 @@ const SwapCard: React.FC<Props> = () => {
         });
 
        
-        setDexType(exchangeRate?.data?.dex);
+        setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setIsLoadingReceiveAmount(false);
@@ -146,8 +142,12 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     if (!isChangeFrom) return;
+    if (
+      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+    )return;
     getCurrentRate();
-  }, [swapAmount, tokenFrom, tokenTo]);
+  }, [swapAmount, tokenFrom, tokenFrom]);
 
   useEffect(() => {
     if (isChangeFrom) return;
@@ -166,7 +166,7 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "OUT",
         });
-        setDexType(exchangeRate?.data?.dex);
+        setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
         setSwapAmount(Number(ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
         setIsLoadingSwapAmount(false);
       }

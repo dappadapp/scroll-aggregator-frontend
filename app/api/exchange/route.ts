@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       id: "uniswap",
       router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
       abi: quoter.abi, // Replace with the actual ABI
-      fee: 3000,
+      fee: 1000,
       inFunction: "quoteExactInputSingle",
       outFunction: "quoteExactOutputSingle",
       async runOutFunction(amount: any, from: any, to: any) {
