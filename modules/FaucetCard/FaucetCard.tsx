@@ -379,6 +379,7 @@ const FaucetCard = (props: any) => {
       background: "rgba(255,255,255,0.04)",
       borderRadius: state.isFocused ? "5px 5px 0 0" : 5,
       border: "none",
+     
     }),
     menu: (base: any) => ({
       ...base,
