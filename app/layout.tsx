@@ -29,7 +29,7 @@ const monteserrat = Montserrat({
 const spartan =  League_Spartan({ subsets: ["latin"], variable: "--font-spartan", style: "normal",  });
 
 export const metadata = {
-  title: "Aggre | Scroll Aggregator",
+  title: "aggre! | Scroll DEX Aggregator",
   description: "Discover the future of decentralized trading with Aggre, your one-stop DEX aggregator at Scroll Network. Seamlessly scroll through diverse decentralized exchanges, finding the best prices and liquidity. Trade with confidence, all in one place",
 };
 
