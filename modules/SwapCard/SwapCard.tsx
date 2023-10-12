@@ -33,7 +33,7 @@ const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
   const contractAddr = useContract();
-  const [swapAmount, setSwapAmount] = useState(0);
+  const [swapAmount, setSwapAmount] = useState("0");
   const [receiveAmount, setReceiveAmount] = useState("0");
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.UNISWAP);
@@ -120,7 +120,7 @@ const SwapCard: React.FC<Props> = () => {
   const getCurrentRate = () => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
-      if (!tokenFrom || !tokenTo || !swapAmount || swapAmount === 0) return;
+      if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
       else {
         setIsLoadingReceiveAmount(true);
 
@@ -167,7 +167,7 @@ const SwapCard: React.FC<Props> = () => {
           type: "OUT",
         });
         setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
-        setSwapAmount(Number(ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
+        setSwapAmount((ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
         setIsLoadingSwapAmount(false);
       }
     }, 200);
@@ -188,7 +188,7 @@ const SwapCard: React.FC<Props> = () => {
   const handleClickInputPercent = (percent: number) => {
     if (!balanceFrom || !tokenFrom) return;
     const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
-    setSwapAmount((parseFloat(balance) * percent) / 100);
+    setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
     setChangeFrom(true);
   };
 
@@ -230,7 +230,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
-                  value={Number(swapAmount) === 0 ? '' : parseFloat(Number(swapAmount).toFixed(5))}
+                  value={(swapAmount)}
                   type="number"
                   loading={isLoadingSwapAmount}
                   placeholder="Enter Amount"
@@ -255,7 +255,7 @@ const SwapCard: React.FC<Props> = () => {
             onClick={handleSwitchToken}
             className="w-10 h-10 p-2 my-5 cursor-pointer mt-5 mb-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
-            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80" />
+            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80  z-[-1]" />
           </button>
           <div className="flex justify-between items-center space-x-2 mt-4">
             <span className="text-white opacity-80">to</span>
@@ -272,7 +272,7 @@ const SwapCard: React.FC<Props> = () => {
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={Number(receiveAmount) === 0 ? '' : parseFloat(Number(receiveAmount).toFixed(5))}
+                  value={ receiveAmount}
                   type="number"
                   loading={isLoadingReceiveAmount}
                   placeholder="Receive Amount"
@@ -297,11 +297,11 @@ const SwapCard: React.FC<Props> = () => {
           pool={poolAddress as string}
           tokenA={tokenFrom}
           tokenB={tokenTo}
-          amountA={swapAmount}
+          amountA={+swapAmount}
           amountB={Number(receiveAmount).toFixed(5)}
           swapType={dexType}
           swapSuccess={() => {
-            setSwapAmount(0);
+            setSwapAmount("0");
             setReceiveAmount("0");
             setIsSwapModalOpen(false);
           }}
