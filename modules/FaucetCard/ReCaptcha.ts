@@ -11,7 +11,7 @@ export default class ReCaptcha {
     setWidgetID: any
         
     constructor(SITE_KEY: string, ACTION: string, V2_SITE_KEY: string, setWidgetID: any) {
-        this.loadReCaptcha(SITE_KEY)
+        //this.loadReCaptcha(SITE_KEY)
         
         this.siteKey = SITE_KEY
         this.v2siteKey = V2_SITE_KEY
