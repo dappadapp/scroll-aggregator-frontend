@@ -224,7 +224,7 @@ const SwapCard: React.FC<Props> = () => {
               </div>
             )}
           </div>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 mb-4">
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 mb-4  z-[2]">
             <div className="flex gap-4 ">
               <div className="w-full">
                 <Input
@@ -255,7 +255,7 @@ const SwapCard: React.FC<Props> = () => {
             onClick={handleSwitchToken}
             className="w-10 h-10 p-2 my-5 cursor-pointer mt-5 mb-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
-            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80  z-[-1]" />
+            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80  z-[1]" />
           </button>
           <div className="flex justify-between items-center space-x-2 mt-4">
             <span className="text-white opacity-80">to</span>
