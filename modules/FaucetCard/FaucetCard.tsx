@@ -115,7 +115,7 @@ const FaucetCard = (props: any) => {
 
       let item = (
         <div className="select-dropdown">
-          <img alt={chain.NAME[0]} src={chain.IMAGE} />
+          <img alt={chain.NAME[0]} src={chain.CONTRACTADDRESS === "0x5300000000000000000000000000000000000004" ? "./eth.png" : (chain.CONTRACTADDRESS === "0x87225C02F104a353d7dA0708907Ec18d1e74ce27" ? "./mock.png" : chain.CONTRACTADDRESS === "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3" ? "./tether.png" : "./eth.png" ) } />
           {chain.ID == ch ? chain.TOKEN : chain.NAME}
 
           <span
@@ -340,10 +340,11 @@ const FaucetCard = (props: any) => {
       });
       data = response?.data;
     } catch (err: any) {
+      console.log("err",err);
       data = err?.response?.data || err;
     }
 
-    ifCaptchaFailed(data);
+    //ifCaptchaFailed(data);
 
     setSendTokenResponse({
       txHash: data?.txHash,
