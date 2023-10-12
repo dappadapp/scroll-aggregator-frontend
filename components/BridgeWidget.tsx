@@ -11,18 +11,19 @@ export const Widget = () => {
       integrator: "nextjs-example",
       containerStyle: {
         "--tw-shadow-colored": "0 1px 2px 0 var(--tw-shadow-color)",
-        "--tw-shadow-color": "#FAD5C3",
+        "--tw-shadow-color": "#FFE7DD",
         "--tw-shadow": "var(--tw-shadow-colored)",
         boxShadow:
           "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);",
         borderRadius: "16px",
         border: "1px solid rgba(255,255,255,0.10)",
-        backgroundColor: "#0D1520",
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
         height: "auto",
         marginTop: "16px",
         marginBottom: "16px",
         width: isMobile() ? "300px" : "800px",
         minWidth: isMobile() ? "300px" : "375px",
+        padding: "10px",
       },
 
       theme: {
@@ -30,8 +31,8 @@ export const Widget = () => {
           primary: { main: "rgba(0,0,0,0.10)" },
           secondary: { main: "#F5B5FF" },
           background: {
-            paper: "rgba(0,0,0,0.05)", // bg color for cards
-            default: "rgba(0,0,0,0.05)", // bg color container
+            paper: "rgba(255, 255, 255, 0.01)",
+            default: "rgba(255, 255, 255, 0.01)", // bg color container
           },
           grey: {
             300: "rgba(255,255,255,0.10)", // border light theme
@@ -44,7 +45,7 @@ export const Widget = () => {
           borderRadiusSecondary: 0,
         },
         typography: {
-          fontFamily: "'__Montserrat_d1047c', '__Montserrat_Fallback_d1047c'",
+          fontFamily: "'__League_Spartan_ed99a8', '__League_Spartan_Fallback_ed99a8'",
         },
       },
     }),

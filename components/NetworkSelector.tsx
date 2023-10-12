@@ -62,46 +62,27 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
     if (switchNetwork) switchNetwork(network.chainId);
   };
 
+  const handleChangeNetworkChain = (chainId: number) => {
+    if (switchNetwork) switchNetwork(chainId);
+  };
+
   return (
     <Menu as="div" className="relative inline-block">
       <div>
-        <Menu.Button className="inline-flex justify-center items-center min-w-[200px] gap-2 p-3 text-xs lg:text-base bg-[#0A0A0A] rounded-lg border border-white/10">
+        <Menu.Button className="inline-flex cursor-pointer justify-center items-center min-w-[200px] gap-2 p-3 text-xl lg:text-base bg-[#0A0A0A] rounded-lg border border-white/10">
           {chain?.id !== 534351 ? (
-            <p>Switch Scroll Sepolia</p>
+            <button onClick={() => handleChangeNetworkChain(534351)}>Switch Scroll Sepolia</button>
           ) : (
             <Fragment>
-              <NetworkItem chain={currentNetwork} />
+            
               {isLoading && <Loading />}
             </Fragment>
           )}
-          <span className="pointer-events-none inset-y-0 flex items-center">
-            <FontAwesomeIcon icon={faAngleDown} />
-          </span>
+         
+ 
         </Menu.Button>
       </div>
-      <Transition
-        as={Fragment}
-        leave="transition ease-in duration-100"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[200px] origin-top-right z-10 backdrop-blur-xl py-1 md:text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none text-sm ">
-          {chain?.id !== 534351
-            ? null
-            : networks.map((network) => (
-                <Menu.Item as={Fragment} key={network.chainId}>
-                  {({ active }) => (
-                    <NetworkItem
-                      key={network.chainId}
-                      chain={network}
-                      className="group text-[#CACACA] select-none p-3 hover:bg-[#2B2B2B]"
-                      onClick={handleChangeNetwork}
-                    />
-                  )}
-                </Menu.Item>
-              ))}
-        </Menu.Items>
-      </Transition>
+
     </Menu>
   );
 };

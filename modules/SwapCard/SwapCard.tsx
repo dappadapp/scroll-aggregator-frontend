@@ -23,6 +23,7 @@ import { toFixedValue } from "@/utils/address";
 import { ethers } from "ethers";
 import SlippageButton from "./SlippageButton";
 import axios from "axios";
+import { networks } from "@/constants/networks";
 
 type Props = {};
 
@@ -49,6 +50,8 @@ const SwapCard: React.FC<Props> = () => {
   const [isLoadingSwapAmount, setIsLoadingSwapAmount] = useState(false);
   const [isLoadingReceiveAmount, setIsLoadingReceiveAmount] = useState(false);
 
+  const { chain, chains } = useNetwork()
+
   const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
     address: address,
     ...(!tokenFrom?.isNative && {
@@ -70,23 +73,23 @@ const SwapCard: React.FC<Props> = () => {
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
-          address: contractAddr?.spacefi.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
+        address: contractAddr?.spacefi.poolFactory,
+        abi: SpaceFiPoolFactoryAbi,
+        functionName: "getPair",
+        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
       : {
-          address: contractAddr?.uniswap.poolFactory,
-          abi: UniswapPoolFactoryAbi,
-          functionName: "getPool",
-          args: [
-            tokenFrom?.wrapped.address,
-            tokenTo?.wrapped.address,
-            UNISWAP_DEFAULT_FEE,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
+        address: contractAddr?.uniswap.poolFactory,
+        abi: UniswapPoolFactoryAbi,
+        functionName: "getPool",
+        args: [
+          tokenFrom?.wrapped.address,
+          tokenTo?.wrapped.address,
+          UNISWAP_DEFAULT_FEE,
+        ],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
   );
 
   const handleINChange = (e: any) => {
@@ -190,7 +193,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAD5C3] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FFE7DD] flex-col relative border-r border-white/10 bg-white/[.01] rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center justify-between gap-2">
           <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>
@@ -205,24 +208,28 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
         <div className="relative w-full flex flex-col">
-          <span className="text-white/25">from</span>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 ">
+          <div className="flex justify-between items-center space-x-2 mt-4">
+            <span className="text-white/80">from</span>
+            {balanceFrom && (
+              <div className="text-right text-lg">
+                {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
+              </div>
+            )}
+          </div>
+          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 mb-4">
             <div className="flex gap-4 ">
               <div className="w-full">
                 <Input
                   onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
-                  value={parseFloat(Number(swapAmount).toFixed(5))}
+                  value={Number(swapAmount) === 0 ? '' : parseFloat(Number(swapAmount).toFixed(5))}
                   type="number"
                   loading={isLoadingSwapAmount}
                   placeholder="Enter Amount"
-                  className="w-full crosschainswap-input"
+                  className="w-full crosschainswap-input h-10" // Increase the height here
                 />
-                {balanceFrom && (
-                  <div className="mt-2">
-                    Balance: {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
-                  </div>
-                )}
+
+
               </div>
               <TokenSelect onChange={setTokenFrom} token={tokenFrom} />
             </div>
@@ -240,28 +247,33 @@ const SwapCard: React.FC<Props> = () => {
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-10 h-10 p-2 my-5 cursor-pointer mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
+            className="w-10 h-10 p-2 my-5 cursor-pointer mt-5 mb-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
           >
-            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 z-[-1]" />
+            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80" />
+
           </button>
-          <span className="text-white/25">to</span>
+          <div className="flex justify-between items-center space-x-2 mt-4">
+            <span className="text-white opacity-80">to</span>
+            {balanceTo && (
+              <div className="text-right text-lg">
+                {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
+              </div>
+            )}
+          </div>
+
           <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
             <div className="flex gap-4">
               <div className="w-full">
                 <Input
                   onChange={(e) => handleOUTChange(e)}
                   onKeyDown={onKeyDownReceiveAmount}
-                  value={parseFloat(Number(receiveAmount).toFixed(5))}
+                  value={Number(receiveAmount) === 0 ? '' : parseFloat(Number(receiveAmount).toFixed(5))}
                   type="number"
                   loading={isLoadingReceiveAmount}
                   placeholder="Receive Amount"
                   className="crosschainswap-input w-full"
                 />
-                {balanceTo && (
-                  <div className="mt-2">
-                    Balance: {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
-                  </div>
-                )}
+
               </div>
               <TokenSelect onChange={setTokenTo} token={tokenTo} />
             </div>
@@ -270,14 +282,14 @@ const SwapCard: React.FC<Props> = () => {
 
         <Button
           variant="bordered"
-          disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount)}
+          disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount) && chain?.id === 534351}
           className="w-full p-4 rounded-lg text-xl font-semibold mt-4"
           onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
         >
           {isConnected ? "SWAP" : "CONNECT WALLET"}
         </Button>
       </div>
-      {tokenFrom && tokenTo && isSwapModalOpen ? (
+      {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534351 ? (
         <SwapModal
           pool={poolAddress as string}
           tokenA={tokenFrom}

@@ -12,6 +12,7 @@ import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 import { fetchFeeData } from "@wagmi/core";
+import { useNetwork } from 'wagmi'
 type Props = {
   onCloseModal: () => void;
   pool: string;
@@ -47,6 +48,7 @@ function SwapModal({
     args: [account!, contractAddr!.contract],
     enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
+
 
   const bigAmountA = useMemo(() => {
     return parseUnits(amountA?.toString(), tokenA?.decimals);
@@ -84,7 +86,8 @@ function SwapModal({
         }
       >
         <div className="flex justify-between mb-8">
-          <h1 className={"text-sm md:text-lg "}>Review swap details</h1>
+        <h1 className="text-2xl md:text-3xl mb-5">Review swap details</h1>
+
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
@@ -97,15 +100,15 @@ function SwapModal({
           <FontAwesomeIcon
             icon={faArrowRight}
             className="text-[#AAA]"
-            width={30}
-            height={30}
+            width={40}
+            height={40}
           />
           <SwapToken value={+amountB} currency={tokenB} />
         </div>
         <div className="w-full bg-[#AAA] h-[1px] my-6 mb-10"></div>
 
         <div className="flex justify-between items-center mt-4">
-          <span>Liquidity source</span>
+          <span className="text-xl">Liquidity source</span>
 
           <span>
             {swapType === SWAP_TYPE.UNISWAP ? (
@@ -132,7 +135,8 @@ function SwapModal({
           </span>
         </div>
 
-        <div className="my-10 text-xs md:text-sm flex flex-col gap-3">
+        <div className="my-10 text-xl md:text-lg flex flex-col gap-2">
+
           {/**
              <div className="flex justify-between">
             <span>Gas Fee</span>
@@ -158,7 +162,7 @@ function SwapModal({
             </span>
           </div>
         </div>
-        {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
+        {!tokenA.isNative && (!allowance || allowance < bigAmountA)  ? (
           <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
         ) : (
           <SwapButton

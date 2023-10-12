@@ -26,7 +26,12 @@ const monteserrat = Montserrat({
   weight: "500",
 });
 
-const spartan =  League_Spartan({ subsets: ["latin"], variable: "--font-spartan",  weight: "500", display: 'swap' });
+const spartan =  League_Spartan({ subsets: ["latin"], variable: "--font-spartan", style: "normal",  });
+
+export const metadata = {
+  title: "Aggre | Scroll Aggregator",
+  description: "Discover the future of decentralized trading with Aggre, your one-stop DEX aggregator at Scroll Network. Seamlessly scroll through diverse decentralized exchanges, finding the best prices and liquidity. Trade with confidence, all in one place",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -55,10 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
         </Script>
       </head>
-      <body className={`${spartan.variable} ${spartan.className} tracking-wider text-[19px]`}>
+      <body className={`${spartan.variable} ${spartan.className} tracking-wider text-[20px]`}>
         <Providers>
           <div
-            className={"relative w-full min-h-screen overflow-x-hidden font-quicksand"}
+            className={"relative w-full min-h-screen overflow-x-hidden"}
           >
             <div
               className={

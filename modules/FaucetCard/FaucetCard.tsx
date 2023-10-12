@@ -86,7 +86,7 @@ const FaucetCard = (props: any) => {
 
           {chain.CONTRACTADDRESS && (
             <span
-              style={{ color: "rgb(180, 180, 183)", fontSize: "10px", marginLeft: "5px" }}
+              style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}
             >
               {chainConfigs[chainToIndex(chain.HOSTID) || 0]?.NAME}
             </span>
@@ -119,7 +119,7 @@ const FaucetCard = (props: any) => {
           {chain.ID == ch ? chain.TOKEN : chain.NAME}
 
           <span
-            style={{ color: "rgb(180, 180, 183)", fontSize: "10px", marginLeft: "5px" }}
+            style={{ color: "rgb(180, 180, 183)", marginLeft: "5px" }}
           >
             {chain.CONTRACTADDRESS ? "ERC20" : "Native"}
           </span>
@@ -376,7 +376,7 @@ const FaucetCard = (props: any) => {
   const customStyles = {
     control: (base: any, state: { isFocused: any }) => ({
       ...base,
-      background: "rgba(255,255,255,0.05)",
+      background: "rgba(255,255,255,0.04)",
       borderRadius: state.isFocused ? "5px 5px 0 0" : 5,
       border: "none",
     }),
@@ -475,11 +475,14 @@ const FaucetCard = (props: any) => {
   };
 
   return (
-    <div className="w-full tracking-widest max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FAD5C3] flex-col relative border-r border-white/10 bg-white/5 rounded-xl mx-auto my-4">
+    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FFE7DD] flex-col relative border-r border-white/10 bg-white/[.01] rounded-xl mx-auto my-4">
+       <h1 className="font-semibold text-xl lg:text-3xl ml-4 mb-4 mt-4">FAUCET</h1>
       <div className="p-4">
+     
         <div className="w-full">
+       
           <span className="flex justify-between">
-            <span className="text-gray-500 text-[13px}">Select Network</span>
+            <span className="text-white mb-2">Select Network</span>
           </span>
           <ChainDropdown /> <br />
           <div>
@@ -491,7 +494,7 @@ const FaucetCard = (props: any) => {
                 </span> */}
 
               <span className="flex justify-between">
-                <span className="text-gray-500 text-[13px}">Select Network</span>
+                <span className="text-white mb-2">Select Token</span>
               </span>
 
               <TokenDropdown />
@@ -502,7 +505,7 @@ const FaucetCard = (props: any) => {
         <br />
 
         <div style={{ display: sendTokenResponse?.txHash ? "none" : "block" }}>
-          <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5">
+          <p className="text-[grey] text-[13px]  tracking-[1px] leading-5">
             Drops are limited to
             <span className="font-medium ml-0.5">
               {chainConfigs[token!]?.RATELIMIT?.MAX_LIMIT} request in{" "}
@@ -538,15 +541,15 @@ const FaucetCard = (props: any) => {
         </div>
 
         <div style={{ display: sendTokenResponse?.txHash ? "block" : "none" }}>
-          <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5">
+          <p className="text-[grey] text-[13px]  tracking-[1px] leading-5">
             {sendTokenResponse?.message}
           </p>
 
           <div>
-            <span className="text-sm font-semibold text-[rgba(255, 255, 255, 0.536)]">
+            <span className="text-sm  text-[rgba(255, 255, 255, 0.536)]">
               Transaction ID
             </span>
-            <p className="text-[grey] text-[13px] font-light tracking-[1px] leading-5 break-all">
+            <p className="text-[grey] text-[13px]  tracking-[1px] leading-5 break-all">
               <a
                 target={"_blank"}
                 href={"https://sepolia.scrollscan.dev/tx/" + sendTokenResponse?.txHash}
