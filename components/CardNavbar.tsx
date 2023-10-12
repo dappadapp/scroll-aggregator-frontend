@@ -40,7 +40,7 @@ function CardNavbar() {
             : "text-[#FFE7DD] rounded-lg bg-white bg-opacity-10 px-6 text-xl"
         }`}
       >
-       Bridge (LIFI)
+       Bridge (LI.FI)
       </Link>
       {/* <Link
         href="#"
