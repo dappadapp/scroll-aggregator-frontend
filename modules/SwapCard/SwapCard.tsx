@@ -196,7 +196,7 @@ const SwapCard: React.FC<Props> = () => {
     <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FFE7DD] flex-col relative border-r border-white/10 bg-white/[.01] rounded-xl mx-auto my-4">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="flex items-center justify-between gap-2">
-          <h1 className="font-semibold text-xl lg:text-3xl">SWAP</h1>
+          <h1 className="text-white font-semibold text-xl lg:text-3xl">SWAP</h1>
           <div className="flex">
             <SlippageButton
               onChangeSlippage={(slippageValue: number) => setSlippage(slippageValue)}
