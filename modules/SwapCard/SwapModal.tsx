@@ -24,6 +24,8 @@ type Props = {
   rate: string;
   swapSuccess: () => void;
   slippage: number;
+  fetchBalanceFrom: () => void;
+  fetchBalanceTo: () => void;
 };
 
 function SwapModal({
@@ -37,6 +39,8 @@ function SwapModal({
   rate,
   swapSuccess,
   slippage,
+  fetchBalanceFrom,
+  fetchBalanceTo,
 }: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
@@ -48,6 +52,12 @@ function SwapModal({
     args: [account!, contractAddr!.contract],
     enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
+
+  const handleRefetchs  = () => {
+    refetch();
+    fetchBalanceFrom();
+    fetchBalanceTo();
+  };
 
 
   const bigAmountA = useMemo(() => {
@@ -163,21 +173,22 @@ function SwapModal({
           </div>
         </div>
         {!tokenA.isNative && (!allowance || allowance < bigAmountA)  ? (
-          <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={refetch} />
+          <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={handleRefetchs} />
         ) : (
           <SwapButton
             swapParam={{
               poolAddress: pool,
               tokenIn: tokenA.wrapped.address,
               tokenOut: tokenB.wrapped.address,
-              amountIn: bigAmountA,
-              amountOutMin: bigAmountB,
+              amountIn: bigAmountA - BigInt("1000000"),
+              amountOutMin: bigAmountB ,
               swapType: swapType,
               fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
             tokenOut={tokenB}
+
           />
         )}
       </div>

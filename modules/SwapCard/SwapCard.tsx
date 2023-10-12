@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
@@ -52,7 +52,7 @@ const SwapCard: React.FC<Props> = () => {
 
   const { chain, chains } = useNetwork()
 
-  const { data: balanceFrom, isLoading: isLoadingBalanceFrom } = useBalance({
+  const { data: balanceFrom, isLoading: isLoadingBalanceFrom, refetch: fetchBalanceFrom } = useBalance({
     address: address,
     ...(!tokenFrom?.isNative && {
       token: tokenFrom?.wrapped.address,
@@ -61,7 +61,7 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenFrom,
   });
 
-  const { data: balanceTo, isLoading: isLoadingBalanceTo } = useBalance({
+  const { data: balanceTo, isLoading: isLoadingBalanceTo,  refetch: fetchBalanceTo } = useBalance({
     address: address,
     ...(!tokenTo?.isNative && {
       token: tokenTo?.wrapped.address,
@@ -91,6 +91,13 @@ const SwapCard: React.FC<Props> = () => {
         enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
       }
   );
+
+  useEffect(() => {
+
+    fetchBalanceFrom();
+    fetchBalanceTo();
+
+  }, [chain,address, tokenFrom, tokenTo, isConnected, contractAddr, dexType, slippage, isChangeFrom, rate, swapAmount, receiveAmount, balanceFrom, balanceTo]);
 
   const handleINChange = (e: any) => {
     if (
@@ -298,16 +305,20 @@ const SwapCard: React.FC<Props> = () => {
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={+swapAmount}
-          amountB={Number(receiveAmount).toFixed(5)}
+          amountB={receiveAmount}
           swapType={dexType}
           swapSuccess={() => {
             setSwapAmount("0");
             setReceiveAmount("0");
             setIsSwapModalOpen(false);
+            fetchBalanceFrom();
+            fetchBalanceTo();
           }}
           rate={Number(rate).toFixed(4)}
           onCloseModal={() => setIsSwapModalOpen(false)}
           slippage={slippage}
+          fetchBalanceFrom={fetchBalanceFrom}
+          fetchBalanceTo={fetchBalanceTo}
         />
       ) : null}
     </div>

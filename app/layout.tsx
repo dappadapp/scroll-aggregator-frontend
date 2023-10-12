@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
              rounded-full`}
               ></div> */}
             </div>
-            <ToastContainer position="top-right" theme="dark" />
+            <ToastContainer position="top-right" theme="dark"  />
           </div>
         </Providers>
       </body>

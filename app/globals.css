@@ -50,3 +50,13 @@ input[type="number"] {
   border-radius: 25px;
   margin-right: 10px;
 }
+
+.Toastify__toast-container {
+  font-size: 15px; /* Set your desired font size here */
+  font-weight: 300;
+  font-family: 'Spartan', sans-serif;
+}
+
+.Toastify__toast {
+  padding: 10px; /* Adjust the padding to change the size */
+}
