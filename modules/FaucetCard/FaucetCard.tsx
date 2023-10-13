@@ -3,6 +3,7 @@ import { BigNumber, ethers } from "ethers";
 import { ClipLoader } from "react-spinners";
 import Select from "react-select";
 
+import ReCaptcha from "./ReCaptcha";
 import queryString from "query-string";
 import axios, { AxiosResponse } from "axios";
 import { useAccount } from "wagmi";
@@ -18,6 +19,7 @@ const FaucetCard = (props: any) => {
   const [chain, setChain] = useState<number | null>(null);
   const [token, setToken] = useState<number | null>(null);
   const [widgetID, setwidgetID] = useState(new Map());
+  const [recaptcha, setRecaptcha] = useState<ReCaptcha | undefined>(undefined);
   const [isV2, setIsV2] = useState<boolean>(false);
   const [chainConfigs, setChainConfigs] = useState<any>([]);
   const [inputAddress, setInputAddress] = useState<string>("");
@@ -43,6 +45,14 @@ const FaucetCard = (props: any) => {
 
   // Update chain configs
   useEffect(() => {
+    setRecaptcha(
+      new ReCaptcha(
+        props.config.SITE_KEY,
+        props.config.ACTION,
+        props.config.V2_SITE_KEY,
+        setwidgetID
+      )
+    );
     updateChainConfigs();
   }, []);
 
@@ -285,6 +295,13 @@ const FaucetCard = (props: any) => {
     }
   }
 
+  async function getCaptchaToken(
+    index: number = 0
+  ): Promise<{ token?: string; v2Token?: string }> {
+    const { token, v2Token } = await recaptcha!.getToken(isV2, widgetID, index);
+    return { token, v2Token };
+  }
+
   function updateChain(option: any): void {
     let chainNum: number = option.value;
 
@@ -303,17 +320,28 @@ const FaucetCard = (props: any) => {
     }
   }
 
+  const ifCaptchaFailed = (data: any, index: number = 0, reload: boolean = false) => {
+    if (typeof data?.message == "string") {
+      if (data.message.includes("Captcha verification failed")) {
+        setIsV2(true);
+        recaptcha?.loadV2Captcha(props.config.V2_SITE_KEY, widgetID, index, reload);
+      }
+    }
+  };
+
   async function sendToken(): Promise<void> {
     let data: any;
     try {
       setIsLoading(true);
+
+      const { token, v2Token } = await getCaptchaToken();
 
       let { chain, erc20 } = getChainParams();
       console.log(address);
       const response = await axios.post("/api/faucet", {
         address,
         token,
-        v2Token: "",
+        v2Token,
         chain,
         erc20,
       });
@@ -425,7 +453,13 @@ const FaucetCard = (props: any) => {
     </div>
   );
 
+  const resetRecaptcha = (): void => {
+    setIsV2(false);
+    recaptcha!.resetV2Captcha(widgetID);
+  };
+
   const back = (): void => {
+    //resetRecaptcha()
     setSendTokenResponse({
       txHash: null,
       message: null,
@@ -496,6 +530,8 @@ const FaucetCard = (props: any) => {
           <span className="rate-limit-text" style={{ color: "red" }}>
             {sendTokenResponse?.message}
           </span>
+
+        
 
           <div className="text-[#ff5252] text-sm text-center rounded mt-5">
             <p>This is a testnet faucet. Funds are not real.</p>
