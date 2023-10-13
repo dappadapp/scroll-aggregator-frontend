@@ -2,7 +2,7 @@ import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
-import _, { set } from "lodash";
+import _, { get, set } from "lodash";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -96,8 +96,16 @@ const SwapCard: React.FC<Props> = () => {
 
     fetchBalanceFrom();
     fetchBalanceTo();
+  
 
   }, [chain,address, tokenFrom, tokenTo, isConnected, contractAddr, dexType, slippage, isChangeFrom, rate, swapAmount, receiveAmount, balanceFrom, balanceTo]);
+
+  useEffect(() => {
+    getCurrentRate();
+  }, [tokenFrom]);
+
+
+
 
   const handleINChange = (e: any) => {
     if (
@@ -137,7 +145,6 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "IN",
         });
-
        
         setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
@@ -154,7 +161,7 @@ const SwapCard: React.FC<Props> = () => {
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
     )return;
     getCurrentRate();
-  }, [swapAmount, tokenFrom, tokenFrom]);
+  }, [swapAmount, tokenFrom, tokenTo]);
 
   useEffect(() => {
     if (isChangeFrom) return;
