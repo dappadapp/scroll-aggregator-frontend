@@ -4,7 +4,7 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  background: #12141A;
+  background: #12141a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,7 +17,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #12141A;
+  background: #12141a;
 }
 .bg-connect_wallet {
   background: linear-gradient(180deg, #ff7a00 0%, #ff5c00 100%);
@@ -54,9 +54,20 @@ input[type="number"] {
 .Toastify__toast-container {
   font-size: 15px; /* Set your desired font size here */
   font-weight: 300;
-  font-family: 'Spartan', sans-serif;
+  font-family: "Spartan", sans-serif;
 }
 
 .Toastify__toast {
   padding: 10px; /* Adjust the padding to change the size */
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 231, 221, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 231, 221, 0.3);
 }

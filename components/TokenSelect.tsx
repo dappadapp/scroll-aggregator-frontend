@@ -55,9 +55,7 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
 };
 
 const defaultOptionRenderer = (option: Currency, selected: any) => (
-  <div
-    className={`flex items-center gap-2 p-1 hover:bg-gray-700 hover:text-blue-500 rounded-lg`}
-  >
+  <div className={`flex items-center gap-2 p-1 hover:bg-gray-800/60  rounded-lg`}>
     <CurrencyLogo currency={option} />
     <span className="block truncate text-xs md:text-base font-medium">
       {option.symbol}
