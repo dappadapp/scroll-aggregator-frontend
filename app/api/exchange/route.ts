@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       id: "uniswap",
       router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
       abi: quoter.abi, // Replace with the actual ABI
-      fee: 1000,
+      fee: 3000,
       inFunction: "quoteExactInputSingle",
       outFunction: "quoteExactOutputSingle",
       async runOutFunction(amount: any, from: any, to: any) {
@@ -105,7 +105,7 @@ export async function POST(request: Request) {
           IziSwapQuoterAbi,
           provider
         );
-        
+
         const { acquire, } = await contract.callStatic.swapAmount(parseUnits(amount, 18), generatePath(from, to, this.fee));
         return BigInt(acquire);
       },
@@ -137,29 +137,7 @@ export async function POST(request: Request) {
         console.log("error " + e);
       }
     }
-
-    /*
-                if type is IN,
-                 sort by outAmount
-                            GET BIGGER
-    
-                if type is OUT,
-                    sort by inAmount
-                            GET BIGGER
-    
-         */
-
-                            if (type === "IN") {
-                              temp.sort((a, b) => {
-                                return a.amount < b.amount ? -1 : a.amount > b.amount ? 1 : 0;
-                              });
-                            } else if (type === "OUT") {
-                              temp.sort((a, b) => {
-                                return a.amount < b.amount ? 1 : a.amount > b.amount ? -1 : 0;
-                              });
-                            }
-                            
-
+    temp.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
     return temp[0];
   }
 
