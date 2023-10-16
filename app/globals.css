@@ -72,7 +72,10 @@ input[type="number"] {
   background: rgba(255, 231, 221, 0.3);
 }
 
-.grecaptcha-badge
-{
+.grecaptcha-badge {
   display: none !important;
+}
+.css-ri3c30-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }

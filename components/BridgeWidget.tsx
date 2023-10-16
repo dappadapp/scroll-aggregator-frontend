@@ -25,21 +25,30 @@ export const Widget = () => {
         minWidth: isMobile() ? "300px" : "375px",
         padding: "10px",
       },
-
+      languages: {
+        default: "en",
+        allow: ["en"],
+      },
+      appearance: "dark",
+      hiddenUI: ["appearance"],
       theme: {
         palette: {
+          text: {
+            primary: "rgba(255, 255, 255, 1)",
+            secondary: "rgba(255, 255, 255, 1)",
+          },
           primary: { main: "rgba(255, 255, 255, 0.1)" },
           secondary: { main: "#F5B5FF" },
           background: {
             paper: "rgba(255, 255, 255, 0.01)",
             default: "rgba(255, 255, 255, 0.01)", // bg color container
           },
-          color: "white",
           grey: {
             300: "rgba(255,255,255,0.10)", // border light theme
             800: "rgba(255,255,255,0.10)", // border dark theme
           },
         },
+
         shape: {
           borderRadius: 0,
           borderColor: "white",
