@@ -1,95 +1,112 @@
-import { Fragment, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Listbox, Transition } from "@headlessui/react";
 
 type Props = {
   value: any;
-  flexReverse?: boolean;
+  className?: string;
+  dropdownClassName?: string;
   onChange: (value: any) => void;
   options: any[];
-  optionRenderer?: (option: any, selected: boolean) => JSX.Element;
+  optionRenderer: (option: any, selected: boolean) => JSX.Element;
+  onSearch?: (key: string) => void;
+  children: JSX.Element;
 };
 
 const DropdownSelect = ({
   value,
+  className = "",
+  dropdownClassName = "",
   onChange,
-  flexReverse = false,
   options,
-  optionRenderer = defaultOptionRenderer,
+  optionRenderer,
+  onSearch,
+  children,
 }: Props) => {
-  const [searchValue, setSearchValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    // Attach the event listener when the component mounts
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="relative md:max-w-[120px] w-full">
-        <Listbox.Button
-          className={`${
-            !flexReverse ? "flex-row" : "flex-row-reverse"
-          } flex items-center justify-between relative w-full cursor-pointer rounded-lg bg-white bg-opacity-5 p-2 break-words overflow-hidden text-left text-lg focus:outline-none`}
+      <div className="static inline-block lg:max-w-none" ref={dropdownRef}>
+        <div
+          className={`${className} static cursor-pointer bg-gray-800/60 rounded-lg focus:outline-none`}
+          onClick={toggleDropdown}
         >
-          <div className="flex items-center gap-2">
-            <Image
-              src={`/chains/${value.image}`}
-              alt={value.name}
-              width={25}
-              height={25}
-              className="rounded-full w-4 h-4 md:w-6 md:h-6"
-            />
-            <span className="block md:max-w-[80px] truncate text-xs md:text-base font-medium">
-              {value.name}
-            </span>
+          <div className="flex items-center justify-between p-2">
+            <div className="text-sm lg:text-lg">{children}</div>
+            <FontAwesomeIcon icon={faAngleDown} className="ml-2" />
           </div>
-          <span className="pointer-events-none inset-y-0 flex items-center">
-            <FontAwesomeIcon icon={faAngleDown} />
-          </span>
-        </Listbox.Button>
+        </div>
         <Transition
-          as={Fragment}
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          show={isOpen}
+          enter="transition ease-out duration-200 transform"
+          enterFrom="opacity-0 scale-0"
+          enterTo="opacity-100 scale-100"
+          leave="transition ease-in duration-150 transform"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-0"
         >
-          <Listbox.Options className="absolute mt-1 z-20  flex flex-col items-center max-h-60 w-full overflow-auto rounded-md bg-[#202020] backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="my-1 w-5/6 px-1 py-1 text-xs md:text-base rounded-md bg-gray-700"
-              placeholder="Search"
-            />
-            {options.map((option, i) => (
-              <Listbox.Option
-                key={i}
-                className={({ active }) =>
-                  `relative cursor-pointer text-[#CACACA] select-none w-full p-2 ${
-                    active ? "bg-[#2B2B2B]" : ""
-                  }`
-                }
-                value={option}
-              >
-                {(props) => optionRenderer(option, props.selected)}
-              </Listbox.Option>
-            ))}
-          </Listbox.Options>
+          <div
+            className={` ${className} ${dropdownClassName} absolute right-0 top-full mt-2 w-64 max-h-60 overflow-y-auto rounded-md bg-[#12141A]/80 backdrop-blur-md text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+          >
+            {onSearch && (
+              <div className="p-2">
+                <div className="relative">
+                  <input
+                    type="text"
+                    onChange={(e) => onSearch(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-100 rounded-md bg-gray-800/60 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                    placeholder="Search"
+                  />
+                  <FontAwesomeIcon
+                    icon={faSearch}
+                    className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
+                  />
+                </div>
+              </div>
+            )}
+            <ul className="list-none sticky">
+              {options.map((option, i) => (
+                <Listbox.Option
+                  key={i}
+                  className={({ active }) =>
+                    `cursor-pointer select-none w-full p-2 ${
+                      value === option ? "bg-gray-800/60 p-2" : ""
+                    }`
+                  }
+                  value={option}
+                >
+                  {(props) => optionRenderer(option, props.selected)}
+                </Listbox.Option>
+              ))}
+            </ul>
+          </div>
         </Transition>
       </div>
     </Listbox>
   );
 };
 
-const defaultOptionRenderer = (option: any, selected: any) => (
-  <div
-    className={`flex items-center gap-2 p-1 ${selected ? "bg-[#2B2B2B] rounded-lg" : ""}`}
-  >
-    <Image
-      src={`/chains/${option.image}`}
-      alt={option.name}
-      width={25}
-      height={25}
-      className="rounded-full w-4 h-4 md:w-6 md:h-6"
-    />
-    <span className="block truncate text-xs md:text-base font-medium">{option.name}</span>
-  </div>
-);
 export default DropdownSelect;

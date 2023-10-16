@@ -1,17 +1,11 @@
-import Image from "next/image";
 import React from "react";
-import logo from "@/assets/images/zetagateLogo.svg";
+import LogoSvg from "@/assets/images/logo-aggre.svg";
+import Image from "next/image";
 
 const Logo = () => {
   return (
-    <div className="flex flex-col items-start select-none">
-      <Image
-        src={logo}
-        alt="aggregator-logo"
-        className="w-11 h-8"
-        width={42}
-        height={33}
-      />
+    <div className="select-none">
+      <LogoSvg alt="Aggregator" width={200} height={100} />
     </div>
   );
 };

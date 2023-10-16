@@ -4,8 +4,7 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  background: #12141a;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,8 +17,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb)))
-    rgb(var(--background-start-rgb));
+  background: #12141a;
 }
 .bg-connect_wallet {
   background: linear-gradient(180deg, #ff7a00 0%, #ff5c00 100%);
@@ -37,4 +35,47 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+.MuiBox-root {
+  height: auto !important;
+}
+.select-dropdown {
+  display: flex;
+  align-items: center;
+}
+
+.select-dropdown > img {
+  width: 25px;
+  height: 25px;
+  border-radius: 25px;
+  margin-right: 10px;
+}
+
+.Toastify__toast-container {
+  font-size: 15px; /* Set your desired font size here */
+  font-weight: 300;
+  font-family: "Spartan", sans-serif;
+}
+
+.Toastify__toast {
+  padding: 10px; /* Adjust the padding to change the size */
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 231, 221, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 231, 221, 0.3);
+}
+
+.grecaptcha-badge {
+  display: none !important;
+}
+.css-ri3c30-MuiPaper-root-MuiPopover-paper-MuiMenu-paper {
+  background-image: none !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
 }
