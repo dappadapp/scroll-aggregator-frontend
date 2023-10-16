@@ -12,7 +12,7 @@ import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
 import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 import { fetchFeeData } from "@wagmi/core";
-import { useNetwork } from 'wagmi'
+import { useNetwork } from "wagmi";
 type Props = {
   onCloseModal: () => void;
   pool: string;
@@ -53,12 +53,11 @@ function SwapModal({
     enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
 
-  const handleRefetchs  = () => {
+  const handleRefetchs = () => {
     refetch();
     fetchBalanceFrom();
     fetchBalanceTo();
   };
-
 
   const bigAmountA = useMemo(() => {
     return parseUnits(amountA?.toString(), tokenA?.decimals);
@@ -92,11 +91,11 @@ function SwapModal({
     >
       <div
         className={
-          "p-8 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-white bg-opacity-[4%] border-white border-[2px] rounded-lg border-opacity-10"
+          "p-8 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
-        <h1 className="text-2xl md:text-3xl mb-5">Review swap details</h1>
+          <h1 className="text-2xl md:text-3xl mb-5">Review swap details</h1>
 
           <div
             onClick={() => onCloseModal()}
@@ -145,35 +144,38 @@ function SwapModal({
           </span>
         </div>
 
-        <div className="my-10 text-xl md:text-lg flex flex-col gap-2">
-
+        <div className="my-10 text-base md:text-lg flex flex-col gap-2">
           {/**
              <div className="flex justify-between">
             <span>Gas Fee</span>
-            <span>{fee} ETH</span>
+            <span>{fee} ETH</span className="text-right">
           </div>
            */}
 
           <div className="flex justify-between">
             <span>Minimum Receive</span>
-            <span>
+            <span className="text-right">
               {" "}
               {(+amountB - (+amountB * slippage) / 100).toFixed(4)} {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Slippage tolerance</span>
+            <span className="text-right">Slippage tolerance</span>
             <span>{slippage}%</span>
           </div>
           <div className="flex justify-between">
             <span>Current Rate</span>
-            <span>
+            <span className="text-right">
               1 ETH = {rate} {tokenB?.symbol}
             </span>
           </div>
         </div>
-        {!tokenA.isNative && (!allowance || allowance < bigAmountA)  ? (
-          <AllowButton tokenIn={tokenA} amountIn={bigAmountA} onSuccess={handleRefetchs} />
+        {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
+          <AllowButton
+            tokenIn={tokenA}
+            amountIn={bigAmountA}
+            onSuccess={handleRefetchs}
+          />
         ) : (
           <SwapButton
             swapParam={{
@@ -181,14 +183,13 @@ function SwapModal({
               tokenIn: tokenA.wrapped.address,
               tokenOut: tokenB.wrapped.address,
               amountIn: bigAmountA - BigInt("1000000"),
-              amountOutMin: bigAmountB ,
+              amountOutMin: bigAmountB,
               swapType: swapType,
               fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
             tokenOut={tokenB}
-
           />
         )}
       </div>

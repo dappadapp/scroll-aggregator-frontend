@@ -1,6 +1,6 @@
 import Providers from "@/provider/Providers";
 import type { Metadata } from "next";
-import { Orbitron, Raleway, Montserrat,League_Spartan } from "next/font/google";
+import { Orbitron, Raleway, Montserrat, League_Spartan } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-svg-core/styles.css";
@@ -26,11 +26,16 @@ const monteserrat = Montserrat({
   weight: "500",
 });
 
-const spartan =  League_Spartan({ subsets: ["latin"], variable: "--font-spartan", style: "normal",  });
+const spartan = League_Spartan({
+  subsets: ["latin"],
+  variable: "--font-spartan",
+  style: "normal",
+});
 
 export const metadata = {
   title: "aggre! | Scroll DEX Aggregator",
-  description: "Discover the future of decentralized trading with Aggre, your one-stop DEX aggregator at Scroll Network. Seamlessly scroll through diverse decentralized exchanges, finding the best prices and liquidity. Trade with confidence, all in one place",
+  description:
+    "Discover the future of decentralized trading with Aggre, your one-stop DEX aggregator at Scroll Network. Seamlessly scroll through diverse decentralized exchanges, finding the best prices and liquidity. Trade with confidence, all in one place",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -59,16 +64,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     });
         `}
         </Script>
-        <script type="text/javascript" src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg" async={true}></script>
+        <script
+          type="text/javascript"
+          src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg"
+          async={true}
+        ></script>
       </head>
-      <body className={`${spartan.variable} ${spartan.className} tracking-wider text-[20px]`}>
+      <body
+        className={`${spartan.variable} ${spartan.className} tracking-wider text-[20px]`}
+      >
         <Providers>
-          <div
-            className={"relative w-full min-h-screen overflow-x-hidden"}
-          >
+          <div className={"relative w-full min-h-screen overflow-x-hidden"}>
             <div
               className={
-                "container mx-auto px-3 pt-2 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-between flex-col"
+                "container mx-auto px-3 pt-6 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-between flex-col"
               }
             >
               <Navbar />
@@ -90,7 +99,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
              rounded-full`}
               ></div> */}
             </div>
-            <ToastContainer position="top-right" theme="dark"  />
+            <ToastContainer position="top-right" theme="dark" />
           </div>
         </Providers>
       </body>

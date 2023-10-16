@@ -339,7 +339,7 @@ const SwapCard: React.FC<Props> = () => {
                 (!tokenFrom || !tokenTo || !swapAmount) &&
                 chain?.id === 534351
               }
-              className="w-full p-4 rounded-lg text-xl font-semibold mt-4"
+              className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
               onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
             >
               {isConnected ? "SWAP" : "Connect Wallet"}
