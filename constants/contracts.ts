@@ -34,6 +34,7 @@ export const aggregator : {
     }
   }    
 } = {
+  
   [ChainId.SCROLL_SEPOLIA]: {
     contract: "0xCA3c42f9D37e7b1481fb61e83798d0778Af77c84",
     spacefi: {
