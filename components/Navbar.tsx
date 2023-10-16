@@ -18,6 +18,11 @@ const menuItems = [
     href: "/",
   },
   {
+    title: "Bridge",
+    href: "/bridge",
+    type: "mobile",
+  },
+  {
     title: "Dao",
     href: "/",
   },
@@ -49,7 +54,7 @@ const Navbar: React.FC<Props> = (props) => {
         className={`flex items-center gap-2 transition-all hover:text-white ${
           path === menuItem.href
             ? "[&>svg]:fill-[#3AFF4242] text-white"
-            : "[&>svg]:fill-slate-500 text-slate-500"
+            : "[&>svg]:fill-[#3AFF4242] text-white"
         }`}
         key={`menu-item-${menuItem.href}`}
         onClick={() => setMenuOpen(false)}
@@ -58,21 +63,23 @@ const Navbar: React.FC<Props> = (props) => {
       </Link>
     );
   });
-  const menuDesktop = menuItems.map((menuItem) => {
-    return (
-      <Link
-        href={menuItem.href || ""}
-        className={` ${
-          path === menuItem.href
-            ? "cursor-not-allowed"
-            : "cursor-pointer  hover:bg-opacity-40 hover:bg-slate-100"
-        } flex  items-center  transition-all gap-2 p-3 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
-        key={`menu-item-${menuItem.title}`}
-      >
-        {menuItem.title}
-      </Link>
-    );
-  });
+  const menuDesktop = menuItems
+    .filter((item) => item.type !== "mobile")
+    .map((menuItem) => {
+      return (
+        <Link
+          href={menuItem.href || ""}
+          className={` ${
+            path === menuItem.href
+              ? "cursor-not-allowed"
+              : "cursor-pointer  hover:bg-opacity-40 hover:bg-slate-100"
+          } flex  items-center  transition-all gap-2 mt-6 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
+          key={`menu-item-${menuItem.title}`}
+        >
+          {menuItem.title}
+        </Link>
+      );
+    });
   return (
     <div className="flex flex-row items-center justify-between w-full">
       <div

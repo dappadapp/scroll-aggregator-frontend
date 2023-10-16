@@ -9,7 +9,7 @@ function CardNavbar() {
   return (
     <div
       className={
-        "hidden lg:flex gap-5 lg:text-base text-xs items-baseline text-[#FFF0DD] "
+        "hidden lg:flex justify-start gap-5 lg:text-4xl text-xs items-baseline text-[#FFF0DD] "
       }
     >
       <Link
@@ -21,16 +21,6 @@ function CardNavbar() {
         }`}
       >
         Swap
-      </Link>
-      <Link
-        href={"/faucet"}
-        className={`transition-all ${
-          path !== "/faucet"
-            ? "text-[#FFF0DD]/[0.24]"
-            : "text-[#FFF0DD] border-[#FF7C5C] border-b "
-        }`}
-      >
-        Faucet
       </Link>
       <Link
         href={"/bridge"}

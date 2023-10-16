@@ -21,19 +21,25 @@ const Input: React.FC<Props> = ({
   onKeyDown,
   loading,
 }) => {
+  const preventNegativeValues = (e: any) =>
+    ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
   return !loading ? (
     <input
       onChange={onChange}
-      onKeyDown={onKeyDown}
+      onKeyDown={(e) => {
+        preventNegativeValues(e);
+        onKeyDown!(e);
+      }}
+      min={type === "number" ? 0 : undefined}
       value={value}
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-[64px] bg-transparent tracking-wide`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-md lg:text-[64px] bg-transparent  placeholder:text-base placeholder:lg:text-3xl tracking-wide`}
     />
   ) : (
     <div
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 bg-slate-200 bg-opacity-25 h-[80px] text-[64px] mt-2 tracking-wide animate-pulse`}
+      className={`${className} rounded-lg ml-2 w-full focus:outline-0 bg-slate-200 bg-opacity-25 h-[60px] lg:h-[80px] text-[64px] lg:mt-2 tracking-wide animate-pulse`}
     ></div>
   );
 };

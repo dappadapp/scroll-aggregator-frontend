@@ -69,7 +69,7 @@ const DropdownSelect = ({
           leaveTo="opacity-0 scale-0"
         >
           <div
-            className={` ${className} ${dropdownClassName} absolute right-0 top-full mt-2 w-64 max-h-60 overflow-y-auto rounded-md bg-[#12141A]/80 backdrop-blur-md text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+            className={` ${className} ${dropdownClassName}  absolute right-0 top-full z-10 mt-2 w-44 lg:w-64 max-h-60 overflow-y-auto rounded-md bg-[#12141A]/80 backdrop-blur-md text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
           >
             {onSearch && (
               <div className="p-2">

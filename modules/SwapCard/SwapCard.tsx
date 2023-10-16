@@ -247,10 +247,10 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[600px] p-8 gap-2 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[600px] p-2 lg:p-8 gap-2 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
-          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
+          <div className="w-full flex flex-col lg:z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex justify-between items-center space-x-2 mt-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (
@@ -260,14 +260,23 @@ const SwapCard: React.FC<Props> = () => {
               )}
             </div>
             <div className="rounded-lg flex w-full flex-col gap-4 mb-4 ">
-              <div className="flex justify-between gap-8 items-center">
+              <div className="flex justify-between z-[6] lg:gap-8 items-center">
                 <TokenSelect
                   onChange={setTokenFrom}
                   className="flex-1"
                   token={tokenFrom}
                 />
                 <Input
-                  onChange={(e) => handleINChange(e)}
+                  onChange={(e) => {
+                    let val = parseInt(e.target.value, 10);
+                    if (isNaN(val)) {
+                      setSwapAmount("");
+                    } else {
+                      // is A Number
+                      val = val >= 0 ? val : 0;
+                      handleINChange(e);
+                    }
+                  }}
                   onKeyDown={onKeyDownSwapAmount}
                   value={swapAmount}
                   type="number"
@@ -291,7 +300,7 @@ const SwapCard: React.FC<Props> = () => {
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-20 h-20 p-4 my-5 z-[2] absolute left-[43%] top-[40%] cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
+            className="w-16 h-16 lg:w-20 lg:h-20 p-4 lg:-my-6 lg:z-[2] cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
           >
             <Image
               src={"/change-icon.svg"}
@@ -301,7 +310,7 @@ const SwapCard: React.FC<Props> = () => {
               alt="change-icon"
             />
           </button>
-          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
+          <div className="w-full flex flex-col lgz-[1] bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex justify-between items-center space-x-2 mt-4">
               <span className="text-[#FFF0DD]">You Buy</span>
               {balanceTo && (
@@ -311,7 +320,7 @@ const SwapCard: React.FC<Props> = () => {
               )}
             </div>
 
-            <div className="flex w-full gap-8 justify-between items-center">
+            <div className="flex w-full lg:gap-8 justify-between items-center">
               <TokenSelect onChange={setTokenTo} token={tokenTo} />
               <Input
                 onChange={(e) => handleOUTChange(e)}
