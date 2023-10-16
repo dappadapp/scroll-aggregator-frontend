@@ -14,16 +14,20 @@ const ConnectButton: any = dynamic(() => import("./ConnectButton"), {
 
 const menuItems = [
   {
-    title: "Swap",
+    title: "Trade",
     href: "/",
   },
   {
-    title: "Faucet",
-    href: "/faucet",
+    title: "Dao",
+    href: "/",
   },
   {
-    title: "Bridge",
-    href: "/bridge",
+    title: "Earn",
+    href: "/",
+  },
+  {
+    title: "Buy Crypto",
+    href: "/",
   },
   // {
   //   title: "Stats",
@@ -54,18 +58,35 @@ const Navbar: React.FC<Props> = (props) => {
       </Link>
     );
   });
-
+  const menuDesktop = menuItems.map((menuItem) => {
+    return (
+      <Link
+        href={menuItem.href || ""}
+        className={` ${
+          path === menuItem.href
+            ? "cursor-not-allowed"
+            : "cursor-pointer  hover:bg-opacity-40 hover:bg-slate-100"
+        } flex  items-center  transition-all gap-2 p-3 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
+        key={`menu-item-${menuItem.title}`}
+      >
+        {menuItem.title}
+      </Link>
+    );
+  });
   return (
     <div className="flex flex-row items-center justify-between w-full">
       <div
         className={
-          "w-full hidden lg:flex flex-row items-center justify-between mt-2 lg:mt-2 gap-2"
+          "w-full hidden lg:flex flex-row lg:mb-10 items-center justify-between mt-2 lg:mt-5 gap-2"
         }
       >
-        <Link href={"https://aggre.io"}>
-          <ZetaGateLogo />
-        </Link>
-        <div className="flex flex-col-reverse lg:flex-row gap-3">
+        <div className={"hidden lg:flex gap-12 flex-row items-center justify-start"}>
+          <Link href={"https://aggre.io"}>
+            <ZetaGateLogo />
+          </Link>
+          {menuDesktop}
+        </div>
+        <div className="flex flex-col-reverse items-center lg:flex-row gap-3">
           <NetworkSelector />
           <ConnectButton />
         </div>

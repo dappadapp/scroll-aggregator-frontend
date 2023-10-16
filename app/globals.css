@@ -72,7 +72,6 @@ input[type="number"] {
   background: rgba(255, 231, 221, 0.3);
 }
 
-.grecaptcha-badge
-{
+.grecaptcha-badge {
   display: none !important;
 }

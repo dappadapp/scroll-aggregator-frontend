@@ -24,6 +24,8 @@ import { ethers } from "ethers";
 import SlippageButton from "./SlippageButton";
 import axios from "axios";
 import { networks } from "@/constants/networks";
+import { FaWallet } from "react-icons/fa";
+import Image from "next/image";
 
 type Props = {};
 
@@ -50,9 +52,13 @@ const SwapCard: React.FC<Props> = () => {
   const [isLoadingSwapAmount, setIsLoadingSwapAmount] = useState(false);
   const [isLoadingReceiveAmount, setIsLoadingReceiveAmount] = useState(false);
 
-  const { chain, chains } = useNetwork()
+  const { chain, chains } = useNetwork();
 
-  const { data: balanceFrom, isLoading: isLoadingBalanceFrom, refetch: fetchBalanceFrom } = useBalance({
+  const {
+    data: balanceFrom,
+    isLoading: isLoadingBalanceFrom,
+    refetch: fetchBalanceFrom,
+  } = useBalance({
     address: address,
     ...(!tokenFrom?.isNative && {
       token: tokenFrom?.wrapped.address,
@@ -61,7 +67,11 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenFrom,
   });
 
-  const { data: balanceTo, isLoading: isLoadingBalanceTo,  refetch: fetchBalanceTo } = useBalance({
+  const {
+    data: balanceTo,
+    isLoading: isLoadingBalanceTo,
+    refetch: fetchBalanceTo,
+  } = useBalance({
     address: address,
     ...(!tokenTo?.isNative && {
       token: tokenTo?.wrapped.address,
@@ -73,39 +83,48 @@ const SwapCard: React.FC<Props> = () => {
   const { data: poolAddress } = useContractRead(
     dexType === SWAP_TYPE.SPACEFI
       ? {
-        address: contractAddr?.spacefi.poolFactory,
-        abi: SpaceFiPoolFactoryAbi,
-        functionName: "getPair",
-        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
+          address: contractAddr?.spacefi.poolFactory,
+          abi: SpaceFiPoolFactoryAbi,
+          functionName: "getPair",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
       : {
-        address: contractAddr?.uniswap.poolFactory,
-        abi: UniswapPoolFactoryAbi,
-        functionName: "getPool",
-        args: [
-          tokenFrom?.wrapped.address,
-          tokenTo?.wrapped.address,
-          UNISWAP_DEFAULT_FEE,
-        ],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
+          address: contractAddr?.uniswap.poolFactory,
+          abi: UniswapPoolFactoryAbi,
+          functionName: "getPool",
+          args: [
+            tokenFrom?.wrapped.address,
+            tokenTo?.wrapped.address,
+            UNISWAP_DEFAULT_FEE,
+          ],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
   );
 
   useEffect(() => {
-
     fetchBalanceFrom();
     fetchBalanceTo();
-  
-
-  }, [chain,address, tokenFrom, tokenTo, isConnected, contractAddr, dexType, slippage, isChangeFrom, rate, swapAmount, receiveAmount, balanceFrom, balanceTo]);
+  }, [
+    chain,
+    address,
+    tokenFrom,
+    tokenTo,
+    isConnected,
+    contractAddr,
+    dexType,
+    slippage,
+    isChangeFrom,
+    rate,
+    swapAmount,
+    receiveAmount,
+    balanceFrom,
+    balanceTo,
+  ]);
 
   useEffect(() => {
     getCurrentRate();
   }, [tokenFrom]);
-
-
-
 
   const handleINChange = (e: any) => {
     if (
@@ -145,8 +164,14 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "IN",
         });
-       
-        setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
+
+        setDexType(
+          exchangeRate?.data?.dex === "space-fi"
+            ? SWAP_TYPE.SPACEFI
+            : exchangeRate?.data?.dex === "uniswap"
+            ? SWAP_TYPE.UNISWAP
+            : SWAP_TYPE.IZUMI
+        );
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setIsLoadingReceiveAmount(false);
@@ -159,7 +184,8 @@ const SwapCard: React.FC<Props> = () => {
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    )return;
+    )
+      return;
     getCurrentRate();
   }, [swapAmount, tokenFrom, tokenTo]);
 
@@ -180,8 +206,14 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           type: "OUT",
         });
-        setDexType(exchangeRate?.data?.dex === "space-fi" ? SWAP_TYPE.SPACEFI : (exchangeRate?.data?.dex === "uniswap" ? SWAP_TYPE.UNISWAP : SWAP_TYPE.IZUMI));
-        setSwapAmount((ethers.utils.formatUnits(exchangeRate?.data.amount, 18)));
+        setDexType(
+          exchangeRate?.data?.dex === "space-fi"
+            ? SWAP_TYPE.SPACEFI
+            : exchangeRate?.data?.dex === "uniswap"
+            ? SWAP_TYPE.UNISWAP
+            : SWAP_TYPE.IZUMI
+        );
+        setSwapAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
         setIsLoadingSwapAmount(false);
       }
     }, 200);
@@ -215,96 +247,96 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[548px] p-8 gap-2 flex shadow-sm shadow-[#FFE7DD] flex-col relative border-r border-white/10 bg-white/[.01] rounded-xl mx-auto my-4">
+    <div className="w-full max-w-[600px] p-8 gap-2 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="text-white font-semibold text-xl lg:text-3xl">SWAP</h1>
-          <div className="flex">
-            <SlippageButton
-              onChangeSlippage={(slippageValue: number) => setSlippage(slippageValue)}
-              slippage={slippage}
-            />
-            {/* <Button className="p-3 w-12 h-12 rounded-lg">
-              <IconRefresh />
-            </Button> */}
-          </div>
-        </div>
         <div className="relative w-full flex flex-col">
-          <div className="flex justify-between items-center space-x-2 mt-4">
-            <span className="text-white/80">from</span>
-            {balanceFrom && (
-              <div className="text-right text-lg">
-                {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
-              </div>
-            )}
-          </div>
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4 mb-4  z-[2]">
-            <div className="flex gap-4 ">
-              <div className="w-full">
+          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
+            <div className="flex justify-between items-center space-x-2 mt-4">
+              <span className="text-[#FFF0DD]">You Sell</span>
+              {balanceFrom && (
+                <div className="text-right text-lg">
+                  {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
+                </div>
+              )}
+            </div>
+            <div className="rounded-lg flex w-full flex-col gap-4 mb-4 ">
+              <div className="flex justify-between gap-8 items-center">
+                <TokenSelect
+                  onChange={setTokenFrom}
+                  className="flex-1"
+                  token={tokenFrom}
+                />
                 <Input
                   onChange={(e) => handleINChange(e)}
                   onKeyDown={onKeyDownSwapAmount}
-                  value={(swapAmount)}
+                  value={swapAmount}
                   type="number"
                   loading={isLoadingSwapAmount}
                   placeholder="Enter Amount"
-                  className="w-full crosschainswap-input h-10" // Increase the height here
+                  className="w-full crosschainswap-input text-end" // Increase the height here
                 />
               </div>
-              <TokenSelect onChange={setTokenFrom} token={tokenFrom} />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {percentageButtons.map((val, index) => (
-                <Button
-                  className="font-monteserrat text-sm"
-                  key={"perc-button-" + index}
-                  onClick={() => handleClickInputPercent(val)}
-                >
-                  {val}%
-                </Button>
-              ))}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {percentageButtons.map((val, index) => (
+                  <Button
+                    className="font-monteserrat text-sm"
+                    key={"perc-button-" + index}
+                    onClick={() => handleClickInputPercent(val)}
+                  >
+                    {val}%
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
           <button
             onClick={handleSwitchToken}
-            className="w-10 h-10 p-2 my-5 cursor-pointer mt-5 mb-5 mx-auto rounded-lg text-white flex items-center justify-center bg-white/[.04] hover:bg-opacity-40 transition-all"
+            className="w-20 h-20 p-4 my-5 z-[2] absolute left-[43%] top-[40%] cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
           >
-            <FontAwesomeIcon icon={faArrowsUpDown} className="h-6 text-white opacity-80  z-[1]" />
+            <Image
+              src={"/change-icon.svg"}
+              width={24}
+              height={24}
+              className="h-6 w-6"
+              alt="change-icon"
+            />
           </button>
-          <div className="flex justify-between items-center space-x-2 mt-4">
-            <span className="text-white opacity-80">to</span>
-            {balanceTo && (
-              <div className="text-right text-lg">
-                {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
-              </div>
-            )}
-          </div>
-
-          <div className="rounded-lg p-4 flex w-full flex-col -mb-1 bg-white/[.04] gap-4">
-            <div className="flex gap-4">
-              <div className="w-full">
-                <Input
-                  onChange={(e) => handleOUTChange(e)}
-                  onKeyDown={onKeyDownReceiveAmount}
-                  value={ receiveAmount}
-                  type="number"
-                  loading={isLoadingReceiveAmount}
-                  placeholder="Receive Amount"
-                  className="crosschainswap-input w-full"
-                />
-              </div>
-              <TokenSelect onChange={setTokenTo} token={tokenTo} />
+          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
+            <div className="flex justify-between items-center space-x-2 mt-4">
+              <span className="text-[#FFF0DD]">You Buy</span>
+              {balanceTo && (
+                <div className="text-right text-lg">
+                  {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
+                </div>
+              )}
             </div>
+
+            <div className="flex w-full gap-8 justify-between items-center">
+              <TokenSelect onChange={setTokenTo} token={tokenTo} />
+              <Input
+                onChange={(e) => handleOUTChange(e)}
+                onKeyDown={onKeyDownReceiveAmount}
+                value={receiveAmount}
+                type="number"
+                loading={isLoadingReceiveAmount}
+                placeholder="Receive Amount"
+                className="crosschainswap-input w-full text-end"
+              />
+            </div>
+            <Button
+              variant="bordered"
+              disabled={
+                isConnected &&
+                (!tokenFrom || !tokenTo || !swapAmount) &&
+                chain?.id === 534351
+              }
+              className="w-full p-4 rounded-lg text-xl font-semibold mt-4"
+              onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
+            >
+              {isConnected ? "SWAP" : "Connect Wallet"}
+            </Button>
           </div>
         </div>
-        <Button
-          variant="bordered"
-          disabled={isConnected && (!tokenFrom || !tokenTo || !swapAmount) && chain?.id === 534351}
-          className="w-full p-4 rounded-lg text-xl font-semibold mt-4"
-          onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
-        >
-          {isConnected ? "SWAP" : "CONNECT WALLET"}
-        </Button>
       </div>
       {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534351 ? (
         <SwapModal

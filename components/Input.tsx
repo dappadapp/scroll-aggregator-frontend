@@ -29,11 +29,11 @@ const Input: React.FC<Props> = ({
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 border-b border-white/[.20] h-[50.8px] bg-transparent tracking-wide`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-[64px] bg-transparent tracking-wide`}
     />
   ) : (
     <div
-      className={`${className} rounded-lg p-2 w-full focus:outline-0  border-b border-white/[.20] bg-slate-200 bg-opacity-25 h-[50.8px] mt-2 tracking-wide animate-pulse`}
+      className={`${className} rounded-lg p-2 w-full focus:outline-0 bg-slate-200 bg-opacity-25 h-[80px] text-[64px] mt-2 tracking-wide animate-pulse`}
     ></div>
   );
 };
