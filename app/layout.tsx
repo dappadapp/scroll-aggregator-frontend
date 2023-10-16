@@ -59,6 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     });
         `}
         </Script>
+        <script type="text/javascript" src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg" async={true}></script>
       </head>
       <body className={`${spartan.variable} ${spartan.className} tracking-wider text-[20px]`}>
         <Providers>
