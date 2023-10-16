@@ -43,7 +43,7 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
           <>
             <CurrencyLogo currency={token} />
             <span
-              className={`${className} block truncate text-xs md:text-base font-medium `}
+              className={`${className} block truncate text-white text-xs md:text-base font-medium `}
             >
               {token?.symbol}
             </span>

@@ -233,7 +233,7 @@ const SwapCard: React.FC<Props> = () => {
           <div className="flex justify-between items-center space-x-2 mt-4">
             <span className="text-white/80">from</span>
             {balanceFrom && (
-              <div className="text-right text-lg">
+              <div className="text-white text-right text-lg">
                 {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
               </div>
             )}
@@ -274,7 +274,7 @@ const SwapCard: React.FC<Props> = () => {
           <div className="flex justify-between items-center space-x-2 mt-4">
             <span className="text-white opacity-80">to</span>
             {balanceTo && (
-              <div className="text-right text-lg">
+              <div className="text-white text-right text-lg">
                 {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
               </div>
             )}

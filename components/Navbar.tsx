@@ -42,7 +42,7 @@ const Navbar: React.FC<Props> = (props) => {
     return (
       <Link
         href={menuItem.href || ""}
-        className={`flex items-center gap-2 transition-all hover:text-white ${
+        className={`flex items-center gap-2 transition-all text-white hover:text-white ${
           path === menuItem.href
             ? "[&>svg]:fill-[#3AFF4242] text-white"
             : "[&>svg]:fill-slate-500 text-slate-500"
