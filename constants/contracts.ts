@@ -1,6 +1,6 @@
 import { ChainId, SWAP_TYPE } from "@/types";
 
-export const UNISWAP_DEFAULT_FEE = 0;
+export const UNISWAP_DEFAULT_FEE = 3000;
 
 export const addresses : {
   [key: string]: `0x${string}`
@@ -60,7 +60,7 @@ export const aggregator : {
     },
   }, 
   [ChainId.SCROLL_MAINNET]: {
-    contract: "0x7F93aBc94a8a9F88Ec9Eb35B5750b7a97931000C",
+    contract: "0x026b5D83843c40765Fba99a3d1f1732b48c1281B",
     spacefi: {
       router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"

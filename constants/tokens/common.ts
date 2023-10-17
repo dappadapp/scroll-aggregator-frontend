@@ -293,6 +293,7 @@ export const USDC = {
   [ChainId.BSC_TESTNET]: USDC_TESTNET,
   [ChainId.ETHEREUM]: USDC_ETH,
   [ChainId.GOERLI]: USDC_GOERLI,
+  [ChainId.SCROLL_MAINNET]: USDC_SCROLL_MAINNET,
   [ChainId.ZKSYNC]: new ERC20Token(
     ChainId.ZKSYNC,
     "0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4",
@@ -307,7 +308,6 @@ export const USDC = {
     "USDC",
     "USD Coin"
   ),
-  [ChainId.SCROLL_MAINNET]: USDC_SCROLL_MAINNET,
 };
 
 export const USDT = {
@@ -315,6 +315,7 @@ export const USDT = {
   [ChainId.ETHEREUM]: USDT_ETH,
   [ChainId.SCROLL_SEPOLIA]: USDT_SCROLL_SEPOLIA,
   [ChainId.SCROLL_MAINNET]: USDT_SCROLL_MAINNET
+
 };
 
 export const WBTC_ETH = new ERC20Token(

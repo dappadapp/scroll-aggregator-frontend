@@ -25,14 +25,14 @@ export type SwapParam = {
   amountIn: bigint;
   amountOutMin: any;
   swapType: SWAP_TYPE;
-  path:  `0x${string}`;
+  path: string;
   fee: number;
 };
 
 const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
-  const [convEth, setConvEth] = useState<boolean>(true);
+  const [convEth, setConvEth] = useState<boolean>(false);
   const contractAddr = useContract();
   const { address: userWallet } = useAccount();
 

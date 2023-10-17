@@ -69,7 +69,7 @@ const SwapCard: React.FC<Props> = () => {
   //TODO: Add tokens
   const [tokenFrom, setTokenFrom] = useState<Currency>();
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
-    Tokens[ChainId.SCROLL_MAINNET].usdt
+    Tokens[ChainId.SCROLL_MAINNET]?.usdt
   );
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
@@ -83,6 +83,7 @@ const SwapCard: React.FC<Props> = () => {
   const { chain, chains } = useNetwork();
   const signer = useEthersSigner({ chainId: 534352 })
 
+  console.log("Tokens", Tokens);
   const {
     data: balanceFrom,
     isLoading: isLoadingBalanceFrom,
@@ -258,7 +259,7 @@ console.log("poolAddress", poolAddress);
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
         setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
         setIsLoadingReceiveAmount(false);
-        
+
         if(exchangeRate?.data?.dex === "skydrome"){
           const pool = await getPair();
           console.log("pool", pool);

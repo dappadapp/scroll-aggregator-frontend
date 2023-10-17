@@ -13,6 +13,7 @@ import AllowButton from "./AllowButton";
 import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 import { fetchFeeData } from "@wagmi/core";
 import { useNetwork } from "wagmi";
+import { generatePath } from "@/utils/path";
 type Props = {
   onCloseModal: () => void;
   pool: string;
@@ -195,8 +196,8 @@ function SwapModal({
               amountIn: bigAmountA,
               amountOutMin: bigAmountB,
               swapType: swapType,
-              path: "0x0000000000000000000000000000000000000000",
-              fee: swapType === SWAP_TYPE.SKYDROME ? UNISWAP_DEFAULT_FEE : 0,
+              path: generatePath(tokenA.wrapped.address, tokenB.wrapped.address,3000).toString() || "0x0000000000000000000000000000000000000000",
+              fee:  UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
