@@ -19,7 +19,7 @@ export default function Home({
         alt="app-bg"
         width={200}
         height={200}
-        className="hidden lg:absolute w-full h-[1400px] left-0 -top-[285px]"
+        className="hidden md:block lg:absolute w-full h-[1400px] left-0 -top-[285px]"
       />
       <SwapCard />
     </div>

@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import ZetaGateLogo from "./Logo";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -46,7 +46,17 @@ const menuItems = [
 const Navbar: React.FC<Props> = (props) => {
   const path = usePathname();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    const initialValue = (document.body.style as any).zoom;
 
+    // Change zoom level on mount
+    (document.body.style as any).zoom = "80%";
+
+    return () => {
+      // Restore default value
+      (document.body.style as any).zoom = initialValue;
+    };
+  }, []);
   const menu = menuItems.map((menuItem) => {
     return (
       <Link
