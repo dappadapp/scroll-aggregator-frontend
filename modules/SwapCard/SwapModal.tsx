@@ -88,7 +88,7 @@ function SwapModal({
   return (
     <div
       className={
-        "z-[999] fixed w-screen h-[100vh] bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
+        "z-[999] fixed w-full h-full bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
       }
     >
       <div
@@ -142,13 +142,13 @@ function SwapModal({
               </div>
             ) : (
               <div className="flex items-center">
-              <img
-                src="https://izumi.finance/assets/home/iziLogo/logo.svg"
-                className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                alt="Izumi"
-              />
-              <p className="inline-block">Izumi</p>
-            </div>
+                <img
+                  src="https://izumi.finance/assets/home/iziLogo/logo.svg"
+                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  alt="Izumi"
+                />
+                <p className="inline-block">Izumi</p>
+              </div>
             )}
           </span>
         </div>
@@ -196,8 +196,13 @@ function SwapModal({
               amountIn: bigAmountA,
               amountOutMin: bigAmountB,
               swapType: swapType,
-              path: generatePath(tokenA.wrapped.address, tokenB.wrapped.address,3000).toString() || "0x0000000000000000000000000000000000000000",
-              fee:  UNISWAP_DEFAULT_FEE || 0,
+              path:
+                generatePath(
+                  tokenA.wrapped.address,
+                  tokenB.wrapped.address,
+                  3000
+                ).toString() || "0x0000000000000000000000000000000000000000",
+              fee: UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

@@ -4,13 +4,11 @@ import { faDiscord, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { useBlockNumber } from "wagmi";
 
 const Footer = () => {
-  const blockNumber = useBlockNumber({
-   
-  });
+  const blockNumber = useBlockNumber({});
   return (
     <div
       className={
-        "flex flex-col-reverse lg:flex-row gap-5 justify-between bottom-0 items-center mt-10"
+        "flex flex-col-reverse w-full lg:flex-row gap-5 justify-between bottom-0 items-center mt-10"
       }
     >
       <p className={"text-[#FFF0DD] font-light"}>Aggregator</p>

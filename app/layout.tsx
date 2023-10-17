@@ -71,22 +71,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ></script>
       </head>
       <body
-        className={`${spartan.variable} ${spartan.className} tracking-wider text-[20px]`}
+        className={`${spartan.variable} ${spartan.className} h-full tracking-wider text-[20px]`}
       >
         <Providers>
-          <div className={"relative w-full min-h-screen overflow-x-hidden"}>
+          <div
+            className={
+              "relative container min-h-screen h-full flex flex-col px-3 pt-6 pb-6 mx-auto items-center md:px-20 overflow-x-hidden"
+            }
+          >
+            <Navbar />
+
             <div
+              id="container-div"
               className={
-                "container mx-auto px-3 pt-6 md:pt-0 md:px-20 gap-2 pb-6 flex my-auto h-full min-h-screen overflow-hidden md:justify-between flex-col"
+                "container mx-auto  md:pt-0 justify-center md:px-20 gap-2 flex-1  flex my-auto h-full min-h-screen overflow-hidden  flex-col"
               }
             >
-              <Navbar />
               <div className="w-full h-full min-h-[70vh] relative flex-col flex items-center mb-5">
                 <CardNavbar />
                 {children}
               </div>
-              <Footer />
             </div>
+            <Footer />
+
             <div className="w-full -z-10 h-0 lg:h-full bg-[#000814] absolute top-0 overflow-hidden">
               {/* <div
                 className={`absolute h-[0vh] md:h-[120vh] blur-[2px] bg-opacity-30 overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 

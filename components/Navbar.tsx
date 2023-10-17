@@ -47,14 +47,14 @@ const Navbar: React.FC<Props> = (props) => {
   const path = usePathname();
   const [isMenuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    const initialValue = (document.body.style as any).zoom;
+    const initialValue = (document.getElementById("container-div")?.style as any).zoom;
 
     // Change zoom level on mount
-    (document.body.style as any).zoom = "80%";
+    (document.getElementById("container-div")?.style as any).zoom = "80%";
 
     return () => {
       // Restore default value
-      (document.body.style as any).zoom = initialValue;
+      (document.getElementById("container-div")?.style as any).zoom = initialValue;
     };
   }, []);
   const menu = menuItems.map((menuItem) => {
@@ -91,7 +91,7 @@ const Navbar: React.FC<Props> = (props) => {
       );
     });
   return (
-    <div className="flex flex-row items-center justify-between w-full">
+    <div className="flex flex-row items-center top-0 justify-between w-full">
       <div
         className={
           "w-full hidden lg:flex flex-row lg:mb-10 items-center justify-between mt-2 lg:mt-5 gap-2"
