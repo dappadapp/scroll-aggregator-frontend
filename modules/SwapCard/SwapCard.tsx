@@ -203,11 +203,22 @@ console.log("poolAddress", poolAddress);
   ]);
 
   useEffect(() => {
-    getCurrentRate();
+    if (
+      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+    ){
+      setReceiveAmount(swapAmount);
+    }
+    else{
+      getCurrentRate();
+    }
+   
   }, [tokenFrom,tokenTo]);
 
   const handleINChange = async(e: any) => {
     refetch();
+    console.log("tokenTo in", tokenTo);
+    console.log("tokenFrom in", tokenFrom);
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -221,7 +232,6 @@ console.log("poolAddress", poolAddress);
   };
 
   const handleOUTChange = async (e: any) => {
-   
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -426,7 +436,7 @@ console.log("poolAddress", poolAddress);
               <Input
                 onChange={(e) => handleOUTChange(e)}
                 onKeyDown={onKeyDownReceiveAmount}
-                value={(+receiveAmount).toFixed(5)}
+                value={receiveAmount}
                 type="number"
                 loading={isLoadingReceiveAmount}
                 placeholder="Receive Amount"

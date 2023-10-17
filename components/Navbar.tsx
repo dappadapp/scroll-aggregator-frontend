@@ -50,7 +50,7 @@ const Navbar: React.FC<Props> = (props) => {
     const initialValue = (document.getElementById("container-div")?.style as any).zoom;
 
     // Change zoom level on mount
-    (document.getElementById("container-div")?.style as any).zoom = "80%";
+    (document.getElementById("container-div")?.style as any).zoom = "85%";
 
     return () => {
       // Restore default value
@@ -94,7 +94,7 @@ const Navbar: React.FC<Props> = (props) => {
     <div className="flex flex-row items-center top-0 justify-between w-full">
       <div
         className={
-          "w-full hidden lg:flex flex-row lg:mb-10 items-center justify-between mt-2 lg:mt-5 gap-2"
+          "w-full hidden lg:flex flex-row lg:mb-1 items-center justify-between mt-2 lg:mt-3 gap-2"
         }
       >
         <div className={"hidden lg:flex gap-12 flex-row items-center justify-start"}>

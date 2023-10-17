@@ -30,7 +30,7 @@ function CardNavbar() {
             : "text-[#FFF0DD] border-[#FF7C5C] border-b "
         }`}
       >
-        Bridge (LI.FI)
+        Bridge
       </Link>
       {/* <Link
         href="#"

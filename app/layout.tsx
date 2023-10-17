@@ -76,11 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <div
             className={
-              "relative container min-h-screen h-full flex flex-col px-3 pt-6 pb-6 mx-auto items-center md:px-20 overflow-x-hidden"
+              "relative container min-h-screen h-full flex flex-col px-3 mx-auto items-center md:px-20 overflow-x-hidden"
             }
           >
             <Navbar />
-
             <div
               id="container-div"
               className={
@@ -93,7 +92,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
             <Footer />
-
             <div className="w-full -z-10 h-0 lg:h-full bg-[#000814] absolute top-0 overflow-hidden">
               {/* <div
                 className={`absolute h-[0vh] md:h-[120vh] blur-[2px] bg-opacity-30 overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
