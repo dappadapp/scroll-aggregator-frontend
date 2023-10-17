@@ -45,6 +45,7 @@ function SwapModal({
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
   const [fee, setFee] = useState<string>("0");
+  console.log("contractAddr!.contract", contractAddr!.contract);
   const { data: allowance, refetch } = useContractRead({
     address: tokenA.wrapped.address,
     abi: erc20ABI,
@@ -91,11 +92,11 @@ function SwapModal({
     >
       <div
         className={
-          "p-8 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "p-14 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
-          <h1 className="text-2xl md:text-3xl mb-5">Review swap details</h1>
+          <h1 className="text-2xl md:text-4xl mb-5">Review swap details</h1>
 
           <div
             onClick={() => onCloseModal()}
@@ -109,8 +110,8 @@ function SwapModal({
           <FontAwesomeIcon
             icon={faArrowRight}
             className="text-[#AAA]"
-            width={40}
-            height={40}
+            width={80}
+            height={80}
           />
           <SwapToken value={+amountB} currency={tokenB} />
         </div>
@@ -120,26 +121,33 @@ function SwapModal({
           <span className="text-xl">Liquidity source</span>
 
           <span>
-            {swapType === SWAP_TYPE.UNISWAP ? (
+            {swapType === SWAP_TYPE.SKYDROME ? (
               <div className="flex items-center">
                 <img
-                  src="https://avatars.githubusercontent.com/u/36115574?s=200&v=4"
+                  src="https://skydrome.finance/assets/Logos/PNG/Logo.png"
                   className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Uniswap"
+                  alt="Skydrome"
                 />
-                <p className="inline-block mt-1">Uniswap</p>
+                <p className="inline-block mt-1">Skydrome</p>
               </div>
             ) : swapType === SWAP_TYPE.SPACEFI ? (
               <div className="flex items-center">
                 <img
                   src=" https://raw.githubusercontent.com/SpaceFinance/default-token-list/master/assets/0x4E2D4F33d759976381D9DeE04B197bF52F6bC1FC.png"
                   className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Uniswap"
+                  alt="Spacefi"
                 />
                 <p className="inline-block">SpaceFi</p>
               </div>
             ) : (
-              ""
+              <div className="flex items-center">
+              <img
+                src="https://izumi.finance/assets/home/iziLogo/logo.svg"
+                className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                alt="Izumi"
+              />
+              <p className="inline-block">Izumi</p>
+            </div>
             )}
           </span>
         </div>
@@ -163,12 +171,14 @@ function SwapModal({
             <span className="text-right">Slippage tolerance</span>
             <span>{slippage}%</span>
           </div>
+          {/** 
           <div className="flex justify-between">
             <span>Current Rate</span>
             <span className="text-right">
               1 ETH = {rate} {tokenB?.symbol}
             </span>
           </div>
+          */}
         </div>
         {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
           <AllowButton
@@ -182,10 +192,11 @@ function SwapModal({
               poolAddress: pool,
               tokenIn: tokenA.wrapped.address,
               tokenOut: tokenB.wrapped.address,
-              amountIn: bigAmountA - BigInt("1000000"),
+              amountIn: bigAmountA,
               amountOutMin: bigAmountB,
               swapType: swapType,
-              fee: swapType === SWAP_TYPE.UNISWAP ? UNISWAP_DEFAULT_FEE : 0,
+              path: "0x0000000000000000000000000000000000000000",
+              fee: swapType === SWAP_TYPE.SKYDROME ? UNISWAP_DEFAULT_FEE : 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

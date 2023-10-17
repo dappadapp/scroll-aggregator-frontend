@@ -70,9 +70,9 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
     <Menu as="div" className="relative inline-block">
       <div>
         <Menu.Button className="inline-flex cursor-pointer justify-center items-center min-w-[200px] gap-2 p-3 text-xl lg:text-base bg-[#0A0A0A] rounded-lg border border-white/10">
-          {chain?.id !== 534351 ? (
-            <button onClick={() => handleChangeNetworkChain(534351)}>
-              Switch Scroll Sepolia
+          {chain?.id !== 534352 ? (
+            <button onClick={() => handleChangeNetworkChain(534352)}>
+              Switch Scroll Mainnet
             </button>
           ) : (
             <Fragment>
@@ -82,7 +82,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
           )}
         </Menu.Button>
       </div>
-      {chain?.id !== 534351 ? null : (
+      {chain?.id !== 534352 ? null : (
         <Transition
           as={Fragment}
           leave="transition ease-in duration-100"

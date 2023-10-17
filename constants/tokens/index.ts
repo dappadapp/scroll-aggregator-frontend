@@ -6,6 +6,7 @@ import { ChainId } from '@/types'
 // import { zksyncTokens } from './zksync'
 // import { zkSyncTestnetTokens } from './zksync-testnet'
 import { scrollSepoliaTokens } from './scroll-sepolia'
+import { scrollMainnetTokens } from './scroll-mainnet'
 
 const Tokens = {
   // [ChainId.ETHEREUM]: ethereumTokens,
@@ -15,7 +16,8 @@ const Tokens = {
   // [ChainId.ZKSYNC]: zksyncTokens,
   // [ChainId.ZKSYNC_TESTNET]: zkSyncTestnetTokens,
   // [ChainId.SCROLL_TESTNET]: scrollTestnetTokens,
-  [ChainId.SCROLL_SEPOLIA]: scrollSepoliaTokens
+  [ChainId.SCROLL_SEPOLIA]: scrollSepoliaTokens,
+  [ChainId.SCROLL_MAINNET]: scrollMainnetTokens,
 }
 
 export default Tokens;

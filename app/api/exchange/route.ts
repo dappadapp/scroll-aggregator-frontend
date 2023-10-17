@@ -9,6 +9,7 @@ import quoter2 from "@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol
 import quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import { generatePath } from "@/utils/path";
 import { usePublicClient } from "wagmi";
+import SkydromeAbi from "@/constants/abis/skydrome.json";
 
 interface Dex {
   name: string;
@@ -18,11 +19,11 @@ interface Dex {
   fee: number;
   inFunction: string;
   outFunction: string;
-  runInFunction: (amount: any, from: any, to: any) => Promise<any>;
-  runOutFunction: (amount: any, from: any, to: any) => Promise<any>;
+  runInFunction: (amount: any, from: any, to: any,fromDecimals:any,toDecimals:any) => Promise<any>;
+  runOutFunction: (amount: any, from: any, to: any,fromDecimals:any,toDecimals:any) => Promise<any>;
 }
 export async function POST(request: Request) {
-  const network = "https://sepolia-rpc.scroll.io/";
+  const network = "https://rpc.scroll.io/";
   const client = new Web3(network);
 
   const provider = new ethers.providers.JsonRpcProvider(network);
@@ -33,99 +34,105 @@ export async function POST(request: Request) {
     spacefi: {
       name: "Space Fi",
       id: "space-fi",
-      router: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15",
+      router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       abi: SpaceFiAbi, // Replace with the actual ABI
       fee: 0,
       inFunction: "getAmountsIn",
       outFunction: "getAmountsOut",
-      async runInFunction(amount: any, from: any, to: any) {
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(this.router, this.abi, provider);
-        const data = await contract.getAmountsIn(parseUnits(amount, 18), [from, to]);
+        const data = await contract.getAmountsIn(parseUnits(amount, toDecimals), [from, to]);
         return BigInt(data?.[0]);
       },
-      async runOutFunction(amount: any, from: any, to: any) {
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(this.router, this.abi, provider);
-        const data = await contract.getAmountsOut(parseUnits(amount, 18), [from, to]);
+        const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to]);
+        console.log("data", BigInt(data?.[1]));
+        console.log("data", BigInt(data?.[0]));
         return BigInt(data?.[1]);
       },
     },
-    uniswap: {
-      name: "Uniswap",
-      id: "uniswap",
-      router: "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
-      abi: quoter.abi, // Replace with the actual ABI
+    skydrome: {
+      name: "Skydrome",
+      id: "skydrome",
+      router: "0xAA111C62cDEEf205f70E6722D1E22274274ec12F",
+      abi: SkydromeAbi, // Replace with the actual ABI
       fee: 3000,
-      inFunction: "quoteExactInputSingle",
-      outFunction: "quoteExactOutputSingle",
-      async runOutFunction(amount: any, from: any, to: any) {
-        const contract = new ethers.Contract(
-          "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
-          quoter2.abi,
-          provider
-        );
-        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
+      inFunction: "getAmountsOut",
+      outFunction: "getAmountsOut",
+      async runInFunction(amount: any, from: any, to: any,fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
 
-        const res = await contract.callStatic.quoteExactInputSingle(params);
-
-        return BigInt(res.amountOut);
+        const data = await contract.getAmountsOut(parseUnits(amount, toDecimals), [
+          {
+            from: from,
+            to: to,
+            stable: true
+          }
+        ]);
+        return BigInt(data?.[0]);
       },
-      async runInFunction(amount: any, from: any, to: any) {
-        const contract = new ethers.Contract(
-          "0xd5dd33650Ef1DC6D23069aEDC8EAE87b0D3619B2",
-          quoter2.abi,
-          provider
-        );
-        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
-        const data = await contract.callStatic.quoteExactOutputSingle(params);
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
 
-        return BigInt(data.amountIn);
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", (parseUnits(amount, 18)));
+        const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [
+          {
+            from: from,
+            to: to,
+            stable: false
+          }
+        ]);
+        console.log("data", BigInt(data?.[1]));
+        console.log("data", BigInt(data?.[0]));
+        return BigInt(data?.[1]);
       },
     },
     iziswap: {
       name: "Iziswap",
       id: "iziswap",
-      router: "0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3",
+      router: "0x3EF68D3f7664b2805D4E88381b64868a56f88bC4",
       abi: IziSwapQuoterAbi,
       fee: 3000,
       inFunction: "swapDesire",
       outFunction: "swapAmount",
-      async runInFunction(amount: any, from: any, to: any) {
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(
           this.router,
           IziSwapQuoterAbi,
           provider
         );
 
-        const { cost, } = await contract.callStatic.swapDesire(parseUnits(amount, 18), generatePath(from, to, this.fee));
+        const { cost, } = await contract.callStatic.swapDesire(parseUnits(amount, toDecimals), generatePath(from, to, this.fee));
         return BigInt(cost);
       },
-      async runOutFunction(amount: any, from: any, to: any) {
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(
           this.router,
           IziSwapQuoterAbi,
           provider
         );
 
-        const { acquire, } = await contract.callStatic.swapAmount(parseUnits(amount, 18), generatePath(from, to, this.fee));
+        const { acquire, } = await contract.callStatic.swapAmount(parseUnits(amount, fromDecimals), generatePath(from, to, this.fee));
         return BigInt(acquire);
       },
     },
   };
 
-  async function getBestExchange(amount: any, from: any, to: any, type: string) {
+  async function getBestExchange(amount: any, from: any, to: any, type: string, fromDecimals: any, toDecimals: any) {
     const temp = [];
     for (const dex in dexs) {
       try {
         const dexData = dexs[dex as keyof typeof dexs];
         if (type === "OUT") {
-          const inAmount = await dexData.runInFunction(amount, from, to);
+          const inAmount = await dexData.runInFunction(amount, from, to, fromDecimals, toDecimals);
           temp.push({
             dex: dexData.id,
             amount: inAmount.toString(),
           });
         }
         if (type === "IN") {
-          const outAmount = await dexData.runOutFunction(amount, from, to);
+          const outAmount = await dexData.runOutFunction(amount, from, to, fromDecimals, toDecimals);
           temp.push({
             dex: dexData.id,
             amount: outAmount.toString(),
@@ -134,14 +141,14 @@ export async function POST(request: Request) {
 
         console.log("temp", temp);
       } catch (e) {
-        console.log("error " + e);
+        console.log("error "+dex + e);
       }
     }
     temp.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
     return temp[0];
   }
 
-  const res = await getBestExchange(data?.amount, data?.from, data?.to, data?.type);
+  const res = await getBestExchange(data?.amount, data?.from, data?.to, data?.type, data?.fromDecimals, data?.toDecimals);
 
   console.log("res", res);
 

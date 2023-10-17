@@ -23,8 +23,9 @@ export type SwapParam = {
   tokenIn: `0x${string}`;
   tokenOut: `0x${string}`;
   amountIn: bigint;
-  amountOutMin: bigint;
+  amountOutMin: any;
   swapType: SWAP_TYPE;
+  path:  `0x${string}`;
   fee: number;
 };
 
@@ -73,10 +74,11 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
       txHash: hash,
       fromTokenAddress: swapParam.tokenIn,
       toTokenAddress: swapParam.tokenOut,
-      fromAmount: Number(swapParam.amountOutMin).toString(),
-      toAmount: Number(swapParam.amountIn).toString(),
+      fromAmount: (swapParam.amountOutMin).toString(),
+      toAmount: (swapParam.amountIn).toString(),
       chainId: tokenIn.chainId.toString(),
       sourceDex: swapParam.poolAddress,
+      dexType: swapParam.swapType.toString(),
     });
   };
 
@@ -105,6 +107,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
         await postCreateSwap(hash);
       } catch (e) {
         console.log("an error occured while swapping: ", e);
+        return toast("Failed to Swap!");
       } finally {
         setLoading(false);
       }

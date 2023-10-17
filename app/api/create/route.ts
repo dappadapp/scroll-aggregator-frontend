@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   const data = await request.json();
   const response = await axios
     .post(
-      `${process.env.NEXT_PUBLIC_API_URL}/aggre/create`,
+      `${process.env.NEXT_PUBLIC_API_URL}/aggre/mainnet/create`,
       {
         timestamp: Math.floor(Date.now() / 1000),
         userWalletAddress: data.wallet,
@@ -16,6 +16,7 @@ export async function POST(request: Request) {
         toAmount: data.toAmount,
         chainId: data.chainId,
         sourceDex: data.sourceDex,
+        dexType: data.dexType,
       },
       {
         headers: {

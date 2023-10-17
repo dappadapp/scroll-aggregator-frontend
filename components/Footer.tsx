@@ -5,7 +5,7 @@ import { useBlockNumber } from "wagmi";
 
 const Footer = () => {
   const blockNumber = useBlockNumber({
-    watch: true,
+   
   });
   return (
     <div

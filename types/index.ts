@@ -1,4 +1,4 @@
-import { mainnet, goerli, bsc, bscTestnet, scrollSepolia, scrollTestnet, zkSync, zkSyncTestnet } from "wagmi/chains";
+import { mainnet, goerli, bsc, bscTestnet, scrollSepolia, scrollTestnet, zkSync, zkSyncTestnet, scroll } from "wagmi/chains";
 
 export * from './token'
 
@@ -11,13 +11,14 @@ export enum ChainId {
   ZKSYNC_TESTNET = zkSyncTestnet.id,
   SCROLL_TESTNET = scrollTestnet.id,
   SCROLL_SEPOLIA = scrollSepolia.id,
+  SCROLL_MAINNET = scroll.id,
 }
 
 export enum SWAP_TYPE {
   SPACEFI = 1,
-  UNISWAP = 2,
+  SKYDROME = 2,
   IZUMI = 3,
-  LEET = 4
+
 }
 
 export interface Network {

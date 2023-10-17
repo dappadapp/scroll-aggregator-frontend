@@ -73,6 +73,15 @@ export const WETH9 = {
     "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
     "https://weth.io"
   ),
+  [ChainId.SCROLL_MAINNET]: new ERC20Token(
+    ChainId.SCROLL_MAINNET,
+    "0x5300000000000000000000000000000000000004",
+    18,
+    "WETH",
+    "Wrapped Ether",
+    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
+    "https://weth.io"
+  ),
 };
 
 export const WBNB = {
@@ -111,7 +120,8 @@ export const WNATIVE = {
   // [ChainId.ZKSYNC_TESTNET]: WETH9[ChainId.ZKSYNC_TESTNET],
   // [ChainId.SCROLL]: WETH9[ChainId.SCROLL],
   // [ChainId.SCROLL_TESTNET]: WETH9[ChainId.SCROLL_TESTNET],
-  [ChainId.SCROLL_SEPOLIA]: WETH9[ChainId.SCROLL_SEPOLIA],
+  //[ChainId.SCROLL_SEPOLIA]: WETH9[ChainId.SCROLL_SEPOLIA],
+  [ChainId.SCROLL_MAINNET]: WETH9[ChainId.SCROLL_MAINNET],
 } satisfies Record<ChainId, ERC20Token>;
 
 const ETHER = { name: "Ether", symbol: "ETH", decimals: 18, logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026' } as const;
@@ -135,6 +145,7 @@ export const NATIVE = {
   [ChainId.ZKSYNC_TESTNET]: ETHER,
   [ChainId.SCROLL_SEPOLIA]: ETHER,
   [ChainId.SCROLL_TESTNET]: ETHER,
+  [ChainId.SCROLL_MAINNET]: ETHER,
 } satisfies Record<
   ChainId,
   {
@@ -201,6 +212,26 @@ export const USDT_SCROLL_SEPOLIA = new ERC20Token(
   ChainId.SCROLL_SEPOLIA,
   "0x85BB8651cb707150660c4658B7A11a8cdA5B4Fe3",
   18,
+  "USDT",
+  "Tether USD",
+  "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=026",
+  "https://tether.to/"
+);
+
+export const USDC_SCROLL_MAINNET = new ERC20Token(
+  ChainId.SCROLL_MAINNET,
+  "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
+  6,
+  "USDC",
+  "USD COIN",
+  "https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=026",
+  "https://coinmarketcap.com/de/currencies/usd-coin/"
+);
+
+export const USDT_SCROLL_MAINNET = new ERC20Token(
+  ChainId.SCROLL_MAINNET,
+  "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
+  6,
   "USDT",
   "Tether USD",
   "https://cryptologos.cc/logos/tether-usdt-logo.svg?v=026",
@@ -276,12 +307,14 @@ export const USDC = {
     "USDC",
     "USD Coin"
   ),
+  [ChainId.SCROLL_MAINNET]: USDC_SCROLL_MAINNET,
 };
 
 export const USDT = {
   [ChainId.BSC]: USDT_BSC,
   [ChainId.ETHEREUM]: USDT_ETH,
-  [ChainId.SCROLL_SEPOLIA]: USDT_SCROLL_SEPOLIA
+  [ChainId.SCROLL_SEPOLIA]: USDT_SCROLL_SEPOLIA,
+  [ChainId.SCROLL_MAINNET]: USDT_SCROLL_MAINNET
 };
 
 export const WBTC_ETH = new ERC20Token(

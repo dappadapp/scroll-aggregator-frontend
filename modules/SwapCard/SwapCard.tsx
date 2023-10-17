@@ -1,5 +1,6 @@
 import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
+import { readContract } from "@wagmi/core"
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
 import _, { get, set } from "lodash";
@@ -26,10 +27,36 @@ import axios from "axios";
 import { networks } from "@/constants/networks";
 import { FaWallet } from "react-icons/fa";
 import Image from "next/image";
-
+import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
+import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
+import { type WalletClient, useWalletClient } from 'wagmi'
+import { providers } from 'ethers'
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
+
+
+ 
+export function walletClientToSigner(walletClient: WalletClient) {
+  const { account, chain, transport } = walletClient
+  const network = {
+    chainId: 534352,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  const provider = new providers.Web3Provider(transport, network)
+  const signer = provider.getSigner(account.address)
+  return signer
+}
+ 
+/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: walletClient } = useWalletClient({ chainId })
+  return React.useMemo(
+    () => (walletClient ? walletClientToSigner(walletClient) : undefined),
+    [walletClient],
+  )
+}
 
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
@@ -38,11 +65,11 @@ const SwapCard: React.FC<Props> = () => {
   const [swapAmount, setSwapAmount] = useState("0");
   const [receiveAmount, setReceiveAmount] = useState("0");
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
-  const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.UNISWAP);
+  const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.SKYDROME);
   //TODO: Add tokens
   const [tokenFrom, setTokenFrom] = useState<Currency>();
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
-    Tokens[ChainId.SCROLL_SEPOLIA].usdt
+    Tokens[ChainId.SCROLL_MAINNET].usdt
   );
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
@@ -51,8 +78,10 @@ const SwapCard: React.FC<Props> = () => {
   const getTokenRateTimeout = useRef<any>(null);
   const [isLoadingSwapAmount, setIsLoadingSwapAmount] = useState(false);
   const [isLoadingReceiveAmount, setIsLoadingReceiveAmount] = useState(false);
+  const [pairAddress, setPairAddress] = useState<string>();
 
   const { chain, chains } = useNetwork();
+  const signer = useEthersSigner({ chainId: 534352 })
 
   const {
     data: balanceFrom,
@@ -80,31 +109,81 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-  const { data: poolAddress } = useContractRead(
-    dexType === SWAP_TYPE.SPACEFI
-      ? {
-          address: contractAddr?.spacefi.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : {
-          address: contractAddr?.uniswap.poolFactory,
-          abi: UniswapPoolFactoryAbi,
-          functionName: "getPool",
-          args: [
-            tokenFrom?.wrapped.address,
-            tokenTo?.wrapped.address,
-            UNISWAP_DEFAULT_FEE,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-  );
+
+
+  // Instantiate the contract
+const contract = new ethers.Contract(contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004", SkydromePoolFactory, signer);
+
+// Send a call to the getPair function using ethers.js
+async function getPair() {
+  try {
+    const pair = await contract.functions.getPair( tokenFrom?.wrapped.address,
+      tokenTo?.wrapped.address,
+      false);
+      console.log("Pair Address:", pair);
+    return pair;
+
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+const contractIzumi = new ethers.Contract(contractAddr?.iziswap?.liquidityManager || "0x5300000000000000000000000000000000000004", IziSwapPoolFactory, signer);
+async function getPool() {
+  try {
+    const pair = await contractIzumi.pool( tokenFrom?.wrapped.address,
+      tokenTo?.wrapped.address,
+      3000);
+      console.log("Pair Address:", pair);
+    return pair;
+   
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+
+const { data: poolAddress, refetch } = useContractRead(
+  dexType === SWAP_TYPE.SPACEFI
+    ? {
+        address: contractAddr?.spacefi?.poolFactory,
+        abi: SpaceFiPoolFactoryAbi,
+        functionName: "getPair",
+        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
+    : dexType === SWAP_TYPE.SKYDROME
+    ? {
+        address: contractAddr?.skydrome?.poolFactory,
+        abi: SkydromePoolFactory,
+        functionName: "getPair",
+        args: [
+          tokenFrom?.wrapped.address,
+          tokenTo?.wrapped.address,
+          false,
+        ],
+        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+      }
+    : dexType === SWAP_TYPE.IZUMI
+    ? {
+      address: contractAddr?.iziswap?.liquidityManager,
+      abi: IziSwapPoolFactory,
+      functionName: "pool",
+      args: [
+        tokenFrom?.wrapped.address,
+        tokenTo?.wrapped.address,
+        3000,
+      ],
+      }
+    : {}
+);
+
+console.log("poolAddress", poolAddress);
+
 
   useEffect(() => {
     fetchBalanceFrom();
     fetchBalanceTo();
+    refetch();
+    
   }, [
     chain,
     address,
@@ -124,9 +203,10 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     getCurrentRate();
-  }, [tokenFrom]);
+  }, [tokenFrom,tokenTo]);
 
-  const handleINChange = (e: any) => {
+  const handleINChange = async(e: any) => {
+    refetch();
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -139,7 +219,8 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const handleOUTChange = (e: any) => {
+  const handleOUTChange = async (e: any) => {
+   
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -151,7 +232,7 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const getCurrentRate = () => {
+  const getCurrentRate = async() => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
       if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
@@ -161,20 +242,39 @@ const SwapCard: React.FC<Props> = () => {
         const exchangeRate = await axios.post("/api/exchange", {
           amount: swapAmount.toString(),
           from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+          fromDecimals: tokenFrom?.wrapped.decimals,
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+          toDecimals: tokenTo?.wrapped.decimals,
           type: "IN",
         });
 
         setDexType(
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
-            : exchangeRate?.data?.dex === "uniswap"
-            ? SWAP_TYPE.UNISWAP
+            : exchangeRate?.data?.dex === "skydrome"
+            ? SWAP_TYPE.SKYDROME
             : SWAP_TYPE.IZUMI
         );
-        setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
-        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+        setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
+        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
         setIsLoadingReceiveAmount(false);
+        
+        if(exchangeRate?.data?.dex === "skydrome"){
+          const pool = await getPair();
+          console.log("pool", pool);
+          if(pool)
+            setPairAddress(pool[0]);
+        }
+        else if(exchangeRate?.data?.dex === "iziswap"){
+          const pool = await getPool();
+          console.log("pool", pool);
+          if(pool)
+            setPairAddress(pool?.toString());
+        }
+        else{
+          if(poolAddress)
+            setPairAddress(poolAddress?.toString());
+        }
       }
     }, 200);
   };
@@ -209,11 +309,11 @@ const SwapCard: React.FC<Props> = () => {
         setDexType(
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
-            : exchangeRate?.data?.dex === "uniswap"
-            ? SWAP_TYPE.UNISWAP
+            : exchangeRate?.data?.dex === "skydrome"
+            ? SWAP_TYPE.SKYDROME
             : SWAP_TYPE.IZUMI
         );
-        setSwapAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, 18));
+        setSwapAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals));
         setIsLoadingSwapAmount(false);
       }
     }, 200);
@@ -325,11 +425,12 @@ const SwapCard: React.FC<Props> = () => {
               <Input
                 onChange={(e) => handleOUTChange(e)}
                 onKeyDown={onKeyDownReceiveAmount}
-                value={receiveAmount}
+                value={(+receiveAmount).toFixed(5)}
                 type="number"
                 loading={isLoadingReceiveAmount}
                 placeholder="Receive Amount"
-                className="crosschainswap-input w-full text-end"
+                className="crosschainswap-input w-full text-end cursor-not-allowed"
+                disabled={true}
               />
             </div>
             <Button
@@ -337,7 +438,7 @@ const SwapCard: React.FC<Props> = () => {
               disabled={
                 isConnected &&
                 (!tokenFrom || !tokenTo || !swapAmount) &&
-                chain?.id === 534351
+                chain?.id === 534352
               }
               className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
               onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
@@ -347,9 +448,9 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
       </div>
-      {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534351 ? (
+      {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534352 ? (
         <SwapModal
-          pool={poolAddress as string}
+          pool={pairAddress as string}
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={+swapAmount}

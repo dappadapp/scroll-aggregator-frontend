@@ -37,6 +37,7 @@ import {
   scrollTestnet,
   scrollSepolia,
   mantle,
+  scroll,
 } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -354,7 +355,8 @@ const chains = [
   linea,
   mantle,
   scrollTestnet,
-  scrollSepolia
+  scrollSepolia,
+  scroll,
 ];
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
 

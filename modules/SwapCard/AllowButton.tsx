@@ -15,7 +15,6 @@ type Props = {
 const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
-
   const { config: configApprove } = usePrepareContractWrite({
     address: tokenIn.wrapped.address,
     abi: erc20ABI,
@@ -32,16 +31,21 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   } = useContractWrite(configApprove);
 
   const handleAllowance = async () => {
+    try {
     if (approveAsync) {
-      try {
+    
         const { hash } = await approveAsync();
         await waitForTransaction({ hash });
         toast("Approved!");
         onSuccess();
-      } catch (e) {}
+      
     } else {
       return toast("Failed to approve!");
     }
+  } catch (e) {
+    console.log(e);
+    return toast("Failed to approve!");
+  }
   };
 
   return (

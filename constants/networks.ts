@@ -1,5 +1,5 @@
 import { Network } from "@/types";
-import { goerli, bscTestnet, scrollTestnet, scrollSepolia, zkSyncTestnet } from "wagmi/chains";
+import { goerli, bscTestnet, scrollTestnet, scrollSepolia, zkSyncTestnet, scroll } from "wagmi/chains";
 
 export const networks: Network[] = [
   // {
@@ -23,6 +23,17 @@ export const networks: Network[] = [
   //   symbol: "BNB",
   //   isTestnet: true,
   // },
+
+  {
+    name: scroll.name,
+    chainId: scroll.id,
+    wrappedNativeAddress: "test",
+    blockConfirmation: 3,
+    colorClass: "bg-[#EFB90A]",
+    image: "scroll.svg",
+    symbol: scroll.nativeCurrency.symbol,
+    isTestnet: false,
+  },
   {
     name: scrollSepolia.name,
     chainId: scrollSepolia.id,

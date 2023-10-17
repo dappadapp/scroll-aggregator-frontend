@@ -1,6 +1,6 @@
 import { ChainId, SWAP_TYPE } from "@/types";
 
-export const UNISWAP_DEFAULT_FEE = 3000;
+export const UNISWAP_DEFAULT_FEE = 0;
 
 export const addresses : {
   [key: string]: `0x${string}`
@@ -20,21 +20,25 @@ export const addresses : {
 export const aggregator : {
   [chain: string]: {
     contract: `0x${string}`,
-    spacefi: {
+    spacefi?: {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
     },
-    uniswap: {
+    uniswap?: {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
     },
-    iziswap: {
+    iziswap?: {
       router: `0x${string}`,
       liquidityManager: `0x${string}`,
+    },
+    skydrome?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
     }
   }    
 } = {
-  
+
   [ChainId.SCROLL_SEPOLIA]: {
     contract: "0xCA3c42f9D37e7b1481fb61e83798d0778Af77c84",
     spacefi: {
@@ -49,6 +53,25 @@ export const aggregator : {
       router: "0xa9754f0D9055d14EB0D2d196E4C51d8B2Ee6f4d3", //quoter
       // router: "0x77132b63429718Db2B6ad8D942eE13A198f6Ab49", //swap router
       liquidityManager: "0xF4EE7c4bDd43F6b5E509204B375E9512e4110C15"
+    },
+    skydrome: {
+      router: "0x00000000",
+      poolFactory: "0x00000000"
+    },
+  }, 
+  [ChainId.SCROLL_MAINNET]: {
+    contract: "0x7F93aBc94a8a9F88Ec9Eb35B5750b7a97931000C",
+    spacefi: {
+      router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
+      poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"
+    },
+    skydrome: {
+      router: "0xAA111C62cDEEf205f70E6722D1E22274274ec12F",
+      poolFactory: "0x2516212168034b18a0155FfbE59f2f0063fFfBD9"
+    },
+    iziswap: {
+      router: "0x2db0AFD0045F3518c77eC6591a542e326Befd3D7",
+      liquidityManager: "0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08"
     }
   }
 }
