@@ -287,9 +287,20 @@ const SwapCard: React.FC<Props> = () => {
         } else if (exchangeRate?.data?.dex === "iziswap") {
           const pool = await getPool();
           console.log("pool", pool);
-          if (pool) setPairAddress(pool?.toString());
-        } else {
-          if (poolAddress) setPairAddress(poolAddress?.toString());
+          if(pool)
+            setPairAddress(pool?.toString());
+        }
+        else if(exchangeRate?.data?.dex === "syncswap"){
+          if(tokenFrom?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" && tokenTo?.wrapped.address === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4"
+            || tokenFrom?.wrapped.address === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && tokenTo?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"
+          ){
+
+            setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1")
+          }
+        }
+        else{
+          if(poolAddress)
+            setPairAddress(poolAddress?.toString());
         }
       }
     }, 200);
