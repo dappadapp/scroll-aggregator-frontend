@@ -1,6 +1,6 @@
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
-import IconSlider from "@/assets/images/icon-sliders.svg";
+import SlippageIcon from "@/assets/images/slippageIcon.svg";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 
@@ -24,7 +24,7 @@ export default function SlippageButton(props: Props) {
                 ${open ? " text-white/50 bg-white/40" : "bg-[#FFE7DD] text-black"}
                  transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-white/40 hover:text-white/50 text-black flex justify-center items-center`}
             >
-              <IconSlider />
+              <SlippageIcon />
             </Popover.Button>
             <Transition
               as={Fragment}
