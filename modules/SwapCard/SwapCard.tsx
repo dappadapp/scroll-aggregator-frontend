@@ -380,7 +380,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[540px] p-2 lg:p-8 gap-2  z-10 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[600px] p-2 lg:p-8 gap-2  z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
