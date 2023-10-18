@@ -150,13 +150,13 @@ function SwapModal({
               </div>
             ) : (
               <div className="flex items-center">
-              <img
-                src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
-                className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                alt="Syncswap"
-              />
-              <p className="inline-block">Syncswap</p>
-            </div>
+                <img
+                  src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
+                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  alt="Syncswap"
+                />
+                <p className="inline-block">Syncswap</p>
+              </div>
             )}
           </span>
         </div>
@@ -180,6 +180,15 @@ function SwapModal({
             <span className="text-right">Slippage tolerance</span>
             <span>{slippage}%</span>
           </div>
+          <div className="bg-gray-600 p-4 rounded-lg shadow-md max-w-lg mt-5">
+            <div className="flex items-center">
+              <p className="text-white-700">
+                🚨 Important Notice: Due to the Scroll mainnet being recently launched, the Total Value Locked (TVL) is currently low. This may result in higher slippage rates when swapping assets. Please exercise caution.
+              </p>
+            </div>
+          </div>
+
+
           {/** 
           <div className="flex justify-between">
             <span>Current Rate</span>

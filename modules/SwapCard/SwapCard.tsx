@@ -32,6 +32,7 @@ import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
 import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
 import { type WalletClient, useWalletClient } from "wagmi";
 import { providers } from "ethers";
+import { toast } from "react-toastify";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -352,7 +353,9 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     setTokenFrom(native);
+  
   }, [native]);
+
 
   const handleSwitchToken = () => {
     let tokenToA = tokenTo;
