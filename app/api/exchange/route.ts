@@ -123,7 +123,7 @@ export async function POST(request: Request) {
     syncswap: {
       name: "Skycswap",
       id: "syncswap",
-      router: "0x78ea8E533c834049dE625e05F0B4DeFfe9DB5f6e",
+      router: "0x80e38291e06339d10AAB483C65695D004dBD5C69",
       abi: SyncswapAbi, // Replace with the actual ABI
       fee: 0,
       inFunction: "getAmountOut",
