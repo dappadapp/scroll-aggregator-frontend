@@ -11,6 +11,8 @@ import { generatePath } from "@/utils/path";
 import { usePublicClient } from "wagmi";
 import SkydromeAbi from "@/constants/abis/skydrome.json";
 import SyncswapAbi from "@/constants/abis/syncSwapQuote.json";
+import SyncSwapClassicAbi from "@/constants/abis/SyncSwapClassicPool.json";
+import SyncSwapStableAbi from "@/constants/abis/SyncSwapStablePool.json";
 
 interface Dex {
   name: string;
@@ -127,25 +129,26 @@ export async function POST(request: Request) {
       inFunction: "getAmountOut",
       outFunction: "getAmountOut",
       async runInFunction(amount: any, from: any, to: any,fromDecimals: any, toDecimals: any) {
-        const contract = new ethers.Contract(this.router, this.abi, provider);
 
-        const data = await contract.getAmountsOut(parseUnits(amount, toDecimals), [
-          {
-            from: from,
-            to: to,
-            stable: true
-          }
-        ]);
-        return BigInt(data?.[0]);
+
+   
       },
       async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        if(from === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" && to === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" 
+        || from === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && to === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"){
+        const contract = new ethers.Contract("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1", SyncSwapStableAbi, provider);
+
+        const data = await contract.getAmountOut(from,parseUnits(amount, toDecimals), "0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
+        console.log("data1", BigInt(data));
+        return BigInt(data);
+      }
+      else{
         const contract = new ethers.Contract(this.router, this.abi, provider);
 
-        const data = await contract.getAmountOut(from,parseUnits(amount, fromDecimals),"0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
-
-        console.log("data", data);
-
+        const data = await contract.getAmountOut(from,parseUnits(amount, toDecimals),"0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
+        console.log("data2", BigInt(data));
         return BigInt(data);
+      }
       },
     },
   };

@@ -47,7 +47,7 @@ const Navbar: React.FC<Props> = (props) => {
   const path = usePathname();
   const [isMenuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
-    const initialValue = (document.getElementById("container-div")?.style as any).zoom;
+    const initialValue = (document.getElementById("container-div")?.style as any)?.zoom;
 
     // Change zoom level on mount
     (document.getElementById("container-div")?.style as any).zoom = "85%";
