@@ -459,6 +459,7 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 ))}
               </div>
+              */}
               <button
                 onClick={handleSwitchToken}
                 className="w-16 absolute self-center -bottom-20 lg:-bottom-24 h-16 lg:w-20 lg:h-20 p-4  lg:-mt-10  cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
