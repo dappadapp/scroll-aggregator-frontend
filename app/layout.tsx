@@ -83,7 +83,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div
               id="container-div"
               className={
-                "container mx-auto  md:pt-0 justify-center md:px-20 gap-2 flex-1  flex my-auto h-full min-h-screen overflow-hidden  flex-col"
+                "container mx-auto z-10 md:pt-0 justify-center md:px-20 gap-2 flex-1  flex my-auto h-full min-h-screen overflow-hidden  flex-col"
               }
             >
               <div className="w-full h-full min-h-[70vh] relative flex-col flex items-center mb-5">

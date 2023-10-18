@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <div
       className={
-        "flex flex-col-reverse w-full lg:flex-row gap-5 justify-between bottom-0 items-center mt-2"
+        "flex flex-col-reverse w-full z-[1] lg:flex-row gap-5 justify-between bottom-0 items-center mt-2"
       }
     >
       <p className={"text-[#FFF0DD] font-light"}>Aggregator</p>

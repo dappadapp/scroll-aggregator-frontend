@@ -49,17 +49,22 @@ const DropdownSelect = ({
 
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="static inline-block lg:max-w-none" ref={dropdownRef}>
+      <div className="static inline-block lg:max-w-none z-20" ref={dropdownRef}>
         <div
-          className={`${className} static cursor-pointer bg-transparent rounded-lg focus:outline-none`}
+          className={`${className} static cursor-pointer z-10 bg-transparent rounded-lg focus:outline-none`}
           onClick={toggleDropdown}
         >
           <div className="flex items-start justify-between p-2 ">
             <div className="h-full text-[#FFF0DD]">{children}</div>
-            <FontAwesomeIcon icon={faAngleDown} className="ml-2 mt-2" color="#EBC28E" />
+            <FontAwesomeIcon
+              icon={faAngleDown}
+              className="ml-2 mt-[6px] lg:mt-2"
+              color="#EBC28E"
+            />
           </div>
         </div>
         <Transition
+          className={"z-10"}
           show={isOpen}
           enter="transition ease-out duration-200 transform"
           enterFrom="opacity-0 scale-0"
@@ -77,7 +82,7 @@ const DropdownSelect = ({
                   <input
                     type="text"
                     onChange={(e) => onSearch(e.target.value)}
-                    className="w-full px-3 py-2 text-gray-100 rounded-md bg-gray-800/60 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                    className="w-full px-3 py-2 text-gray-100 rounded-md  bg-gray-800/100 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                     placeholder="Search"
                   />
                   <FontAwesomeIcon

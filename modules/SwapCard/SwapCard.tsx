@@ -380,7 +380,7 @@ const SwapCard: React.FC<Props> = () => {
     <div className="w-full max-w-[680px] p-2 lg:p-8 gap-2 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
-          <div className="w-full flex flex-col lg:z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
+          <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex justify-between items-center space-x-2 mt-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (
@@ -389,9 +389,12 @@ const SwapCard: React.FC<Props> = () => {
                 </div>
               )}
             </div>
-            <div className="rounded-lg flex w-full flex-col gap-4 mb-4 ">
-              <div className="flex flex-col z-[6] ">
-                <div className="flex justify-between items-center lg:gap-8">
+            <div className="rounded-lg flex relative w-full flex-col gap-4 mb-4 ">
+              <div className="flex flex-col z-[10]">
+                <div
+                  className="flex justify-between lg:z-50 items-center relative lg:gap-8"
+                  style={{ position: "relative", zIndex: 4 }}
+                >
                   <TokenSelect
                     onChange={setTokenFrom}
                     className="flex-1"
@@ -416,7 +419,7 @@ const SwapCard: React.FC<Props> = () => {
                     className="w-full crosschainswap-input text-end" // Increase the height here
                   />
                 </div>
-                <div className="w-full justify-between pl-6 flex -mt-3">
+                <div className="w-full justify-between pl-6 flex mt-0 lg:-mt-3">
                   <span
                     className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
                   >
@@ -435,11 +438,19 @@ const SwapCard: React.FC<Props> = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
                   <div
-                    className={`font-monteserrat w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
+                    className={`${
+                      percentage === val ? "scale-125" : "scale-100"
+                    }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
-                    {val}%
+                    <span
+                      className={`${
+                        percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                      } transition-all`}
+                    >
+                      {val}%
+                    </span>
                     <div
                       className={`${
                         percentage === val ? "w-full" : "w-0"
@@ -448,22 +459,22 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 ))}
               </div>
-              */}
+              <button
+                onClick={handleSwitchToken}
+                className="w-16 absolute self-center -bottom-20 lg:-bottom-24 h-16 lg:w-20 lg:h-20 p-4  lg:-mt-10  cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
+              >
+                <Image
+                  src={"/change-icon.svg"}
+                  width={24}
+                  height={24}
+                  className="h-6 w-6"
+                  alt="change-icon"
+                />
+              </button>
             </div>
           </div>
-          <button
-            onClick={handleSwitchToken}
-            className="w-16 h-16 lg:w-20 lg:h-20 p-4 lg:-my-6 lg:z-[2] cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
-          >
-            <Image
-              src={"/change-icon.svg"}
-              width={24}
-              height={24}
-              className="h-6 w-6"
-              alt="change-icon"
-            />
-          </button>
-          <div className="w-full flex flex-col lgz-[1] bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
+
+          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex justify-between items-center space-x-2 mt-4">
               <span className="text-[#FFF0DD]">You Buy</span>
               {balanceTo && (
@@ -488,11 +499,11 @@ const SwapCard: React.FC<Props> = () => {
                   disabled={true}
                 />
               </div>
-              <div className="w-full justify-between pl-6 flex -mt-3">
+              <div className="w-full justify-between pl-6  flex mt-0 lg:-mt-3">
                 <span
                   className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
                 >
-                  {tokenFrom?.name}
+                  {tokenTo?.name}
                 </span>
 
                 {/* TODO: USD value of swap amount */}

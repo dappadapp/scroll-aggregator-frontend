@@ -9,7 +9,7 @@ function CardNavbar() {
   return (
     <div
       className={
-        "hidden lg:flex justify-start gap-5 lg:text-4xl z-10 text-xs items-baseline text-[#FFF0DD] "
+        "hidden lg:flex w-full max-w-[540px] px-8 justify-start gap-5 lg:text-4xl z-10 text-xs items-baseline text-[#FFF0DD] "
       }
     >
       <Link
@@ -17,7 +17,7 @@ function CardNavbar() {
         className={`transition-all ${
           path !== "/"
             ? "text-[#FFF0DD]/[0.24]"
-            : "text-[#FFF0DD] border-[#FF7C5C] border-b leading-7"
+            : "text-[#FFF0DD] border-[#FF7C5C] border-b leading-6"
         }`}
       >
         Swap

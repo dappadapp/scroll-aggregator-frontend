@@ -16,19 +16,23 @@ const menuItems = [
   {
     title: "Swap",
     href: "/",
+    active: true,
   },
   {
     title: "Bridge",
     href: "/bridge",
     type: "mobile",
+    active: true,
   },
   {
     title: "Dao",
     href: "/dao",
+    active: false,
   },
   {
     title: "Earn",
     href: "/dao",
+    active: false,
   },
   // {
   //   title: "Buy Crypto",
@@ -78,15 +82,20 @@ const Navbar: React.FC<Props> = (props) => {
     .map((menuItem) => {
       return (
         <Link
-          href={menuItem.href || ""}
+          href={menuItem.active ? menuItem.href : ""}
           className={` ${
             path === menuItem.href
               ? "text-opacity-100"
               : "cursor-pointer text-opacity-40 hover:text-opacity-95 hover:bg-opacity-40 hover:bg-slate-100"
-          } flex  items-center p-4 transition-all gap-2 mt-6 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
+          } ${
+            !menuItem.active && "tooltip"
+          } flex items-center p-4 transition-all gap-2 mt-6 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
           key={`menu-item-${menuItem.title}`}
         >
-          {menuItem.title}
+          <span>{menuItem.title}</span>
+          <span className={`${menuItem.active ? "hidden" : "tooltiptext text-sm"} `}>
+            Soon
+          </span>
         </Link>
       );
     });
