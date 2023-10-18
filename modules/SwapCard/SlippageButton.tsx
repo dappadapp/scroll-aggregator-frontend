@@ -65,7 +65,7 @@ export default function SlippageButton() {
                         value={customSlippage}
                         type="number"
                         placeholder="Custom"
-                        className="w-full m-h-[50px] text-[#FFE7DD] text-center lg:text-[20px] crosschainswap-input"
+                        className="w-full m-h-[50px] text-[#FFE7DD] text-center lg:!text-[20px] crosschainswap-input"
                       />
                     </div>
                   </div>
