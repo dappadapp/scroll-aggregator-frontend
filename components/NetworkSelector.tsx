@@ -60,7 +60,6 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   }, [chain, switchNetwork]);
 
   const handleChangeNetwork = (network: Network) => {
-    if(network.chainId === 534352) return;
     if (switchNetwork) switchNetwork(network.chainId);
   };
 

@@ -123,12 +123,13 @@ export async function POST(request: Request) {
     syncswap: {
       name: "Skycswap",
       id: "syncswap",
-      router: "0x80e38291e06339d10AAB483C65695D004dBD5C69",
+      router: "0x78ea8E533c834049dE625e05F0B4DeFfe9DB5f6e",
       abi: SyncswapAbi, // Replace with the actual ABI
       fee: 0,
       inFunction: "getAmountOut",
       outFunction: "getAmountOut",
       async runInFunction(amount: any, from: any, to: any,fromDecimals: any, toDecimals: any) {
+
 
    
       },
@@ -137,15 +138,14 @@ export async function POST(request: Request) {
         || from === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && to === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"){
         const contract = new ethers.Contract("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1", SyncSwapStableAbi, provider);
 
-        const data = await contract.getAmountOut(from,parseUnits(amount, fromDecimals), "0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
+        const data = await contract.getAmountOut(from,parseUnits(amount, toDecimals), "0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
         console.log("data1", BigInt(data));
         return BigInt(data);
       }
       else{
         const contract = new ethers.Contract(this.router, this.abi, provider);
 
-        console.log("amount parse", (parseUnits(amount, fromDecimals)));
-        const data = await contract.getAmountOut(from,parseUnits(amount, fromDecimals),"0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
+        const data = await contract.getAmountOut(from,parseUnits(amount, toDecimals),"0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
         console.log("data2", BigInt(data));
         return BigInt(data);
       }

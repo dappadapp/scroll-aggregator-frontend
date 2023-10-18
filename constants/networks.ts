@@ -34,8 +34,7 @@ export const networks: Network[] = [
     symbol: scroll.nativeCurrency.symbol,
     isTestnet: false,
   },
-/*
-   {
+  {
     name: scrollSepolia.name,
     chainId: scrollSepolia.id,
     wrappedNativeAddress: "test",
@@ -45,7 +44,6 @@ export const networks: Network[] = [
     symbol: scrollSepolia.nativeCurrency.symbol,
     isTestnet: true,
   },
- */
   // {
   //   name: scrollTestnet.name,
   //   chainId: scrollTestnet.id,
