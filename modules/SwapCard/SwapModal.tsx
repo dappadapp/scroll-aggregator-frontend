@@ -82,7 +82,6 @@ function SwapModal({
     });
     if (feeData) setFee(feeData?.formatted?.gasPrice ?? "0");
 
-    console.log("feeData", feeData);
   };
 
   return (
@@ -93,15 +92,15 @@ function SwapModal({
     >
       <div
         className={
-          "p-14 max-w-[100vw] min-w-[400px] md:min-w-[600px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "p-12 max-w-[100vw] min-w-[400px] md:min-w-[575px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
-          <h1 className="text-2xl md:text-4xl mb-5">Review swap details</h1>
+          <h1 className="text-2xl md:text-4xl mb-6">Review swap details</h1>
 
           <div
             onClick={() => onCloseModal()}
-            className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
+            className="right-0 z-[9999] hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
           >
             <FontAwesomeIcon icon={faX} />
           </div>
