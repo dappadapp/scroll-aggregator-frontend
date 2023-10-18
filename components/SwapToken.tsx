@@ -14,7 +14,7 @@ export const SwapToken: React.FC<Props> = (props) => {
     >
       <CurrencyLogo currency={props.currency} size={12} />
       <div className={`flex flex-col text-left`}>
-        <span className="text-sm md:text-xl">{props.value}</span>
+        <span className="text-xl md:text-2xl">{props.value}</span>
         <span className="text-[#fff] text-xs md:text-sm">{props.currency.symbol}</span>
       </div>
     </div>

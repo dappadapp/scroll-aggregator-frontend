@@ -93,7 +93,7 @@ function SwapModal({
     >
       <div
         className={
-          "p-14 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "p-14 max-w-[100vw] min-w-[400px] md:min-w-[600px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
@@ -119,14 +119,14 @@ function SwapModal({
         <div className="w-full bg-[#AAA] h-[1px] my-6 mb-10"></div>
 
         <div className="flex justify-between items-center mt-4">
-          <span className="text-xl">Liquidity source</span>
+          <span className="text-2xl">Liquidity source</span>
 
-          <span>
+          <span className="text-2xl">
             {swapType === SWAP_TYPE.SKYDROME ? (
               <div className="flex items-center">
                 <img
                   src="https://skydrome.finance/assets/Logos/PNG/Logo.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
                   alt="Skydrome"
                 />
                 <p className="inline-block mt-1">Skydrome</p>
@@ -135,7 +135,7 @@ function SwapModal({
               <div className="flex items-center">
                 <img
                   src=" https://raw.githubusercontent.com/SpaceFinance/default-token-list/master/assets/0x4E2D4F33d759976381D9DeE04B197bF52F6bC1FC.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
                   alt="Spacefi"
                 />
                 <p className="inline-block">SpaceFi</p>
@@ -144,7 +144,7 @@ function SwapModal({
               <div className="flex items-center">
                 <img
                   src="https://izumi.finance/assets/home/iziLogo/logo.svg"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
                   alt="Izumi"
                 />
                 <p className="inline-block">Izumi</p>
@@ -153,8 +153,8 @@ function SwapModal({
               <div className="flex items-center">
               <img
                 src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
-                className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                alt="Izumi"
+                className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                alt="Syncswap"
               />
               <p className="inline-block">Syncswap</p>
             </div>
@@ -162,7 +162,7 @@ function SwapModal({
           </span>
         </div>
 
-        <div className="my-10 text-base md:text-lg flex flex-col gap-2">
+        <div className="my-10  md:text-lg flex flex-col gap-2">
           {/**
              <div className="flex justify-between">
             <span>Gas Fee</span>
