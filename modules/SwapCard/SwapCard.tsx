@@ -380,7 +380,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[600px] p-2 lg:p-8 gap-2  z-10 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2  z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
@@ -526,7 +526,7 @@ const SwapCard: React.FC<Props> = () => {
                 chain?.id === 534352
               }
               className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
-              onClick={() => (isConnected && (!tokenFrom || !tokenTo || !swapAmount || !receiveAmount) ? setIsSwapModalOpen(true) : open())}
+              onClick={() => (isConnected  ? setIsSwapModalOpen(true) : open())}
             >
               {isConnected ? "SWAP" : "Connect Wallet"}
             </Button>
