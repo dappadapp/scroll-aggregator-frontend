@@ -25,6 +25,7 @@ import { type WalletClient, useWalletClient } from "wagmi";
 import { providers } from "ethers";
 import { useGlobalContext } from "@/contexts";
 import SlippageButton from "./SlippageButton";
+import { toast } from "react-toastify";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -371,7 +372,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[540px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
@@ -423,12 +424,13 @@ const SwapCard: React.FC<Props> = () => {
                     {tokenFrom?.name}
                   </span>
 
-                  {/* TODO: USD value of swap amount */}
+                  {/* TODO: USD value of swap amount 
                   <span
                     className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E]  font-semibold `}
                   >
                     ~$50000
                   </span>
+                  */}
                 </div>
               </div>
 
@@ -503,12 +505,12 @@ const SwapCard: React.FC<Props> = () => {
                   {tokenTo?.name}
                 </span>
 
-                {/* TODO: USD value of swap amount */}
+                {/* TODO: USD value of swap amount 
                 <span
                   className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] font-semibold `}
                 >
                   ~$50000
-                </span>
+                </span>*/}
               </div>
             </div>
             <Button
