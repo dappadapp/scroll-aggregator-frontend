@@ -1,5 +1,5 @@
 import type { Currency } from "@/types";
-import React from "react";
+import React, { useState } from "react";
 import { useAccount, useContractWrite, usePrepareContractWrite, erc20ABI } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
 import { toast } from "react-toastify";
@@ -15,6 +15,7 @@ type Props = {
 const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
+  const [loading, setLoading] = useState(false);
   const { config: configApprove } = usePrepareContractWrite({
     address: tokenIn.wrapped.address,
     abi: erc20ABI,
@@ -31,13 +32,15 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   } = useContractWrite(configApprove);
 
   const handleAllowance = async () => {
+    setLoading(true);
     try {
     if (approveAsync) {
-    
+       
         const { hash } = await approveAsync();
         await waitForTransaction({ hash });
         toast("Approved!");
         onSuccess();
+        setLoading(false);
       
     } else {
       return toast("Failed to approve!");
@@ -49,7 +52,7 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
   };
 
   return (
-    <Button className="w-full" onClick={handleAllowance} loading={isLoading}>
+    <Button className="w-full" onClick={handleAllowance} loading={loading} disabled={loading}>
       Allow Swap
     </Button>
   );

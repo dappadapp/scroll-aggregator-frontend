@@ -16,7 +16,7 @@ const Tokens = {
   // [ChainId.ZKSYNC]: zksyncTokens,
   // [ChainId.ZKSYNC_TESTNET]: zkSyncTestnetTokens,
   // [ChainId.SCROLL_TESTNET]: scrollTestnetTokens,
-  [ChainId.SCROLL_SEPOLIA]: scrollSepoliaTokens,
+  //[ChainId.SCROLL_SEPOLIA]: scrollSepoliaTokens,
   [ChainId.SCROLL_MAINNET]: scrollMainnetTokens,
 }
 

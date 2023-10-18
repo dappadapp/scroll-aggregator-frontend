@@ -44,7 +44,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     value: tokenIn.isNative ? swapParam.amountIn : undefined,
     enabled: !!contractAddr,
   });
-
+  console.log("swap params", swapParam);
   const { config: configDeposit } = usePrepareContractWrite({
     address: "0x5300000000000000000000000000000000000004",
     abi: WETHAbi,
@@ -166,7 +166,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   };
 
   return (
-    <Button className="w-full" onClick={handleSwap} loading={loading}>
+    <Button className="w-full" onClick={handleSwap} loading={loading} disabled={loading}>
       SWAP
     </Button>
   );

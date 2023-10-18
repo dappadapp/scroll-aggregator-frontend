@@ -18,6 +18,7 @@ export enum SWAP_TYPE {
   SPACEFI = 1,
   SKYDROME = 2,
   IZUMI = 3,
+  SYNCSWAP = 4,
 
 }
 

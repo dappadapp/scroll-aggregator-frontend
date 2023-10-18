@@ -10,6 +10,7 @@ import quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Qu
 import { generatePath } from "@/utils/path";
 import { usePublicClient } from "wagmi";
 import SkydromeAbi from "@/constants/abis/skydrome.json";
+import SyncswapAbi from "@/constants/abis/syncSwapQuote.json";
 
 interface Dex {
   name: string;
@@ -46,9 +47,9 @@ export async function POST(request: Request) {
       },
       async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", parseUnits(amount, fromDecimals));
         const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to]);
-        console.log("data", BigInt(data?.[1]));
-        console.log("data", BigInt(data?.[0]));
+        console.log("data", [from, to]);
         return BigInt(data?.[1]);
       },
     },
@@ -115,6 +116,36 @@ export async function POST(request: Request) {
 
         const { acquire, } = await contract.callStatic.swapAmount(parseUnits(amount, fromDecimals), generatePath(from, to, this.fee));
         return BigInt(acquire);
+      },
+    },
+    syncswap: {
+      name: "Skycswap",
+      id: "syncswap",
+      router: "0x78ea8E533c834049dE625e05F0B4DeFfe9DB5f6e",
+      abi: SyncswapAbi, // Replace with the actual ABI
+      fee: 0,
+      inFunction: "getAmountOut",
+      outFunction: "getAmountOut",
+      async runInFunction(amount: any, from: any, to: any,fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+
+        const data = await contract.getAmountsOut(parseUnits(amount, toDecimals), [
+          {
+            from: from,
+            to: to,
+            stable: true
+          }
+        ]);
+        return BigInt(data?.[0]);
+      },
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+
+        const data = await contract.getAmountOut(from,parseUnits(amount, fromDecimals),"0x3D6a34D8ECe4640adFf2f38a5bD801E51B07e49C");
+
+        console.log("data", data);
+
+        return BigInt(data);
       },
     },
   };

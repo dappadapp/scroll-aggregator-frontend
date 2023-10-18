@@ -35,7 +35,11 @@ export const aggregator : {
     skydrome?: {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
-    }
+    },
+    syncswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
   }    
 } = {
 
@@ -58,9 +62,10 @@ export const aggregator : {
       router: "0x00000000",
       poolFactory: "0x00000000"
     },
+
   }, 
   [ChainId.SCROLL_MAINNET]: {
-    contract: "0x026b5D83843c40765Fba99a3d1f1732b48c1281B",
+    contract: "0xeF430919857FaDb0ea086e0951fEf1c8a433D33a",
     spacefi: {
       router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"
@@ -72,6 +77,10 @@ export const aggregator : {
     iziswap: {
       router: "0x2db0AFD0045F3518c77eC6591a542e326Befd3D7",
       liquidityManager: "0x8c7d3063579BdB0b90997e18A770eaE32E1eBb08"
+    },
+    syncswap: {
+      router: "0x80e38291e06339d10AAB483C65695D004dBD5C69",
+      poolFactory: "0x37BAc764494c8db4e54BDE72f6965beA9fa0AC2d"
     }
   }
 }

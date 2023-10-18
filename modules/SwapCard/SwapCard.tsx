@@ -29,6 +29,7 @@ import { FaWallet } from "react-icons/fa";
 import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
+import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
 import { type WalletClient, useWalletClient } from 'wagmi'
 import { providers } from 'ethers'
 type Props = {};
@@ -67,9 +68,10 @@ const SwapCard: React.FC<Props> = () => {
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.SKYDROME);
   //TODO: Add tokens
-  const [tokenFrom, setTokenFrom] = useState<Currency>();
+  const [tokenFrom, setTokenFrom] = useState<Currency>(
+  );
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
-    Tokens[ChainId.SCROLL_MAINNET]?.usdt
+    Tokens[ChainId.SCROLL_MAINNET]?.usdc
   );
   const [slippage, setSlippage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
@@ -143,6 +145,16 @@ async function getPool() {
 }
 
 const { data: poolAddress, refetch } = useContractRead(
+  dexType === SWAP_TYPE.SYNCSWAP ? {
+    address: contractAddr?.syncswap?.poolFactory,
+    abi: SnycSwapPoolFactory,
+    functionName: "getPool",
+    args: [
+      tokenFrom?.wrapped.address,
+      tokenTo?.wrapped.address,
+    ],
+    }: 
+   
   dexType === SWAP_TYPE.SPACEFI
     ? {
         address: contractAddr?.spacefi?.poolFactory,
@@ -174,7 +186,8 @@ const { data: poolAddress, refetch } = useContractRead(
         3000,
       ],
       }
-    : {}
+    :  {
+      },
 );
 
 console.log("poolAddress", poolAddress);
@@ -264,7 +277,10 @@ console.log("poolAddress", poolAddress);
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
             ? SWAP_TYPE.SKYDROME
-            : SWAP_TYPE.IZUMI
+            : exchangeRate?.data?.dex === "iziswap"
+            ? SWAP_TYPE.IZUMI 
+            : SWAP_TYPE.SYNCSWAP
+          
         );
         setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
         setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
