@@ -377,7 +377,7 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[600px] p-2 lg:p-8 gap-2 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[680px] p-2 lg:p-8 gap-2 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col lg:z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
@@ -431,7 +431,7 @@ const SwapCard: React.FC<Props> = () => {
                   </span>
                 </div>
               </div>
-
+              {/* 
               <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
                   <div
@@ -448,6 +448,7 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 ))}
               </div>
+              */}
             </div>
           </div>
           <button

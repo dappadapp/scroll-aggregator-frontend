@@ -32,7 +32,7 @@ const TokenSelect = ({ token, onChange, className }: Props) => {
     <DropdownSelect
       value={token}
       onChange={onChange}
-      className={`px-2 lg:px-4 z-10`}
+      className={`px-2 lg:px-4 z-15`}
       dropdownClassName={""}
       options={tokens}
       optionRenderer={defaultOptionRenderer}
