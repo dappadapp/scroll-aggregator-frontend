@@ -429,12 +429,13 @@ const SwapCard: React.FC<Props> = () => {
                     {tokenFrom?.name}
                   </span>
 
-                  {/* TODO: USD value of swap amount */}
+                  {/* TODO: USD value of swap amount 
                   <span
                     className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E]  font-semibold `}
                   >
                     ~$50000
                   </span>
+                  */}
                 </div>
               </div>
 
@@ -509,12 +510,12 @@ const SwapCard: React.FC<Props> = () => {
                   {tokenTo?.name}
                 </span>
 
-                {/* TODO: USD value of swap amount */}
+                {/* TODO: USD value of swap amount 
                 <span
                   className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] font-semibold `}
                 >
                   ~$50000
-                </span>
+                </span>*/}
               </div>
             </div>
             <Button
@@ -525,7 +526,7 @@ const SwapCard: React.FC<Props> = () => {
                 chain?.id === 534352
               }
               className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
-              onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
+              onClick={() => (isConnected && (!tokenFrom || !tokenTo || !swapAmount || !receiveAmount) ? setIsSwapModalOpen(true) : open())}
             >
               {isConnected ? "SWAP" : "Connect Wallet"}
             </Button>
