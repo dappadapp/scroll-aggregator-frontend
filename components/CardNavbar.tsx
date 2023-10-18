@@ -17,7 +17,7 @@ function CardNavbar() {
         className={`transition-all ${
           path !== "/"
             ? "text-[#FFF0DD]/[0.24]"
-            : "text-[#FFF0DD] border-[#FF7C5C] border-b leading-6"
+            : "text-[#FFF0DD] border-[#FF7C5C] border-b-2 leading-6"
         }`}
       >
         Swap
