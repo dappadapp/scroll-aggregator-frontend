@@ -13,7 +13,7 @@ export default function Home({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   return (
-    <div className="w-full relative h-full flex items-center">
+    <div className="w-full relative h-full flex items-center z-[3]">
       <Image
         src="/app-bg.svg"
         alt="app-bg"

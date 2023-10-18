@@ -10,6 +10,7 @@ import Container from "@/container/container";
 import Navbar from "@/components/Navbar";
 import CardNavbar from "@/components/CardNavbar";
 import Footer from "@/components/Footer";
+import { GlobalContextProvider } from "@/contexts/globalContext";
 
 const inter = Orbitron({
   subsets: ["latin"],
@@ -74,26 +75,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${spartan.variable} ${spartan.className} h-full tracking-wider text-[20px]`}
       >
         <Providers>
-          <div
-            className={
-              "relative container min-h-screen h-full flex flex-col px-3 mx-auto items-center md:px-20 overflow-x-hidden"
-            }
-          >
-            <Navbar />
+          <GlobalContextProvider>
             <div
-              id="container-div"
               className={
-                "container mx-auto z-10 md:pt-0 justify-center md:px-20 gap-2 flex-1  flex my-auto h-full min-h-screen overflow-hidden  flex-col"
+                "relative container min-h-screen h-full flex flex-col px-3 mx-auto items-center md:px-20 overflow-x-hidden"
               }
             >
-              <div className="w-full h-full min-h-[70vh] relative flex-col flex items-center mb-5">
-                <CardNavbar />
-                {children}
+              <Navbar />
+              <div
+                id="container-div"
+                className={
+                  "container mx-auto z-10 md:pt-0 justify-center md:px-20 gap-2 flex-1  flex my-auto h-full min-h-screen overflow-hidden  flex-col"
+                }
+              >
+                <div className="w-full h-full min-h-[70vh] relative flex-col flex items-center mb-5">
+                  <CardNavbar />
+                  {children}
+                </div>
               </div>
-            </div>
-            <Footer />
-            <div className="w-full -z-10 h-0 lg:h-full bg-[#000814] absolute top-0 overflow-hidden">
-              {/* <div
+              <Footer />
+              <div className="w-full -z-10 h-0 lg:h-full bg-[#000814] absolute top-0 overflow-hidden">
+                {/* <div
                 className={`absolute h-[0vh] md:h-[120vh] blur-[2px] bg-opacity-30 overflow-hidden top-0 aspect-square bg-[radial-gradient(circle,#ffcd2c,#c99d32,#937132,#5d492d,#272625)] 
                 left-0 md:translate-x-[-70%] translate-x-[-90%]
             rounded-full`}
@@ -103,9 +105,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                  right-0 md:translate-x-[70%] translate-x-[90%]
              rounded-full`}
               ></div> */}
+              </div>
+              <ToastContainer position="top-right" theme="dark" />
             </div>
-            <ToastContainer position="top-right" theme="dark" />
-          </div>
+          </GlobalContextProvider>
         </Providers>
       </body>
     </html>

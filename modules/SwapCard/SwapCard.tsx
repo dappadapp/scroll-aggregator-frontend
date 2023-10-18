@@ -2,8 +2,8 @@ import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
-import { formatUnits, parseUnits } from "viem";
-import _, { get, set } from "lodash";
+import { formatUnits } from "viem";
+import _ from "lodash";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -13,25 +13,18 @@ import Tokens from "@/constants/tokens";
 import useContract from "@/hooks/useContract";
 import { ChainId, Currency, SWAP_TYPE } from "@/types";
 import SwapModal from "./SwapModal";
-import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
-
 import SpaceFiPoolFactoryAbi from "@/constants/abis/spacefi.pool-factory.json";
-import SpaceFiRouterAbi from "@/constants/abis/spacefi.router.json";
-import { abi as UniswapPoolFactoryAbi } from "@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/UniswapV3Factory.json";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsUpDown } from "@fortawesome/free-solid-svg-icons";
 import { toFixedValue } from "@/utils/address";
 import { ethers } from "ethers";
-import SlippageButton from "./SlippageButton";
 import axios from "axios";
-import { networks } from "@/constants/networks";
-import { FaWallet } from "react-icons/fa";
 import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
 import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
 import { type WalletClient, useWalletClient } from "wagmi";
 import { providers } from "ethers";
+import { useGlobalContext } from "@/contexts";
+import SlippageButton from "./SlippageButton";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -70,7 +63,7 @@ const SwapCard: React.FC<Props> = () => {
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
     Tokens[ChainId.SCROLL_MAINNET]?.usdc
   );
-  const [slippage, setSlippage] = useState<number>(0.5);
+  const { slippage } = useGlobalContext();
   const [percentage, setPercentage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
@@ -287,20 +280,21 @@ const SwapCard: React.FC<Props> = () => {
         } else if (exchangeRate?.data?.dex === "iziswap") {
           const pool = await getPool();
           console.log("pool", pool);
-          if(pool)
-            setPairAddress(pool?.toString());
-        }
-        else if(exchangeRate?.data?.dex === "syncswap"){
-          if(tokenFrom?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" && tokenTo?.wrapped.address === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4"
-            || tokenFrom?.wrapped.address === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && tokenTo?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"
-          ){
-
-            setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1")
+          if (pool) setPairAddress(pool?.toString());
+        } else if (exchangeRate?.data?.dex === "syncswap") {
+          if (
+            (tokenFrom?.wrapped.address ===
+              "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
+              tokenTo?.wrapped.address ===
+                "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
+            (tokenFrom?.wrapped.address ===
+              "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" &&
+              tokenTo?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
+          ) {
+            setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1");
           }
-        }
-        else{
-          if(poolAddress)
-            setPairAddress(poolAddress?.toString());
+        } else {
+          if (poolAddress) setPairAddress(poolAddress?.toString());
         }
       }
     }, 200);
@@ -377,10 +371,13 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="w-full max-w-[540px] p-2 lg:p-8 gap-2  z-10 flex flex-col relative mx-auto pt-3">
+    <div className="w-full max-w-[540px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
+            <div className="flex lg:hidden w-full justify-end">
+              <SlippageButton />
+            </div>
             <div className="flex justify-between items-center space-x-2 mt-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (

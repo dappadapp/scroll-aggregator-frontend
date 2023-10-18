@@ -35,7 +35,7 @@ const Input: React.FC<Props> = ({
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`${className} rounded-lg p-2 w-full focus:outline-0 text-md lg:text-[64px] bg-transparent  placeholder:text-base placeholder:lg:text-xl tracking-wide`}
+      className={`rounded-lg p-2 w-full focus:outline-0 text-md lg:text-[64px] bg-transparent  placeholder:text-base placeholder:lg:text-xl tracking-wide ${className} `}
     />
   ) : (
     <div
