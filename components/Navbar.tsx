@@ -14,7 +14,7 @@ const ConnectButton: any = dynamic(() => import("./ConnectButton"), {
 
 const menuItems = [
   {
-    title: "Trade",
+    title: "Swap",
     href: "/",
   },
   {
@@ -24,16 +24,16 @@ const menuItems = [
   },
   {
     title: "Dao",
-    href: "/",
+    href: "/dao",
   },
   {
     title: "Earn",
-    href: "/",
+    href: "/dao",
   },
-  {
-    title: "Buy Crypto",
-    href: "/",
-  },
+  // {
+  //   title: "Buy Crypto",
+  //   href: "/",
+  // },
   // {
   //   title: "Stats",
   //   href: "/stats",
@@ -81,9 +81,9 @@ const Navbar: React.FC<Props> = (props) => {
           href={menuItem.href || ""}
           className={` ${
             path === menuItem.href
-              ? "cursor-not-allowed"
-              : "cursor-pointer  hover:bg-opacity-40 hover:bg-slate-100"
-          } flex  items-center  transition-all gap-2 mt-6 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
+              ? "text-opacity-100"
+              : "cursor-pointer text-opacity-40 hover:text-opacity-95 hover:bg-opacity-40 hover:bg-slate-100"
+          } flex  items-center p-4 transition-all gap-2 mt-6 rounded-lg text-[#FFF0DD] text-[20px] leading-[120%]`}
           key={`menu-item-${menuItem.title}`}
         >
           {menuItem.title}

@@ -51,12 +51,12 @@ const DropdownSelect = ({
     <Listbox value={value} onChange={onChange}>
       <div className="static inline-block lg:max-w-none" ref={dropdownRef}>
         <div
-          className={`${className} static cursor-pointer bg-gray-800/60 rounded-lg focus:outline-none`}
+          className={`${className} static cursor-pointer bg-transparent rounded-lg focus:outline-none`}
           onClick={toggleDropdown}
         >
-          <div className="flex items-center justify-between p-2">
-            <div className="text-sm lg:text-lg">{children}</div>
-            <FontAwesomeIcon icon={faAngleDown} className="ml-2" />
+          <div className="flex items-start justify-between p-2 ">
+            <div className="h-full text-[#FFF0DD]">{children}</div>
+            <FontAwesomeIcon icon={faAngleDown} className="ml-2 mt-2" color="#EBC28E" />
           </div>
         </div>
         <Transition
@@ -69,7 +69,7 @@ const DropdownSelect = ({
           leaveTo="opacity-0 scale-0"
         >
           <div
-            className={` ${className} ${dropdownClassName}  absolute right-0 top-full z-10 mt-2 w-44 lg:w-64 max-h-60 overflow-y-auto rounded-md bg-[#12141A]/80 backdrop-blur-md text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+            className={` ${className} ${dropdownClassName}  absolute right-0 top-full z-10 mt-2 w-44 lg:w-64 max-h-60 overflow-y-auto bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[8px] text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
           >
             {onSearch && (
               <div className="p-2">

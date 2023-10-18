@@ -1,6 +1,6 @@
 import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
-import { readContract } from "@wagmi/core"
+import { readContract } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits, parseUnits } from "viem";
 import _, { get, set } from "lodash";
@@ -30,33 +30,31 @@ import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
 import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
-import { type WalletClient, useWalletClient } from 'wagmi'
-import { providers } from 'ethers'
+import { type WalletClient, useWalletClient } from "wagmi";
+import { providers } from "ethers";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
 
-
- 
 export function walletClientToSigner(walletClient: WalletClient) {
-  const { account, chain, transport } = walletClient
+  const { account, chain, transport } = walletClient;
   const network = {
     chainId: 534352,
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
-  }
-  const provider = new providers.Web3Provider(transport, network)
-  const signer = provider.getSigner(account.address)
-  return signer
+  };
+  const provider = new providers.Web3Provider(transport, network);
+  const signer = provider.getSigner(account.address);
+  return signer;
 }
- 
+
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const { data: walletClient } = useWalletClient({ chainId })
+  const { data: walletClient } = useWalletClient({ chainId });
   return React.useMemo(
     () => (walletClient ? walletClientToSigner(walletClient) : undefined),
-    [walletClient],
-  )
+    [walletClient]
+  );
 }
 
 const SwapCard: React.FC<Props> = () => {
@@ -68,12 +66,12 @@ const SwapCard: React.FC<Props> = () => {
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.SKYDROME);
   //TODO: Add tokens
-  const [tokenFrom, setTokenFrom] = useState<Currency>(
-  );
+  const [tokenFrom, setTokenFrom] = useState<Currency>();
   const [tokenTo, setTokenTo] = useState<Currency | undefined>(
     Tokens[ChainId.SCROLL_MAINNET]?.usdc
   );
   const [slippage, setSlippage] = useState<number>(0.5);
+  const [percentage, setPercentage] = useState<number>(0.5);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
   const getCurrentRateTimeout = useRef<any>(null);
@@ -83,7 +81,7 @@ const SwapCard: React.FC<Props> = () => {
   const [pairAddress, setPairAddress] = useState<string>();
 
   const { chain, chains } = useNetwork();
-  const signer = useEthersSigner({ chainId: 534352 })
+  const signer = useEthersSigner({ chainId: 534352 });
 
   console.log("Tokens", Tokens);
   const {
@@ -112,92 +110,87 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-
-
   // Instantiate the contract
-const contract = new ethers.Contract(contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004", SkydromePoolFactory, signer);
+  const contract = new ethers.Contract(
+    contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004",
+    SkydromePoolFactory,
+    signer
+  );
 
-// Send a call to the getPair function using ethers.js
-async function getPair() {
-  try {
-    const pair = await contract.functions.getPair( tokenFrom?.wrapped.address,
-      tokenTo?.wrapped.address,
-      false);
-      console.log("Pair Address:", pair);
-    return pair;
-
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-const contractIzumi = new ethers.Contract(contractAddr?.iziswap?.liquidityManager || "0x5300000000000000000000000000000000000004", IziSwapPoolFactory, signer);
-async function getPool() {
-  try {
-    const pair = await contractIzumi.pool( tokenFrom?.wrapped.address,
-      tokenTo?.wrapped.address,
-      3000);
-      console.log("Pair Address:", pair);
-    return pair;
-   
-  } catch (error) {
-    console.error("Error:", error);
-  }
-}
-
-const { data: poolAddress, refetch } = useContractRead(
-  dexType === SWAP_TYPE.SYNCSWAP ? {
-    address: contractAddr?.syncswap?.poolFactory,
-    abi: SnycSwapPoolFactory,
-    functionName: "getPool",
-    args: [
-      tokenFrom?.wrapped.address,
-      tokenTo?.wrapped.address,
-    ],
-    }: 
-   
-  dexType === SWAP_TYPE.SPACEFI
-    ? {
-        address: contractAddr?.spacefi?.poolFactory,
-        abi: SpaceFiPoolFactoryAbi,
-        functionName: "getPair",
-        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
-    : dexType === SWAP_TYPE.SKYDROME
-    ? {
-        address: contractAddr?.skydrome?.poolFactory,
-        abi: SkydromePoolFactory,
-        functionName: "getPair",
-        args: [
-          tokenFrom?.wrapped.address,
-          tokenTo?.wrapped.address,
-          false,
-        ],
-        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-      }
-    : dexType === SWAP_TYPE.IZUMI
-    ? {
-      address: contractAddr?.iziswap?.liquidityManager,
-      abi: IziSwapPoolFactory,
-      functionName: "pool",
-      args: [
+  // Send a call to the getPair function using ethers.js
+  async function getPair() {
+    try {
+      const pair = await contract.functions.getPair(
         tokenFrom?.wrapped.address,
         tokenTo?.wrapped.address,
-        3000,
-      ],
-      }
-    :  {
-      },
-);
+        false
+      );
+      console.log("Pair Address:", pair);
+      return pair;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  const contractIzumi = new ethers.Contract(
+    contractAddr?.iziswap?.liquidityManager ||
+      "0x5300000000000000000000000000000000000004",
+    IziSwapPoolFactory,
+    signer
+  );
+  async function getPool() {
+    try {
+      const pair = await contractIzumi.pool(
+        tokenFrom?.wrapped.address,
+        tokenTo?.wrapped.address,
+        3000
+      );
+      console.log("Pair Address:", pair);
+      return pair;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
-console.log("poolAddress", poolAddress);
+  const { data: poolAddress, refetch } = useContractRead(
+    dexType === SWAP_TYPE.SYNCSWAP
+      ? {
+          address: contractAddr?.syncswap?.poolFactory,
+          abi: SnycSwapPoolFactory,
+          functionName: "getPool",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+        }
+      : dexType === SWAP_TYPE.SPACEFI
+      ? {
+          address: contractAddr?.spacefi?.poolFactory,
+          abi: SpaceFiPoolFactoryAbi,
+          functionName: "getPair",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
+      : dexType === SWAP_TYPE.SKYDROME
+      ? {
+          address: contractAddr?.skydrome?.poolFactory,
+          abi: SkydromePoolFactory,
+          functionName: "getPair",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, false],
+          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+        }
+      : dexType === SWAP_TYPE.IZUMI
+      ? {
+          address: contractAddr?.iziswap?.liquidityManager,
+          abi: IziSwapPoolFactory,
+          functionName: "pool",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, 3000],
+        }
+      : {}
+  );
 
+  console.log("poolAddress", poolAddress);
 
   useEffect(() => {
     fetchBalanceFrom();
     fetchBalanceTo();
     refetch();
-    
   }, [
     chain,
     address,
@@ -219,16 +212,14 @@ console.log("poolAddress", poolAddress);
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    ){
+    ) {
       setReceiveAmount(swapAmount);
-    }
-    else{
+    } else {
       getCurrentRate();
     }
-   
-  }, [tokenFrom,tokenTo]);
+  }, [tokenFrom, tokenTo]);
 
-  const handleINChange = async(e: any) => {
+  const handleINChange = async (e: any) => {
     refetch();
     console.log("tokenTo in", tokenTo);
     console.log("tokenFrom in", tokenFrom);
@@ -256,7 +247,7 @@ console.log("poolAddress", poolAddress);
     }
   };
 
-  const getCurrentRate = async() => {
+  const getCurrentRate = async () => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
       if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
@@ -278,21 +269,22 @@ console.log("poolAddress", poolAddress);
             : exchangeRate?.data?.dex === "skydrome"
             ? SWAP_TYPE.SKYDROME
             : exchangeRate?.data?.dex === "iziswap"
-            ? SWAP_TYPE.IZUMI 
+            ? SWAP_TYPE.IZUMI
             : SWAP_TYPE.SYNCSWAP
-          
         );
-        setReceiveAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
-        setRate(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals));
+        setReceiveAmount(
+          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
+        );
+        setRate(
+          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
+        );
         setIsLoadingReceiveAmount(false);
 
-        if(exchangeRate?.data?.dex === "skydrome"){
+        if (exchangeRate?.data?.dex === "skydrome") {
           const pool = await getPair();
           console.log("pool", pool);
-          if(pool)
-            setPairAddress(pool[0]);
-        }
-        else if(exchangeRate?.data?.dex === "iziswap"){
+          if (pool) setPairAddress(pool[0]);
+        } else if (exchangeRate?.data?.dex === "iziswap") {
           const pool = await getPool();
           console.log("pool", pool);
           if(pool)
@@ -348,7 +340,9 @@ console.log("poolAddress", poolAddress);
             ? SWAP_TYPE.SKYDROME
             : SWAP_TYPE.IZUMI
         );
-        setSwapAmount(ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals));
+        setSwapAmount(
+          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
+        );
         setIsLoadingSwapAmount(false);
       }
     }, 200);
@@ -369,6 +363,7 @@ console.log("poolAddress", poolAddress);
   const handleClickInputPercent = (percent: number) => {
     if (!balanceFrom || !tokenFrom) return;
     const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
+    setPercentage(percent);
     setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
     setChangeFrom(true);
   };
@@ -395,40 +390,62 @@ console.log("poolAddress", poolAddress);
               )}
             </div>
             <div className="rounded-lg flex w-full flex-col gap-4 mb-4 ">
-              <div className="flex justify-between z-[6] lg:gap-8 items-center">
-                <TokenSelect
-                  onChange={setTokenFrom}
-                  className="flex-1"
-                  token={tokenFrom}
-                />
-                <Input
-                  onChange={(e) => {
-                    let val = parseInt(e.target.value, 10);
-                    if (isNaN(val)) {
-                      setSwapAmount("");
-                    } else {
-                      // is A Number
-                      val = val >= 0 ? val : 0;
-                      handleINChange(e);
-                    }
-                  }}
-                  onKeyDown={onKeyDownSwapAmount}
-                  value={swapAmount}
-                  type="number"
-                  loading={isLoadingSwapAmount}
-                  placeholder="Enter Amount"
-                  className="w-full crosschainswap-input text-end" // Increase the height here
-                />
+              <div className="flex flex-col z-[6] ">
+                <div className="flex justify-between items-center lg:gap-8">
+                  <TokenSelect
+                    onChange={setTokenFrom}
+                    className="flex-1"
+                    token={tokenFrom}
+                  />
+                  <Input
+                    onChange={(e) => {
+                      let val = parseInt(e.target.value, 10);
+                      if (isNaN(val)) {
+                        setSwapAmount("");
+                      } else {
+                        // is A Number
+                        val = val >= 0 ? val : 0;
+                        handleINChange(e);
+                      }
+                    }}
+                    onKeyDown={onKeyDownSwapAmount}
+                    value={swapAmount}
+                    type="number"
+                    loading={isLoadingSwapAmount}
+                    placeholder="Enter Amount"
+                    className="w-full crosschainswap-input text-end" // Increase the height here
+                  />
+                </div>
+                <div className="w-full justify-between pl-6 flex -mt-3">
+                  <span
+                    className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
+                  >
+                    {tokenFrom?.name}
+                  </span>
+
+                  {/* TODO: USD value of swap amount */}
+                  <span
+                    className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E]  font-semibold `}
+                  >
+                    ~$50000
+                  </span>
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+
+              <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
-                  <Button
-                    className="font-monteserrat text-sm"
+                  <div
+                    className={`font-monteserrat w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
                     {val}%
-                  </Button>
+                    <div
+                      className={`${
+                        percentage === val ? "w-full" : "w-0"
+                      } transition-all bg-[#FF7C5C]  h-1`}
+                    ></div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -455,18 +472,35 @@ console.log("poolAddress", poolAddress);
               )}
             </div>
 
-            <div className="flex w-full lg:gap-8 justify-between items-center">
-              <TokenSelect onChange={setTokenTo} token={tokenTo} />
-              <Input
-                onChange={(e) => handleOUTChange(e)}
-                onKeyDown={onKeyDownReceiveAmount}
-                value={receiveAmount}
-                type="number"
-                loading={isLoadingReceiveAmount}
-                placeholder="Receive Amount"
-                className="crosschainswap-input w-full text-end cursor-not-allowed"
-                disabled={true}
-              />
+            <div className="flex flex-col z-[6] ">
+              <div className="flex justify-between items-center lg:gap-8">
+                <TokenSelect onChange={setTokenTo} token={tokenTo} />
+
+                <Input
+                  onChange={(e) => handleOUTChange(e)}
+                  onKeyDown={onKeyDownReceiveAmount}
+                  value={receiveAmount}
+                  type="number"
+                  loading={isLoadingReceiveAmount}
+                  placeholder="Receive Amount"
+                  className="crosschainswap-input w-full text-end cursor-not-allowed"
+                  disabled={true}
+                />
+              </div>
+              <div className="w-full justify-between pl-6 flex -mt-3">
+                <span
+                  className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
+                >
+                  {tokenFrom?.name}
+                </span>
+
+                {/* TODO: USD value of swap amount */}
+                <span
+                  className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] font-semibold `}
+                >
+                  ~$50000
+                </span>
+              </div>
             </div>
             <Button
               variant="bordered"
