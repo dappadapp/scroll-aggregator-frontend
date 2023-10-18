@@ -50,8 +50,8 @@ export default function SlippageButton() {
                           }`}
                           key={"perc-button-" + index}
                           onClick={() => {
-                            setSlippage(val);
                             setCustomSlippage(null);
+                            setSlippage(val);
                           }}
                         >
                           {val}%
