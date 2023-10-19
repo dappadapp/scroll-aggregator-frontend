@@ -232,8 +232,6 @@ const SwapCard: React.FC<Props> = () => {
 
   const handleINChange = async (e: any) => {
     refetch();
-    console.log("tokenTo in", tokenTo);
-    console.log("tokenFrom in", tokenFrom);
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -373,11 +371,27 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   const handleClickInputPercent = (percent: number) => {
-    if (!balanceFrom || !tokenFrom) return;
+
+    if (
+      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+    ) {
+      if (!balanceFrom || !tokenFrom) return;
     const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
     setPercentage(percent);
     setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
+    setReceiveAmount(((parseFloat(balance) * percent) / 100).toString());
     setChangeFrom(true);
+    } 
+    else {
+
+  
+    if (!balanceFrom || !tokenFrom) return;
+    const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
+    setPercentage(percent);
+    setSwapAmount(((parseFloat(balance) * percent) / 100).toString());    
+    setChangeFrom(true);
+  }
   };
 
   const onKeyDownSwapAmount = () => {
@@ -396,10 +410,12 @@ const SwapCard: React.FC<Props> = () => {
   
   function getPercentageDifference(value1: number, value2: number): number {
     const percentageDiff = calculatePercentageDifference(value1, value2);
-    return percentageDiff;
+    if(percentageDiff)
+      return percentageDiff;
+    else 
+      return 0;
   }
   
-
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
@@ -559,7 +575,7 @@ const SwapCard: React.FC<Props> = () => {
                 </div>
                 <div className="flex justify-between justify-center mt-2">
                   <span className="text-base  w-1/3 text-center">~${tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : (+swapAmount).toFixed(4)}</span>
-                  <span className="text-xl w-1/3 text-center">{!swapAmount || !receiveAmount ? 0 : getPercentageDifference(tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : +swapAmount,tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? ethUSD * +receiveAmount : +receiveAmount).toFixed(2)}%</span>
+                  <span className="text-xl w-1/3 text-center">{getPercentageDifference(tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : +swapAmount,tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? ethUSD * +receiveAmount : +receiveAmount).toFixed(2) || 0}%</span>
                   <span className="text-base  w-1/3 text-center">~${tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? (ethUSD * +receiveAmount).toFixed(4) : (+receiveAmount).toFixed(4)}</span>
                 </div>
               </div>
