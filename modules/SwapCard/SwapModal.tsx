@@ -82,7 +82,6 @@ function SwapModal({
     });
     if (feeData) setFee(feeData?.formatted?.gasPrice ?? "0");
 
-    console.log("feeData", feeData);
   };
 
   return (
