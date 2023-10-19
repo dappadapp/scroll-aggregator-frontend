@@ -22,8 +22,7 @@ export default function SlippageButton() {
           <>
             <Popover.Button
               className={`
-                ${open ? " bg-[rgb(255,240,221)]/10" : ""}
-                 transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
+                ${open ? " bg-[rgb(255,240,221)]/10" : ""} transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
             >
               <SlippageIcon />
             </Popover.Button>
