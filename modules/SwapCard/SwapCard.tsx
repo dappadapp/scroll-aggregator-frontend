@@ -593,13 +593,16 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 </div>
                 <div className="flex justify-center text-xs gap-2 lg:text-base mt-2">
-                  <span className="  w-1/3 text-center">
-                    ~$
-                    {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                      ? (ethUSD * +swapAmount).toFixed(4)
-                      : (+swapAmount).toFixed(4)}
-                  </span>
-
+                  {isLoadingReceiveAmount ? (
+                    <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                  ) : (
+                    <span className="  w-1/3 text-center">
+                      ~$
+                      {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
+                        ? (ethUSD * +swapAmount).toFixed(4)
+                        : (+swapAmount).toFixed(4)}
+                    </span>
+                  )}
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
