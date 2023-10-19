@@ -19,7 +19,10 @@ export const Widget = () => {
         marginBottom: "16px",
         width: isMobile() ? "300px" : "800px",
         minWidth: isMobile() ? "300px" : "375px",
-        padding: "10px",
+        paddingLeft: "20px",
+        paddingRight: "20px",
+        paddingBottom: "30px",
+        paddingTop: "30px",
       },
       languages: {
         default: "en",
@@ -41,6 +44,10 @@ export const Widget = () => {
           borderRadius: 0,
           borderColor: "#FFF0DD",
           borderRadiusSecondary: 0,
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingBottom: "30px",
+          paddingTop: "30px",
         },
         typography: {
           allVariants: { color: "#FFF0DD" },
