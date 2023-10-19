@@ -1,6 +1,4 @@
-import { useMemo } from "react";
-import { Currency, Token, ChainId } from "@/types";
-import Image from "next/image";
+import { Currency } from "@/types";
 
 export function CurrencyLogo({
   currency,

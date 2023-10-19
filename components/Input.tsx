@@ -39,7 +39,7 @@ const Input: React.FC<Props> = ({
     />
   ) : (
     <div
-      className={`${className} rounded-lg ml-2 w-full focus:outline-0 bg-slate-200 bg-opacity-25 h-[60px] lg:h-[80px] text-[64px] lg:mt-2 tracking-wide animate-pulse`}
+      className={`${className} rounded-lg ml-2 w-full focus:outline-0 bg-slate-200 mb-2 bg-opacity-25 h-[60px] lg:h-[80px] text-[64px] lg:mt-2 tracking-wide animate-pulse`}
     ></div>
   );
 };
