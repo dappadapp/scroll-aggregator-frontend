@@ -4,7 +4,7 @@ import { CurrencyLogo } from "./CurrencyLogo";
 
 type Props = {
   currency: Currency;
-  value: number;
+  value: any;
 };
 
 export const SwapToken: React.FC<Props> = (props) => {

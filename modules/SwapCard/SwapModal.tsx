@@ -93,7 +93,7 @@ function SwapModal({
     >
       <div
         className={
-          "z-[9999] p-14 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "z-[9999] p-14 max-w-[95vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
@@ -107,7 +107,7 @@ function SwapModal({
           </div>
         </div>
         <div className="flex justify-between mb-10 mt-5 items-center">
-          <SwapToken value={amountA} currency={tokenA} />
+          <SwapToken value={amountA.toFixed(5)} currency={tokenA} />
           <FontAwesomeIcon
             icon={faArrowRight}
             className="text-[#AAA]"

@@ -572,7 +572,7 @@ const SwapCard: React.FC<Props> = () => {
                       src={`${tokenFrom?.logo}`}
                       className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
                     />
-                    <span className="ml-2">{swapAmount || 0}</span>
+                    <span className="ml-2">{(+swapAmount).toFixed(4) || 0}</span>
                   </div>
                   <div className="flex items-center w-1/3 justify-center">
                     <svg
@@ -606,7 +606,7 @@ const SwapCard: React.FC<Props> = () => {
                     {isLoadingReceiveAmount ? (
                       <div className="w-1/3 rounded-lg ml-2 bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                     ) : (
-                      <span className="ml-2">{receiveAmount || 0}</span>
+                      <span className="ml-2">{(+receiveAmount).toFixed(4) || 0}</span>
                     )}
                   </div>
                 </div>
