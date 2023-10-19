@@ -70,7 +70,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg"
           async={true}
         ></script>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' connect-src wss://stream.binance.com;" /> 
+      
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src wss://stream.binance.com;"/>
 
       </head>
       <body
