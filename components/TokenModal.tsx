@@ -114,9 +114,12 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
               }}
               className="hover:bg-[rgba(26,29,36,0.40)] rounded-lg text-[#FFF0DD] cursor-pointer p-2 flex items-center justify-between"
             >
-              <div className="flex gap-5">
+              <div className="flex gap-5 items-center">
                 <CurrencyLogo currency={tokenX} />
-                <span>{tokenX.symbol}</span>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm">{tokenX.symbol}</span>
+                  <span className="text-opacity-40 text-xs">{tokenX.name}</span>
+                </div>
               </div>
               {favTokens.some((tokenY) => tokenX.symbol === tokenY) ? (
                 <FaStar
