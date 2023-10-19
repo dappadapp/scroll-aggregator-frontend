@@ -10,14 +10,10 @@ export const Widget = () => {
     () => ({
       integrator: "nextjs-example",
       containerStyle: {
-        "--tw-shadow-colored": "0 1px 2px 0 var(--tw-shadow-color)",
-        "--tw-shadow-color": "#FFE7DD",
-        "--tw-shadow": "var(--tw-shadow-colored)",
-        boxShadow:
-          "var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);",
-        borderRadius: "16px",
-        border: "1px solid rgba(255,255,255,0.10)",
-        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        borderRadius: "48px",
+        backgroundColor: "rgba(26,29,36,0.80)",
+        "--tw-backdrop-blur": "blur(52px)",
+        backdropFilter: "var(--tw-backdrop-blur)",
         height: "auto",
         marginTop: "16px",
         marginBottom: "16px",
@@ -25,28 +21,29 @@ export const Widget = () => {
         minWidth: isMobile() ? "300px" : "375px",
         padding: "10px",
       },
-
+      languages: {
+        default: "en",
+        allow: ["en"],
+      },
+      appearance: "dark",
+      hiddenUI: ["appearance"],
       theme: {
         palette: {
-          primary: { main: "rgba(255, 255, 255, 0.1)" },
-          secondary: { main: "#F5B5FF" },
+          primary: { main: "#FFF0DD" },
+          secondary: { main: "#FFF0DD" },
           background: {
-            paper: "rgba(255, 255, 255, 0.01)",
-            default: "rgba(255, 255, 255, 0.01)", // bg color container
+            paper: "rgba(26,29,36,0)",
+            default: "rgba(26,29,36,0)", // bg color container
           },
-          color: "white",
-          grey: {
-            300: "rgba(255,255,255,0.10)", // border light theme
-            800: "rgba(255,255,255,0.10)", // border dark theme
-          },
+          color: "#FFF0DD",
         },
         shape: {
           borderRadius: 0,
-          borderColor: "white",
+          borderColor: "#FFF0DD",
           borderRadiusSecondary: 0,
         },
         typography: {
-          fontFamily: "'__League_Spartan_ed99a8', '__League_Spartan_Fallback_ed99a8'",
+          allVariants: { color: "#FFF0DD" },
         },
       },
     }),
@@ -54,7 +51,6 @@ export const Widget = () => {
   );
 
   useEffect(() => {
-    console.log(isMobile());
     if (typeof window !== undefined) {
       let elementId = document.querySelector('[id^="widget-relative-container"]')?.id;
       let element = document.getElementById(elementId!);

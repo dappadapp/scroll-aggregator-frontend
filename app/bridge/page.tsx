@@ -1,12 +1,9 @@
 /* eslint-disable import/no-default-export */
 "use client";
 
-import Footer from "@/components/Footer";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
-import Navbar from "@/components/Navbar";
-import type { NextPage } from "next";
 import dynamic from "next/dynamic";
-import { ToastContainer } from "react-toastify";
+import Image from "next/image";
 
 const LiFiWidgetNext = dynamic(
   () => import("../../components/BridgeWidget").then((module) => module.Widget) as any,
@@ -22,7 +19,14 @@ export default function Bridge({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   return (
-    <div className="w-full h-full flex items-center mx-auto px-2 lg:px-0">
+    <div className="w-full relative h-full flex items-center z-[3]">
+      <Image
+        src="/app-bg.svg"
+        alt="app-bg"
+        width={200}
+        height={200}
+        className="hidden md:block lg:absolute w-full h-[900px] left-0 -top-[100px]"
+      />
       <LiFiWidgetNext />
     </div>
   );
