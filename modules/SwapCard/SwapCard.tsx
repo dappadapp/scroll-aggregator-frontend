@@ -3,7 +3,7 @@ import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits } from "viem";
-import _ from "lodash";
+import _, { set } from "lodash";
 
 import Input from "@/components/Input";
 import Button from "@/components/Button";
@@ -21,11 +21,13 @@ import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
 import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
+import IPyth from "@/constants/abis/IPyth.json";
 import { type WalletClient, useWalletClient } from "wagmi";
 import { providers } from "ethers";
 import { useGlobalContext } from "@/contexts";
 import SlippageButton from "./SlippageButton";
 import { toast } from "react-toastify";
+import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -73,9 +75,10 @@ const SwapCard: React.FC<Props> = () => {
   const [isLoadingSwapAmount, setIsLoadingSwapAmount] = useState(false);
   const [isLoadingReceiveAmount, setIsLoadingReceiveAmount] = useState(false);
   const [pairAddress, setPairAddress] = useState<string>();
-
   const { chain, chains } = useNetwork();
   const signer = useEthersSigner({ chainId: 534352 });
+  const ethPrice = useRealTimeETHPrice();
+  const [ethUSD, setEthPrice] = useState<number>(0);
 
   console.log("Tokens", Tokens);
   const {
@@ -127,7 +130,7 @@ const SwapCard: React.FC<Props> = () => {
   }
   const contractIzumi = new ethers.Contract(
     contractAddr?.iziswap?.liquidityManager ||
-      "0x5300000000000000000000000000000000000004",
+    "0x5300000000000000000000000000000000000004",
     IziSwapPoolFactory,
     signer
   );
@@ -145,41 +148,55 @@ const SwapCard: React.FC<Props> = () => {
     }
   }
 
+  const getEthPrice = async () => {
+    if (!ethPrice) {
+      const res = await axios.get("https://api.binance.com/api/v3/avgPrice?symbol=ETHUSDT");
+      setEthPrice(res.data.price);
+    }
+    else {
+      setEthPrice(ethPrice);
+    }
+  };
+
+  useEffect(() => {
+    getEthPrice();
+  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
+
+  console.log("ethPrice", ethUSD);
+
   const { data: poolAddress, refetch } = useContractRead(
     dexType === SWAP_TYPE.SYNCSWAP
       ? {
-          address: contractAddr?.syncswap?.poolFactory,
-          abi: SnycSwapPoolFactory,
-          functionName: "getPool",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
-        }
+        address: contractAddr?.syncswap?.poolFactory,
+        abi: SnycSwapPoolFactory,
+        functionName: "getPool",
+        args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+      }
       : dexType === SWAP_TYPE.SPACEFI
-      ? {
+        ? {
           address: contractAddr?.spacefi?.poolFactory,
           abi: SpaceFiPoolFactoryAbi,
           functionName: "getPair",
           args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
           enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
         }
-      : dexType === SWAP_TYPE.SKYDROME
-      ? {
-          address: contractAddr?.skydrome?.poolFactory,
-          abi: SkydromePoolFactory,
-          functionName: "getPair",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, false],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.IZUMI
-      ? {
-          address: contractAddr?.iziswap?.liquidityManager,
-          abi: IziSwapPoolFactory,
-          functionName: "pool",
-          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, 3000],
-        }
-      : {}
+        : dexType === SWAP_TYPE.SKYDROME
+          ? {
+            address: contractAddr?.skydrome?.poolFactory,
+            abi: SkydromePoolFactory,
+            functionName: "getPair",
+            args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, false],
+            enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+          }
+          : dexType === SWAP_TYPE.IZUMI
+            ? {
+              address: contractAddr?.iziswap?.liquidityManager,
+              abi: IziSwapPoolFactory,
+              functionName: "pool",
+              args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, 3000],
+            }
+            : {}
   );
-
-  console.log("poolAddress", poolAddress);
 
   useEffect(() => {
     fetchBalanceFrom();
@@ -261,10 +278,10 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-            ? SWAP_TYPE.SKYDROME
-            : exchangeRate?.data?.dex === "iziswap"
-            ? SWAP_TYPE.IZUMI
-            : SWAP_TYPE.SYNCSWAP
+              ? SWAP_TYPE.SKYDROME
+              : exchangeRate?.data?.dex === "iziswap"
+                ? SWAP_TYPE.IZUMI
+                : SWAP_TYPE.SYNCSWAP
         );
         setReceiveAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
@@ -287,7 +304,7 @@ const SwapCard: React.FC<Props> = () => {
             (tokenFrom?.wrapped.address ===
               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
               tokenTo?.wrapped.address ===
-                "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
+              "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
             (tokenFrom?.wrapped.address ===
               "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" &&
               tokenTo?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
@@ -332,8 +349,8 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-            ? SWAP_TYPE.SKYDROME
-            : SWAP_TYPE.IZUMI
+              ? SWAP_TYPE.SKYDROME
+              : SWAP_TYPE.IZUMI
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
@@ -371,6 +388,18 @@ const SwapCard: React.FC<Props> = () => {
     setChangeFrom(false);
   };
 
+  function calculatePercentageDifference(value1: number, value2: number): number {
+    const difference = value2 - value1;
+    const percentageDifference = (difference / value1) * 100;
+    return percentageDifference;
+  }
+  
+  function getPercentageDifference(value1: number, value2: number): number {
+    const percentageDiff = calculatePercentageDifference(value1, value2);
+    return percentageDiff;
+  }
+  
+
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
@@ -379,7 +408,7 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex lg:hidden w-full justify-end">
               <SlippageButton />
             </div>
-            <div className="flex justify-between items-center space-x-2 mt-4">
+            <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (
                 <div className="text-right text-lg">
@@ -418,42 +447,39 @@ const SwapCard: React.FC<Props> = () => {
                   />
                 </div>
                 <div className="w-full justify-between pl-6 flex mt-0 lg:-mt-3">
-                  <span
+                  {/*  <span
                     className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
                   >
                     {tokenFrom?.name}
                   </span>
 
-                  {/* TODO: USD value of swap amount 
+                TODO: USD value of swap amount   
                   <span
                     className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E]  font-semibold `}
                   >
-                    ~$50000
+                    ~${tokenFrom?.symbol === "ETH" ? ethUSD * +swapAmount : swapAmount}
                   </span>
-                  */}
+*/}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
                   <div
-                    className={`${
-                      percentage === val ? "scale-125" : "scale-100"
-                    }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
+                    className={`${percentage === val ? "scale-125" : "scale-100"
+                      }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
                     <span
-                      className={`${
-                        percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
-                      } transition-all`}
+                      className={`${percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                        } transition-all`}
                     >
                       {val}%
                     </span>
                     <div
-                      className={`${
-                        percentage === val ? "w-full" : "w-0"
-                      } transition-all bg-[#FF7C5C]  h-1`}
+                      className={`${percentage === val ? "w-full" : "w-0"
+                        } transition-all bg-[#FF7C5C]  h-1`}
                     ></div>
                   </div>
                 ))}
@@ -474,7 +500,7 @@ const SwapCard: React.FC<Props> = () => {
           </div>
 
           <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
-            <div className="flex justify-between items-center space-x-2 mt-4">
+            <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
               <span className="text-[#FFF0DD]">You Buy</span>
               {balanceTo && (
                 <div className="text-right text-lg">
@@ -499,18 +525,43 @@ const SwapCard: React.FC<Props> = () => {
                 />
               </div>
               <div className="w-full justify-between pl-6  flex mt-0 lg:-mt-3">
+                {/* 
                 <span
                   className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
                 >
                   {tokenTo?.name}
                 </span>
 
-                {/* TODO: USD value of swap amount 
+               TODO: USD value of swap amount 
                 <span
                   className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] font-semibold `}
                 >
-                  ~$50000
+                  ~${tokenTo?.symbol === "ETH" ? ethUSD * +receiveAmount : receiveAmount}
                 </span>*/}
+              </div>
+
+              <div className="flex flex-col justify-between p-5 bg-[#121419] bg-opacity-30 rounded-xl my-4 ml-3">
+                <div className="flex items-center text-[#EBC28E] text-base font-semibold font-leagueSpartan justify-between">
+                  <div className="flex items-center w-1/3 justify-center">
+                    <img src={`${tokenFrom?.logo}`} className="w-8 h-8 mb-2" />
+                    <span className="ml-2">{swapAmount}</span>
+                  </div>
+                  <div className="flex items-center w-1/3 justify-center">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M22 12C22 17.5228 17.5228 22 12 22M2 12C2 6.47715 6.47715 2 12 2" stroke="#EBC28E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M12 12V17M12 7V8" stroke="#FFF0DD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center w-1/3 justify-center">
+                    <img src={`${tokenTo?.logo}`} className="w-8 h-8 mb-2" />
+                    <span className="ml-2">{receiveAmount}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between justify-center mt-2">
+                  <span className="text-base  w-1/3 text-center">~$ {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : (+swapAmount).toFixed(4)}</span>
+                  <span className="text-xl w-1/3 text-center">{!swapAmount || !receiveAmount ? 0 : getPercentageDifference(tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : +swapAmount,tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? ethUSD * +receiveAmount : +receiveAmount).toFixed(2)}%</span>
+                  <span className="text-base  w-1/3 text-center">~$ {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? (ethUSD * +receiveAmount).toFixed(4) : (+receiveAmount).toFixed(4)}</span>
+                </div>
               </div>
             </div>
             <Button
@@ -525,6 +576,7 @@ const SwapCard: React.FC<Props> = () => {
             >
               {isConnected ? "SWAP" : "Connect Wallet"}
             </Button>
+
           </div>
         </div>
       </div>

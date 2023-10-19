@@ -124,7 +124,7 @@ export const WNATIVE = {
   [ChainId.SCROLL_MAINNET]: WETH9[ChainId.SCROLL_MAINNET],
 } satisfies Record<ChainId, ERC20Token>;
 
-const ETHER = { name: "Ether", symbol: "ETH", decimals: 18, logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026' } as const;
+const ETHER = { name: "ETHEREUM", symbol: "ETH", decimals: 18, logo: 'https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026' } as const;
 
 export const NATIVE = {
   [ChainId.ETHEREUM]: ETHER,

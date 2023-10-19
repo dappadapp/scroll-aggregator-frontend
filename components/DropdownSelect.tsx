@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Listbox, Transition } from "@headlessui/react";
@@ -46,6 +46,12 @@ const DropdownSelect = ({
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
+
+  useEffect(() => {
+    if (value) {
+      setIsOpen(false);
+    }
+  }, [value]);
 
   return (
     <Listbox value={value} onChange={onChange}>
