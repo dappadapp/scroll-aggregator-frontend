@@ -88,12 +88,12 @@ function SwapModal({
   return (
     <div
       className={
-        "z-[999] fixed w-full h-full bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
+        "z-[9999] fixed w-full h-full bg-white flex items-center justify-center backdrop-blur-2xl bg-opacity-10 top-0 left-0"
       }
     >
       <div
         className={
-          "p-14 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "z-[9999] p-14 max-w-[90vw] min-w-[300px] md:min-w-[500px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
@@ -181,15 +181,6 @@ function SwapModal({
             <span className="text-right">Slippage tolerance</span>
             <span>{slippage}%</span>
           </div>
-          <div className="bg-gray-600 p-4 rounded-lg shadow-md max-w-lg mt-5">
-            <div className="flex items-center">
-              <p className="text-white-700">
-                🚨 Important Notice: Due to the Scroll mainnet being recently launched, the Total Value Locked (TVL) is currently low. This may result in higher slippage rates when swapping assets. Please exercise caution.
-              </p>
-            </div>
-          </div>
-
-
           {/** 
           <div className="flex justify-between">
             <span>Current Rate</span>

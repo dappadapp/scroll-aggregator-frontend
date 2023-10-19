@@ -10,7 +10,7 @@ function CardNavbar() {
   return (
     <div
       className={
-        "hidden lg:flex w-full max-w-[600px] px-8 justify-between z-10 items-center  "
+        "hidden lg:flex w-full max-w-[600px] px-8 justify-between items-center  "
       }
     >
       <div className="flex justify-start items-baseline lg:text-4xl text-xs gap-5 text-[#FFF0DD] ">
@@ -47,7 +47,7 @@ function CardNavbar() {
       >
         Stats
       </Link> */}
-      <div className="flex justify-end">
+      <div className="flex justify-end z-1">
         <SlippageButton />
       </div>
     </div>

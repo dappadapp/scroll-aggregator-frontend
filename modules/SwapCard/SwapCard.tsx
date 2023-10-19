@@ -558,9 +558,9 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 </div>
                 <div className="flex justify-between justify-center mt-2">
-                  <span className="text-base  w-1/3 text-center">~$ {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : (+swapAmount).toFixed(4)}</span>
+                  <span className="text-base  w-1/3 text-center">~${tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : (+swapAmount).toFixed(4)}</span>
                   <span className="text-xl w-1/3 text-center">{!swapAmount || !receiveAmount ? 0 : getPercentageDifference(tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH" ? ethUSD * +swapAmount : +swapAmount,tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? ethUSD * +receiveAmount : +receiveAmount).toFixed(2)}%</span>
-                  <span className="text-base  w-1/3 text-center">~$ {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? (ethUSD * +receiveAmount).toFixed(4) : (+receiveAmount).toFixed(4)}</span>
+                  <span className="text-base  w-1/3 text-center">~${tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH" ? (ethUSD * +receiveAmount).toFixed(4) : (+receiveAmount).toFixed(4)}</span>
                 </div>
               </div>
             </div>
