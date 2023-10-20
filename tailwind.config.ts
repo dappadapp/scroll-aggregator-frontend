@@ -15,16 +15,15 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       backgroundColor: {
-        "panel": "#12141A"
+        panel: "#12141A",
       },
       colors: {
-        "panel": "rgba(255,255,255,0.04)"
+        panel: "rgba(255,255,255,0.04)",
       },
       fontFamily: {
-        inter: 'var(--font-spartan)',
-       
-        
-      }
+        inter: "var(--font-spartan)",
+      },
+      display: ["group-hover"],
     },
   },
   plugins: [],

@@ -28,6 +28,7 @@ import { useGlobalContext } from "@/contexts";
 import SlippageButton from "./SlippageButton";
 import { toast } from "react-toastify";
 import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
+import TokenModal from "@/components/TokenModal";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -80,7 +81,9 @@ const SwapCard: React.FC<Props> = () => {
   const ethPrice = useRealTimeETHPrice();
   const [ethUSD, setEthPrice] = useState<number>(0);
 
-  console.log("Tokens", Tokens);
+  const [showFrom, setShowFrom] = useState(false);
+  const [showTo, setShowTo] = useState(false);
+
   const {
     data: balanceFrom,
     isLoading: isLoadingBalanceFrom,
@@ -376,27 +379,23 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   const handleClickInputPercent = (percent: number) => {
-
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
     ) {
       if (!balanceFrom || !tokenFrom) return;
-    const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
-    setPercentage(percent);
-    setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
-    setReceiveAmount(((parseFloat(balance) * percent) / 100).toString());
-    setChangeFrom(true);
-    } 
-    else {
-
-  
-    if (!balanceFrom || !tokenFrom) return;
-    const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
-    setPercentage(percent);
-    setSwapAmount(((parseFloat(balance) * percent) / 100).toString());    
-    setChangeFrom(true);
-  }
+      const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
+      setPercentage(percent);
+      setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
+      setReceiveAmount(((parseFloat(balance) * percent) / 100).toString());
+      setChangeFrom(true);
+    } else {
+      if (!balanceFrom || !tokenFrom) return;
+      const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
+      setPercentage(percent);
+      setSwapAmount(((parseFloat(balance) * percent) / 100).toString());
+      setChangeFrom(true);
+    }
   };
 
   const onKeyDownSwapAmount = () => {
@@ -415,13 +414,16 @@ const SwapCard: React.FC<Props> = () => {
 
   function getPercentageDifference(value1: number, value2: number): number {
     const percentageDiff = calculatePercentageDifference(value1, value2);
-    if(percentageDiff)
-      return percentageDiff;
-    else 
-      return 0;
+    if (percentageDiff) return percentageDiff;
+    else return 0;
   }
-  
-
+  const tokens: Currency[] = useMemo(() => {
+    if (chain && Tokens[chain.id]) {
+      const tokens = _.values(Tokens[chain.id]);
+      return [native, ...tokens];
+    }
+    return [];
+  }, [chain, native]);
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
@@ -444,11 +446,7 @@ const SwapCard: React.FC<Props> = () => {
                   className="flex justify-between lg:z-50 items-center relative lg:gap-8"
                   style={{ position: "relative", zIndex: 4 }}
                 >
-                  <TokenSelect
-                    onChange={setTokenFrom}
-                    className="flex-1"
-                    token={tokenFrom}
-                  />
+                  <TokenSelect onClick={() => setShowFrom(true)} token={tokenFrom} />
                   <Input
                     onChange={(e) => {
                       let val = parseInt(e.target.value, 10);
@@ -536,7 +534,7 @@ const SwapCard: React.FC<Props> = () => {
 
             <div className="flex flex-col z-[6] ">
               <div className="flex justify-between items-center lg:gap-8">
-                <TokenSelect onChange={setTokenTo} token={tokenTo} />
+                <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} />
 
                 <Input
                   onChange={(e) => handleOUTChange(e)}
@@ -667,6 +665,22 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
       </div>
+      {showFrom && (
+        <TokenModal
+          onSelectToken={(token: any) => setTokenFrom(token)}
+          token={tokenFrom!}
+          onCloseModal={() => setShowFrom(false)}
+          tokens={tokens}
+        />
+      )}
+      {showTo && (
+        <TokenModal
+          onSelectToken={(token: any) => setTokenTo(token)}
+          token={tokenTo!}
+          onCloseModal={() => setShowTo(false)}
+          tokens={tokens}
+        />
+      )}
       {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534352 ? (
         <SwapModal
           pool={pairAddress as string}
