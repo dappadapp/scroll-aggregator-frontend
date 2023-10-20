@@ -21,7 +21,7 @@ const menuItems = [
   {
     title: "Bridge",
     href: "/bridge",
-    type: "mobile",
+    type: "",
     active: true,
   },
   {
