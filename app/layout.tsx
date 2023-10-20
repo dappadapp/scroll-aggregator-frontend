@@ -78,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GlobalContextProvider>
             <div
               className={
-                "relative container min-h-screen h-full flex flex-col px-3 mx-auto items-center md:px-20 overflow-x-hidden"
+                "relative container min-h-screen h-full flex flex-col px-3 pt-2 lg:pt-0 mx-auto items-center md:px-20 overflow-x-hidden"
               }
             >
               <Navbar />
