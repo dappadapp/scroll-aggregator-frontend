@@ -182,13 +182,13 @@ export async function POST(request: Request) {
       fee: 300,
       inFunction: "quoteExactInputSingle",
       outFunction: "quoteExactOutputSingle",
-      async runOutFunction(amount: any, from: any, to: any) {
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(
           this.router,
           this.abi,
           provider
         );
-        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
+        const params = [from, to, parseUnits(amount, fromDecimals), this.fee, 0];
 
       
 
@@ -198,13 +198,13 @@ export async function POST(request: Request) {
 
         return BigInt(res.returnedAmount);
       },
-      async runInFunction(amount: any, from: any, to: any) {
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
         const contract = new ethers.Contract(
           this.router,
           this.abi,
           provider
         );
-        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
+        const params = [from, to, parseUnits(amount, toDecimals), this.fee, 0];
         const data = await contract.callStatic.quoteExactOutputSingle(params);
 
         return BigInt(data.amountIn);

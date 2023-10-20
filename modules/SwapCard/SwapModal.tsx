@@ -148,7 +148,30 @@ function SwapModal({
                 />
                 <p className="inline-block">Izumi</p>
               </div>
-            ) : (
+            ) : swapType === SWAP_TYPE.KYBERSWAP ? (
+              <div className="flex items-center">
+              <img
+                src="https://storage.googleapis.com/ks-setting-1d682dca/70129bd5-c3eb-44e8-b9fc-e6d76bf80b921697557071098.png"
+                className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                alt="Kyberswap"
+              />
+              <p className="inline-block">KyberSwap</p>
+            </div>
+            )
+
+            : swapType === SWAP_TYPE.PUNKSWAP ? (
+              <div className="flex items-center">
+              <img
+                src="https://storage.googleapis.com/ks-setting-1d682dca/bcc2ed81-3d91-4b71-a615-ed4102cf8fb41697557738542.png"
+                className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                alt="PunkSwap"
+              />
+              <p className="inline-block">PunkSwap</p>
+            </div>
+            )
+            
+            :
+            (
               <div className="flex items-center">
                 <img
                   src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
@@ -173,7 +196,7 @@ function SwapModal({
             <span>Minimum Receive</span>
             <span className="text-right">
               {" "}
-              {(+amountB - (+amountB * slippage) / 100).toFixed(4)} {tokenB?.symbol}
+              {(+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000) } {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -210,7 +233,7 @@ function SwapModal({
                   tokenB.wrapped.address,
                   3000
                 ).toString() || "0x0000000000000000000000000000000000000000",
-              fee: UNISWAP_DEFAULT_FEE || 0,
+              fee: 300 || UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

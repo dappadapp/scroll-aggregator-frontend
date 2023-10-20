@@ -21,6 +21,8 @@ import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
 import SnycSwapPoolFactory from "@/constants/abis/syncswapPoolFactory.json";
+import PunkSwapPoolFactory from "@/constants/abis/punkSwapPoolFactory.json";
+import KyberSwapFactory from "@/constants/abis/kyberSwapFactory.json";
 import IPyth from "@/constants/abis/IPyth.json";
 import { type WalletClient, useWalletClient } from "wagmi";
 import { providers } from "ethers";
@@ -196,7 +198,21 @@ const SwapCard: React.FC<Props> = () => {
           abi: IziSwapPoolFactory,
           functionName: "pool",
           args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, 3000],
-        }
+      }
+      : dexType === SWAP_TYPE.PUNKSWAP
+      ? {
+          address: contractAddr?.punkswap?.poolFactory,
+          abi: PunkSwapPoolFactory,
+          functionName: "getPair",
+          args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address],
+      }
+      : dexType === SWAP_TYPE.KYBERSWAP
+      ? {
+            address: contractAddr?.kyberswap?.poolFactory,
+            abi: KyberSwapFactory,
+            functionName: "getPool",
+            args: [tokenFrom?.wrapped.address, tokenTo?.wrapped.address, 100],
+      }
       : {}
   );
 
@@ -274,6 +290,8 @@ const SwapCard: React.FC<Props> = () => {
           type: "IN",
         });
 
+        console.log("exchangeRate",  exchangeRate?.data?.dex);
+
         setDexType(
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
@@ -281,13 +299,19 @@ const SwapCard: React.FC<Props> = () => {
             ? SWAP_TYPE.SKYDROME
             : exchangeRate?.data?.dex === "iziswap"
             ? SWAP_TYPE.IZUMI
-            : SWAP_TYPE.SYNCSWAP
+            : exchangeRate?.data?.dex === "syncswap"
+            ? SWAP_TYPE.SYNCSWAP
+            : exchangeRate?.data?.dex === "punkswap"
+            ? SWAP_TYPE.PUNKSWAP
+            : exchangeRate?.data?.dex === "kyberswap"
+            ? SWAP_TYPE.KYBERSWAP 
+            : SWAP_TYPE.INVALID
         );
         setReceiveAmount(
           Number(
             ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
           )
-            .toFixed(4)
+            .toFixed(5)
             .toString()
         );
         setRate(
@@ -354,7 +378,15 @@ const SwapCard: React.FC<Props> = () => {
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
             ? SWAP_TYPE.SKYDROME
-            : SWAP_TYPE.IZUMI
+            : exchangeRate?.data?.dex === "iziswap"
+            ? SWAP_TYPE.IZUMI
+            : exchangeRate?.data?.dex === "syncswap"
+            ? SWAP_TYPE.SYNCSWAP
+            : exchangeRate?.data?.dex === "punkswap"
+            ? SWAP_TYPE.PUNKSWAP
+            : exchangeRate?.data?.dex === "kyberswap"
+            ? SWAP_TYPE.KYBERSWAP 
+            : SWAP_TYPE.INVALID
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)

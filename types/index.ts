@@ -19,7 +19,10 @@ export enum SWAP_TYPE {
   SKYDROME = 2,
   IZUMI = 3,
   SYNCSWAP = 4,
-
+  PUNKSWAP = 5,
+  KYBERSWAP = 6,
+  
+  INVALID = 0,
 }
 
 export interface Network {
