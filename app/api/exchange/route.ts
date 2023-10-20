@@ -13,6 +13,8 @@ import SkydromeAbi from "@/constants/abis/skydrome.json";
 import SyncswapAbi from "@/constants/abis/syncSwapQuote.json";
 import SyncSwapClassicAbi from "@/constants/abis/SyncSwapClassicPool.json";
 import SyncSwapStableAbi from "@/constants/abis/SyncSwapStablePool.json";
+import PunkSwapAbi from "@/constants/abis/punkswap.json";
+import KyberSwapQuteAbi from "@/constants/abis/KyberSwapQuote.json";
 
 interface Dex {
   name: string;
@@ -149,6 +151,63 @@ export async function POST(request: Request) {
         console.log("data2", BigInt(data));
         return BigInt(data);
       }
+      },
+    },
+    punkswap: {
+      name: "Punkswap",
+      id: "punkswap",
+      router: "0x26cb8660eefcb2f7652e7796ed713c9fb8373f8e",
+      abi: PunkSwapAbi, // Replace with the actual ABI
+      fee: 0,
+      inFunction: "getAmountsIn",
+      outFunction: "getAmountsOut",
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        const data = await contract.getAmountsIn(parseUnits(amount, toDecimals), [from, to]);
+        return BigInt(data?.[0]);
+      },
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", parseUnits(amount, fromDecimals));
+        const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to]);
+        console.log("data", [from, to]);
+        return BigInt(data?.[1]);
+      },
+    },
+    kyberswap: {
+      name: "Kyberswap",
+      id: "kyberswap",
+      router: "0x4d47fd5a29904Dae0Ef51b1c450C9750F15D7856",
+      abi: KyberSwapQuteAbi, // Replace with the actual ABI
+      fee: 300,
+      inFunction: "quoteExactInputSingle",
+      outFunction: "quoteExactOutputSingle",
+      async runOutFunction(amount: any, from: any, to: any) {
+        const contract = new ethers.Contract(
+          this.router,
+          this.abi,
+          provider
+        );
+        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
+
+      
+
+        const res = await contract.callStatic.quoteExactInputSingle(params);
+
+        console.log("res", res);
+
+        return BigInt(res.returnedAmount);
+      },
+      async runInFunction(amount: any, from: any, to: any) {
+        const contract = new ethers.Contract(
+          this.router,
+          this.abi,
+          provider
+        );
+        const params = [from, to, parseUnits(amount, 18), this.fee, 0];
+        const data = await contract.callStatic.quoteExactOutputSingle(params);
+
+        return BigInt(data.amountIn);
       },
     },
   };

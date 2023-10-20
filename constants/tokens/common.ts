@@ -79,7 +79,7 @@ export const WETH9 = {
     18,
     "WETH",
     "Wrapped Ether",
-    "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=026",
+    "https://storage.googleapis.com/ks-setting-1d682dca/9ff8336f-d4f0-4966-9409-937f02dfde971697557490973.png",
     "https://weth.io"
   ),
 };
@@ -156,6 +156,46 @@ export const NATIVE = {
   }
 >;
 
+export const PUNK_TOKEN = new ERC20Token(
+    ChainId.SCROLL_MAINNET,
+    "0xDdEB23905F6987d5f786A93C00bBED3d97Af1ccc",
+    18,
+    "PUNK",
+    "PUNKSwap Token",
+    "https://storage.googleapis.com/ks-setting-1d682dca/bcc2ed81-3d91-4b71-a615-ed4102cf8fb41697557738542.png",
+    "https://zkscroll.punkswap.exchange/swap/"
+  );
+
+
+  export const WBTC = new ERC20Token(
+    ChainId.SCROLL_MAINNET,
+    "0x3c1bca5a656e69edcd0d4e36bebb3fcdaca60cf1",
+    8,
+    "WBTC",
+    "Wrapped Bitcoin",
+    "https://storage.googleapis.com/ks-setting-1d682dca/68c98dd7-b218-43a5-ba09-3a8cfea78a501697555569986.png",
+    "#"
+  );
+
+  export const wsETH = new ERC20Token(
+    ChainId.SCROLL_MAINNET,
+    "0xf610a9dfb7c89644979b4a0f27063e9e7d7cda32",
+    18,
+    "wsETH",
+    "Wrapped stETH",
+    "https://storage.googleapis.com/ks-setting-1d682dca/20e46115-d8f4-4244-8bfc-94ab7dc8b5dd1697557657933.png",
+    "#"
+  );
+
+  export const script = new ERC20Token(
+    ChainId.SCROLL_MAINNET,
+    "0x87203Ff9393dC97D7847B4D4103bC32fea7d2DB2",
+    9,
+    "Script ",
+    "SCRIPT",
+    "https://storage.googleapis.com/ks-setting-1d682dca/b6842f76-1782-42c8-bd94-17706603ee151697564056597.png",
+    "#"
+  );
 export const USDC_BSC = new ERC20Token(
   ChainId.BSC,
   "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",

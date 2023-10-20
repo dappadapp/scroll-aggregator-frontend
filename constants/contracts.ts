@@ -40,6 +40,14 @@ export const aggregator : {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
     },
+    punkswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
+    kyberswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
   }    
 } = {
 
@@ -81,7 +89,16 @@ export const aggregator : {
     syncswap: {
       router: "0x80e38291e06339d10AAB483C65695D004dBD5C69",
       poolFactory: "0x37BAc764494c8db4e54BDE72f6965beA9fa0AC2d"
-    }
+    },
+    punkswap: {
+      router: "0x26cb8660eefcb2f7652e7796ed713c9fb8373f8e",
+      poolFactory: "0x5640113ea7f369e6dafbe54cbb1406e5bf153e90"
+    },
+    kyberswap: {
+      router: "0xF9c2b5746c946EF883ab2660BbbB1f10A5bdeAb4",
+      poolFactory: "0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A"
+    },
+    
   }
 }
 
