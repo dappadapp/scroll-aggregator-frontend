@@ -168,8 +168,6 @@ const SwapCard: React.FC<Props> = () => {
     getEthPrice();
   }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
 
-  console.log("ethPrice", ethUSD);
-
   const { data: poolAddress, refetch } = useContractRead(
     dexType === SWAP_TYPE.SYNCSWAP
       ? {
@@ -700,17 +698,15 @@ const SwapCard: React.FC<Props> = () => {
       {showFrom && (
         <TokenModal
           onSelectToken={(token: any) => setTokenFrom(token)}
-          token={tokenFrom!}
           onCloseModal={() => setShowFrom(false)}
-          tokens={tokens}
+          tokenList={tokens}
         />
       )}
       {showTo && (
         <TokenModal
           onSelectToken={(token: any) => setTokenTo(token)}
-          token={tokenTo!}
           onCloseModal={() => setShowTo(false)}
-          tokens={tokens}
+          tokenList={tokens}
         />
       )}
       {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534352 ? (
