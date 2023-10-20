@@ -106,7 +106,7 @@ const SwapCard: React.FC<Props> = () => {
   } = useBalance({
     address: address,
     ...(!tokenTo?.isNative && {
-      token: tokenTo?.wrapped.address,
+      token: tokenTo?.wrapped?.address,
     }),
     chainId: tokenTo?.chainId,
     enabled: !!tokenTo,
@@ -124,7 +124,7 @@ const SwapCard: React.FC<Props> = () => {
     try {
       const pair = await contract.functions.getPair(
         tokenFrom?.wrapped.address,
-        tokenTo?.wrapped.address,
+        tokenTo?.wrapped?.address,
         false
       );
       console.log("Pair Address:", pair);
@@ -143,7 +143,7 @@ const SwapCard: React.FC<Props> = () => {
     try {
       const pair = await contractIzumi.pool(
         tokenFrom?.wrapped.address,
-        tokenTo?.wrapped.address,
+        tokenTo?.wrapped?.address,
         3000
       );
       console.log("Pair Address:", pair);
