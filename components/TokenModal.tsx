@@ -18,6 +18,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
   const { address } = useAccount();
   const [filteredToken, setFilteredToken] = useState<any[]>([]);
   const [favTokens, setFavTokens] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const { data } = useBalance({
     address: address,
     chainId: 534352,
@@ -38,7 +39,8 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
 
   useEffect(() => {
     if (!tokenList) return;
-    getScrollTokenBalances();
+    setLoading(true);
+    getScrollTokenBalances().finally(() => setLoading(false));
   }, [address, tokenList]);
 
   const handleFavToken = (token: string) => {
@@ -125,83 +127,91 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
             className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
           />
         </div>
-        <div className="grid grid-cols-3 mb-4 lg:grid-cols-4 gap-2 mt-2 p-2">
-          {favTokens.map((favToken) => (
-            <div key={favToken} className="relative group w-full text-sm">
-              <div
-                onClick={() => {
-                  onSelectToken(tokens.find((tokenX) => tokenX.symbol === favToken));
-                  onCloseModal();
-                }}
-                className="flex gap-2 bg hover:bg-[rgba(26,29,36,0.90)] p-2 items-center rounded-xl border border-[#FFF0DD]/50 transition-all cursor-pointer"
-              >
-                <CurrencyLogo
-                  size={4}
-                  currency={tokens.find((tokenX) => tokenX.symbol === favToken)}
-                />
-                <span>{tokens.find((tokenX) => tokenX.symbol === favToken)?.symbol}</span>
-              </div>
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFavToken(favToken);
-                }}
-                className="absolute rounded-full w-6 h-6 text-center cursor-pointer items-center justify-center text-[12px] pt-1 pl-[1px] -top-[13px] border border-[#FFF0DD] -right-[13px] group-hover:flex hidden"
-              >
-                X
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="max-h-[400px] pt-4 overflow-y-auto gap-4 px-2  flex flex-col mb-4">
-          {(search.length ? filteredToken : tokens)
-            ?.sort((a: any, b: any) => {
-              if (a?.balance > b?.balance) return -1;
-              else return 1;
-            })
-            .map((tokenX) => (
-              <div
-                key={tokenX.name}
-                onClick={() => {
-                  onSelectToken(tokenX);
-                  onCloseModal();
-                }}
-                className="hover:bg-[rgba(26,29,36,0.40)] gap-2 rounded-lg text-[#FFF0DD] cursor-pointer p-2 flex items-center justify-between"
-              >
-                <div className="flex gap-5 items-center">
-                  <CurrencyLogo currency={tokenX} />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm">{tokenX.symbol}</span>
-                    <span className="text-opacity-40 text-xs">{tokenX.name}</span>
+        {loading ? (
+          <div className="h-[400px] w-full rounded-lg bg-slate-400 animate-pulse"></div>
+        ) : (
+          <>
+            <div className="grid grid-cols-3 mb-4 lg:grid-cols-4 gap-2 mt-2 p-2">
+              {favTokens.map((favToken) => (
+                <div key={favToken} className="relative group w-full text-sm">
+                  <div
+                    onClick={() => {
+                      onSelectToken(tokens.find((tokenX) => tokenX.symbol === favToken));
+                      onCloseModal();
+                    }}
+                    className="flex gap-2 bg hover:bg-[rgba(26,29,36,0.90)] p-2 items-center rounded-xl border border-[#FFF0DD]/50 transition-all cursor-pointer"
+                  >
+                    <CurrencyLogo
+                      size={4}
+                      currency={tokens.find((tokenX) => tokenX.symbol === favToken)}
+                    />
+                    <span>
+                      {tokens.find((tokenX) => tokenX.symbol === favToken)?.symbol}
+                    </span>
+                  </div>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleFavToken(favToken);
+                    }}
+                    className="absolute rounded-full w-6 h-6 text-center cursor-pointer items-center justify-center text-[12px] pt-1 pl-[1px] -top-[13px] border border-[#FFF0DD] -right-[13px] group-hover:flex hidden"
+                  >
+                    X
                   </div>
                 </div>
-                <div className="flex-1 flex justify-end truncate text-sm">
-                  {tokenX.symbol === "ETH"
-                    ? Number(data?.formatted).toFixed(4)
-                    : tokenX?.balance?.toFixed(4) || 0}
-                </div>
-                {favTokens.some((tokenY) => tokenX.symbol === tokenY) ? (
-                  <FaStar
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleFavToken(tokenX.symbol);
+              ))}
+            </div>
+            <div className="max-h-[400px] pt-4 overflow-y-auto gap-4 px-2  flex flex-col mb-4">
+              {(search.length ? filteredToken : tokens)
+                ?.sort((a: any, b: any) => {
+                  if (a?.balance > b?.balance) return -1;
+                  else return 1;
+                })
+                .map((tokenX) => (
+                  <div
+                    key={tokenX.name}
+                    onClick={() => {
+                      onSelectToken(tokenX);
+                      onCloseModal();
                     }}
-                    fill={"#FFF0DD "}
-                    className="mb-2"
-                  />
-                ) : (
-                  <FaRegStar
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleFavToken(tokenX.symbol);
-                    }}
-                    fill={"#fff"}
-                    className="mb-2"
-                  />
-                )}
-              </div>
-            ))}
-        </div>
+                    className="hover:bg-[rgba(26,29,36,0.40)] gap-2 rounded-lg text-[#FFF0DD] cursor-pointer p-2 flex items-center justify-between"
+                  >
+                    <div className="flex gap-5 items-center">
+                      <CurrencyLogo currency={tokenX} />
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm">{tokenX.symbol}</span>
+                        <span className="text-opacity-40 text-xs">{tokenX.name}</span>
+                      </div>
+                    </div>
+                    <div className="flex-1 flex justify-end truncate text-sm">
+                      {tokenX.symbol === "ETH"
+                        ? Number(data?.formatted).toFixed(4)
+                        : tokenX?.balance?.toFixed(4) || 0}
+                    </div>
+                    {favTokens.some((tokenY) => tokenX.symbol === tokenY) ? (
+                      <FaStar
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFavToken(tokenX.symbol);
+                        }}
+                        fill={"#FFF0DD "}
+                        className="mb-2"
+                      />
+                    ) : (
+                      <FaRegStar
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFavToken(tokenX.symbol);
+                        }}
+                        fill={"#fff"}
+                        className="mb-2"
+                      />
+                    )}
+                  </div>
+                ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
