@@ -52,7 +52,7 @@ const Navbar: React.FC<Props> = (props) => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     // Change zoom level on mount
-    (document.getElementById("container-div")?.style as any).zoom = "85%";
+    (document.getElementById("container-div")?.style as any).zoom = "80%";
   }, []);
   const menu = menuItems.map((menuItem) => {
     return (
@@ -131,7 +131,7 @@ const Navbar: React.FC<Props> = (props) => {
           {menu}
         </nav>
       </div>
-      <div className="flex flex-col-reverse lg:hidden gap-3">
+      <div className="flex flex-row lg:hidden gap-3">
         <NetworkSelector />
         <ConnectButton />
       </div>
