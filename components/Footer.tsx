@@ -13,7 +13,12 @@ const Footer = () => {
     >
       <p className={"text-[#FFF0DD] font-light"}>2023 © aggre! </p>
       <div className="flex flex-col gap-4 items-center">
-        <p className={"text-[#FFF0DD] font-light"}>Powered By DappLabs</p>
+        <p
+          onClick={() => window.open("https://dapplabs.tech/")}
+          className={"cursor-pointer text-[#FFF0DD] font-light"}
+        >
+          Powered By DappLabs
+        </p>
         <div className={"flex gap-4 text-xl text-gray-400 "}>
           <a
             href="https://twitter.com/aggreio"
