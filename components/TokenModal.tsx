@@ -48,7 +48,7 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
     >
       <div
         className={
-          "z-[9999] py-12 px-8 w-[30vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "z-[9999] py-14 px-10 w-[30vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-1">
