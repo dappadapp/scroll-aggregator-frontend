@@ -52,7 +52,7 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
         }
       >
         <div className="flex justify-between mb-1">
-          <h1 className="text-2xl md:text-4xl mb-2">Select Token</h1>
+          <h1 className="text-2xl md:text-4xl mb-4">Select Token</h1>
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
@@ -60,7 +60,7 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
             <FontAwesomeIcon icon={faX} />
           </div>
         </div>
-        <div className="relative mb-4">
+        <div className="relative mb-6">
           <input
             type="text"
             value={search}
@@ -76,7 +76,7 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
             className="absolute top-1/2 right-2 transform -translate-y-1/2 text-gray-500 pointer-events-none"
           />
         </div>
-        <div className=" grid grid-cols-3 mb-4 lg:grid-cols-5 gap-2">
+        <div className="grid grid-cols-3 mb-4 lg:grid-cols-4 gap-2 mt-2 mb-2 p-2">
           {favTokens.map((favToken) => (
             <div key={favToken} className="relative group w-full text-sm">
               <div
@@ -104,7 +104,7 @@ function TokenModal({ onCloseModal, token, onSelectToken, tokens }: Props) {
             </div>
           ))}
         </div>
-        <div className="max-h-[400px] mb-4 pt-4 border-t border-[#FFF0DD]/40 overflow-y-auto gap-4 px-2  flex flex-col">
+        <div className="max-h-[400px] mb-4 pt-4 overflow-y-auto gap-4 px-2  flex flex-col mb-4">
           {(search.length ? filteredToken : tokens).map((tokenX) => (
             <div
               key={tokenX.name}
