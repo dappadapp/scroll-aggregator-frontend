@@ -452,6 +452,10 @@ const SwapCard: React.FC<Props> = () => {
       const tokens = _.values(Tokens[chain.id]);
       return [native, ...tokens];
     }
+    else{
+      const tokens = _.values(Tokens[534352]);
+      return [native, ...tokens];
+    }
     return [];
   }, [chain, native]);
   return (
