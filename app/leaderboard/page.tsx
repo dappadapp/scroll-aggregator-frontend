@@ -208,7 +208,7 @@ export default function LeaderBoard() {
                 {item?.amount} XP
               </td>
               <td className=" pr-2 w-[40%] text-right rounded-r-lg text-sm lg:text-base pr-4">
-                {item.total} TX
+                {item?.count} TX
               </td>
             </tr>
           ))}
