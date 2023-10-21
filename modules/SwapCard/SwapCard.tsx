@@ -93,7 +93,7 @@ const SwapCard: React.FC<Props> = () => {
   } = useBalance({
     address: address,
     ...(!tokenFrom?.isNative && {
-      token: tokenFrom?.wrapped?.address,
+      token: tokenFrom?.wrapped?.address || tokenFrom?.address,
     }),
     chainId: tokenFrom?.chainId,
     enabled: !!tokenFrom,
@@ -106,7 +106,7 @@ const SwapCard: React.FC<Props> = () => {
   } = useBalance({
     address: address,
     ...(!tokenTo?.isNative && {
-      token: tokenTo?.wrapped?.address,
+      token: tokenTo?.wrapped?.address || tokenTo?.address,
     }),
     chainId: tokenTo?.chainId,
     enabled: !!tokenTo,
@@ -164,6 +164,8 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
+
+
   useEffect(() => {
     getEthPrice();
   }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
@@ -189,7 +191,7 @@ const SwapCard: React.FC<Props> = () => {
           address: contractAddr?.skydrome?.poolFactory,
           abi: SkydromePoolFactory,
           functionName: "getPair",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, false],
+          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address, false],
           enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
         }
       : dexType === SWAP_TYPE.IZUMI
@@ -197,7 +199,7 @@ const SwapCard: React.FC<Props> = () => {
           address: contractAddr?.iziswap?.liquidityManager,
           abi: IziSwapPoolFactory,
           functionName: "pool",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, 3000],
+          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address, 3000],
       }
       : dexType === SWAP_TYPE.PUNKSWAP
       ? {
@@ -215,6 +217,7 @@ const SwapCard: React.FC<Props> = () => {
       }
       : {}
   );
+
 
   useEffect(() => {
     fetchBalanceFrom();
@@ -235,6 +238,8 @@ const SwapCard: React.FC<Props> = () => {
     receiveAmount,
     balanceFrom,
     balanceTo,
+    showFrom,
+    showTo,
   ]);
 
   useEffect(() => {
@@ -458,6 +463,8 @@ const SwapCard: React.FC<Props> = () => {
     }
     return [];
   }, [chain, native]);
+
+
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
@@ -701,7 +708,7 @@ const SwapCard: React.FC<Props> = () => {
       </div>
       {showFrom && (
         <TokenModal
-          onSelectToken={(token: any) => setTokenFrom(token)}
+          onSelectToken={(token: any) => {setTokenFrom(token); fetchBalanceFrom();}}
           onCloseModal={() => setShowFrom(false)}
           tokenList={tokens}
         />
