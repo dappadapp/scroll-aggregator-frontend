@@ -104,22 +104,21 @@ export default function LeaderBoard() {
     setMinutes(Math.floor((time / 1000 / 60) % 60));
   };
   // Show a fixed number of pages
-  const maxVisiblePages = 10;
+  const maxVisiblePages = 9;
 
   // Calculate the range of pages to display
   const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
   const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
   return (
-    <div className="flex w-full flex-col gap-5 mt-4 lg:mt-7">
-      <div className="flex flex-col lg:flex-row gap-3 lg:gap-0 justify-between items-center border p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
+    <div className="flex w-full flex-col gap-5 mt-[25px] lg:mt-12 mb-8">
+      <div className="flex flex-col lg:flex-row gap-5 lg:gap-0 justify-between items-center border p-12 py-20 border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
         <div className="flex flex-col items-start">
           <div className="flex items-center mb-3">
-            <span className="text-[#FFF0DD] text-2xl lg:text-5xl mr-5">Leaderboard</span>
+            <span className="text-[#FFF0DD] text-5xl lg:text-5xl mr-5">Leaderboard</span>
           </div>
           <span className="text-cool-gray-400 break-words mt-4">
-            Exclusive ranking for aggre! users rewards.
-          </span>
+          Get rewarded with a portion of our monthly revenue share.          </span>
         </div>
         <div className="flex items-center gap-4">
           <Avvvatars
@@ -128,7 +127,7 @@ export default function LeaderBoard() {
             size={80}
           />
           <div className="flex flex-col text-lg text-[#FFF0DD]">
-            <span className="font-semibold text-grey-cool-500 text-grey-cool-500 text-lg lg:text-2xl">
+            <span className="font-semibold text-grey-cool-500 text-grey-cool-500 text-lg lg:text-3xl">
               Your Ranking:
             </span>
 
@@ -151,24 +150,24 @@ export default function LeaderBoard() {
       <div className="flex gap-4 w-full">
         <div className="w-full flex flex-col gap-1 lg:gap-2 justify-between items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className="text-md md:text-5xl text-[#FFF0DD]">Total Reward</span>
-          <span className="text-md md:text-3xl text-[#ff7c5c]">18695221 XP</span>
+          <span className="text-md md:text-3xl text-[#ff7c5c] mt-2">18695221 XP</span>
         </div>
         <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
-          <span className="text-md md:text-5xl text-[#FFF0DD]">Epoch</span>
-          <div className="text-center text-[#ff7c5c] text-md md:text-3xl font-bold">
+          <span className="text-md md:text-5xl text-[#FFF0DD]">Epoch #1</span>
+          <div className="text-center text-[#ff7c5c] text-md md:text-3xl font-bold mt-2">
             {days >= 10 ? Number(days) : "0" + days} days{" "}
             {hours >= 10 ? hours : "0" + hours} hours{" "}
             {minutes > 10 ? minutes : "0" + minutes} minutes
           </div>
         </div>
       </div>
-      <table className="overflow-y-scroll border-separate border-spacing-y-1 text-x md:text-base w-full">
+      <table className="overflow-y-scroll border-separate border-spacing-y-1 text-xl md:text-base w-full">
         <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">
-          <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD]">
-            <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2"></td>
-            <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2">Address</td>
-            <td className="w-[40.6%]">XP</td>
-            <td className=" table-cell w-[40.6%] pr-4">Transactions</td>
+          <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD] ">
+            <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2 py-3"></td>
+            <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">Address</td>
+            <td className="w-[40.6%] py-3">XP</td>
+            <td className=" table-cell w-[40.6%] pr-4 py-3">Transactions</td>
           </tr>
           {leaderboard?.map((item: any, index: number) => (
             <tr
