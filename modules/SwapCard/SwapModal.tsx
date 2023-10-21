@@ -46,7 +46,7 @@ function SwapModal({
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
   const [fee, setFee] = useState<string>("0");
-  console.log("contractAddr!.contract", contractAddr!.contract);
+
   const { data: allowance, refetch } = useContractRead({
     address: (tokenA?.isToken ? tokenA.address  : tokenA.wrapped.address),
     abi: erc20ABI,

@@ -127,7 +127,6 @@ const SwapCard: React.FC<Props> = () => {
         tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
         false
       );
-      console.log("Pair Address:", pair);
       return pair;
     } catch (error) {
       console.error("Error:", error);
@@ -146,7 +145,6 @@ const SwapCard: React.FC<Props> = () => {
         tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
         3000
       );
-      console.log("Pair Address:", pair);
       return pair;
     } catch (error) {
       console.error("Error:", error);
