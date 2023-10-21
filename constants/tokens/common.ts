@@ -191,7 +191,7 @@ export const PUNK_TOKEN = new ERC20Token(
     ChainId.SCROLL_MAINNET,
     "0x87203Ff9393dC97D7847B4D4103bC32fea7d2DB2",
     9,
-    "Script ",
+    "Script",
     "SCRIPT",
     "https://storage.googleapis.com/ks-setting-1d682dca/b6842f76-1782-42c8-bd94-17706603ee151697564056597.png",
     "#"

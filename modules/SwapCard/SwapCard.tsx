@@ -124,7 +124,7 @@ const SwapCard: React.FC<Props> = () => {
     try {
       const pair = await contract.functions.getPair(
         tokenFrom?.wrapped?.address,
-        tokenTo?.wrapped?.address,
+        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
         false
       );
       console.log("Pair Address:", pair);
@@ -135,15 +135,15 @@ const SwapCard: React.FC<Props> = () => {
   }
   const contractIzumi = new ethers.Contract(
     contractAddr?.iziswap?.liquidityManager ||
-      "0x5300000000000000000000000000000000000004",
+    "0x5300000000000000000000000000000000000004",
     IziSwapPoolFactory,
     signer
   );
   async function getPool() {
     try {
       const pair = await contractIzumi.pool(
-        tokenFrom?.wrapped?.address,
-        tokenTo?.wrapped?.address,
+        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
+        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
         3000
       );
       console.log("Pair Address:", pair);
@@ -173,49 +173,49 @@ const SwapCard: React.FC<Props> = () => {
   const { data: poolAddress, refetch } = useContractRead(
     dexType === SWAP_TYPE.SYNCSWAP
       ? {
-          address: contractAddr?.syncswap?.poolFactory,
-          abi: SnycSwapPoolFactory,
-          functionName: "getPool",
-          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
-        }
+        address: contractAddr?.syncswap?.poolFactory,
+        abi: SnycSwapPoolFactory,
+        functionName: "getPool",
+        args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
+      }
       : dexType === SWAP_TYPE.SPACEFI
-      ? {
+        ? {
           address: contractAddr?.spacefi?.poolFactory,
           abi: SpaceFiPoolFactoryAbi,
           functionName: "getPair",
-          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
+          args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
           enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
         }
-      : dexType === SWAP_TYPE.SKYDROME
-      ? {
-          address: contractAddr?.skydrome?.poolFactory,
-          abi: SkydromePoolFactory,
-          functionName: "getPair",
-          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, false],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.IZUMI
-      ? {
-          address: contractAddr?.iziswap?.liquidityManager,
-          abi: IziSwapPoolFactory,
-          functionName: "pool",
-          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 3000],
-      }
-      : dexType === SWAP_TYPE.PUNKSWAP
-      ? {
-          address: contractAddr?.punkswap?.poolFactory,
-          abi: PunkSwapPoolFactory,
-          functionName: "getPair",
-          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
-      }
-      : dexType === SWAP_TYPE.KYBERSWAP
-      ? {
-            address: contractAddr?.kyberswap?.poolFactory,
-            abi: KyberSwapFactory,
-            functionName: "getPool",
-            args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 100],
-      }
-      : {}
+        : dexType === SWAP_TYPE.SKYDROME
+          ? {
+            address: contractAddr?.skydrome?.poolFactory,
+            abi: SkydromePoolFactory,
+            functionName: "getPair",
+            args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, false],
+            enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+          }
+          : dexType === SWAP_TYPE.IZUMI
+            ? {
+              address: contractAddr?.iziswap?.liquidityManager,
+              abi: IziSwapPoolFactory,
+              functionName: "pool",
+              args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 3000],
+            }
+            : dexType === SWAP_TYPE.PUNKSWAP
+              ? {
+                address: contractAddr?.punkswap?.poolFactory,
+                abi: PunkSwapPoolFactory,
+                functionName: "getPair",
+                args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
+              }
+              : dexType === SWAP_TYPE.KYBERSWAP
+                ? {
+                  address: contractAddr?.kyberswap?.poolFactory,
+                  abi: KyberSwapFactory,
+                  functionName: "getPool",
+                  args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 100],
+                }
+                : {}
   );
 
 
@@ -279,8 +279,6 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  console.log("tokenFrom", tokenFrom);
-
   const getCurrentRate = async () => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
@@ -301,26 +299,25 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-            ? SWAP_TYPE.SKYDROME
-            : exchangeRate?.data?.dex === "iziswap"
-            ? SWAP_TYPE.IZUMI
-            : exchangeRate?.data?.dex === "syncswap"
-            ? SWAP_TYPE.SYNCSWAP
-            : exchangeRate?.data?.dex === "punkswap"
-            ? SWAP_TYPE.PUNKSWAP
-            : exchangeRate?.data?.dex === "kyberswap"
-            ? SWAP_TYPE.KYBERSWAP 
-            : SWAP_TYPE.INVALID
+              ? SWAP_TYPE.SKYDROME
+              : exchangeRate?.data?.dex === "iziswap"
+                ? SWAP_TYPE.IZUMI
+                : exchangeRate?.data?.dex === "syncswap"
+                  ? SWAP_TYPE.SYNCSWAP
+                  : exchangeRate?.data?.dex === "punkswap"
+                    ? SWAP_TYPE.PUNKSWAP
+                    : exchangeRate?.data?.dex === "kyberswap"
+                      ? SWAP_TYPE.KYBERSWAP
+                      : SWAP_TYPE.INVALID
         );
         setReceiveAmount(
-          Number(
-            ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
+          (
+            ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
           )
-            .toFixed(5)
             .toString()
         );
         setRate(
-          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo.wrapped.decimals)
+          ethers.utils.formatUnits(exchangeRate?.data.amount,  tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
         );
         setIsLoadingReceiveAmount(false);
 
@@ -337,7 +334,7 @@ const SwapCard: React.FC<Props> = () => {
             (tokenFrom?.wrapped?.address ===
               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
               tokenTo?.wrapped.address ===
-                "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
+              "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
             (tokenFrom?.wrapped?.address ===
               "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" &&
               tokenTo?.wrapped.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
@@ -382,16 +379,16 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-            ? SWAP_TYPE.SKYDROME
-            : exchangeRate?.data?.dex === "iziswap"
-            ? SWAP_TYPE.IZUMI
-            : exchangeRate?.data?.dex === "syncswap"
-            ? SWAP_TYPE.SYNCSWAP
-            : exchangeRate?.data?.dex === "punkswap"
-            ? SWAP_TYPE.PUNKSWAP
-            : exchangeRate?.data?.dex === "kyberswap"
-            ? SWAP_TYPE.KYBERSWAP 
-            : SWAP_TYPE.INVALID
+              ? SWAP_TYPE.SKYDROME
+              : exchangeRate?.data?.dex === "iziswap"
+                ? SWAP_TYPE.IZUMI
+                : exchangeRate?.data?.dex === "syncswap"
+                  ? SWAP_TYPE.SYNCSWAP
+                  : exchangeRate?.data?.dex === "punkswap"
+                    ? SWAP_TYPE.PUNKSWAP
+                    : exchangeRate?.data?.dex === "kyberswap"
+                      ? SWAP_TYPE.KYBERSWAP
+                      : SWAP_TYPE.INVALID
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
@@ -457,7 +454,7 @@ const SwapCard: React.FC<Props> = () => {
       const tokens = _.values(Tokens[chain.id]);
       return [native, ...tokens];
     }
-    else{
+    else {
       const tokens = _.values(Tokens[534352]);
       return [native, ...tokens];
     }
@@ -527,23 +524,20 @@ const SwapCard: React.FC<Props> = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
                   <div
-                    className={`${
-                      percentage === val ? "scale-125" : "scale-100"
-                    }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
+                    className={`${percentage === val ? "scale-125" : "scale-100"
+                      }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
                     <span
-                      className={`${
-                        percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
-                      } transition-all`}
+                      className={`${percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                        } transition-all`}
                     >
                       {val}%
                     </span>
                     <div
-                      className={`${
-                        percentage === val ? "w-full" : "w-0"
-                      } transition-all bg-[#FF7C5C]  h-1`}
+                      className={`${percentage === val ? "w-full" : "w-0"
+                        } transition-all bg-[#FF7C5C]  h-1`}
                     ></div>
                   </div>
                 ))}
@@ -650,9 +644,10 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 </div>
                 <div className="flex justify-center text-xs gap-2 lg:text-base mt-2">
+
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : (
+                  ) : tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
                     <span className="  w-1/3 text-center">
                       ~$
                       {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
@@ -660,28 +655,30 @@ const SwapCard: React.FC<Props> = () => {
                         : (+swapAmount).toFixed(4)}
                     </span>
                   )}
+
+
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
                     <span className="text-sm lg:text-xl w-1/3 text-center">
-                      {!swapAmount || !receiveAmount || Number(swapAmount) === 0
+                      {!swapAmount || !receiveAmount || Number(swapAmount) === 0 || ( tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" || tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script")
                         ? 0
                         : getPercentageDifference(
-                            tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                              ? ethUSD * +swapAmount
-                              : +swapAmount,
-                            tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                              ? ethUSD * +receiveAmount
-                              : +receiveAmount
-                          ).toFixed(2)}
+                          tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
+                            ? ethUSD * +swapAmount
+                            : +swapAmount,
+                          tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
+                            ? ethUSD * +receiveAmount
+                            : +receiveAmount
+                        ).toFixed(2)}
                       %
                     </span>
                   )}
 
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : (
-                    <span className=" w-1/3 text-center">
+                    ) : tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
+                      <span className="w-1/3 text-center">
                       ~$
                       {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
                         ? (ethUSD * +receiveAmount).toFixed(4)
@@ -708,7 +705,7 @@ const SwapCard: React.FC<Props> = () => {
       </div>
       {showFrom && (
         <TokenModal
-          onSelectToken={(token: any) => {setTokenFrom(token); fetchBalanceFrom();}}
+          onSelectToken={(token: any) => { setTokenFrom(token); fetchBalanceFrom(); }}
           onCloseModal={() => setShowFrom(false)}
           tokenList={tokens}
         />

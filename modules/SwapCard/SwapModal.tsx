@@ -196,7 +196,7 @@ function SwapModal({
             <span>Minimum Receive</span>
             <span className="text-right">
               {" "}
-              {(+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000) } {tokenB?.symbol}
+              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7) } {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -223,9 +223,9 @@ function SwapModal({
             swapParam={{
               poolAddress: pool,
               tokenIn: tokenA?.isToken ?  tokenA?.address : tokenA.wrapped.address,
-              tokenOut: tokenB.wrapped.address,
+              tokenOut: tokenB?.isToken ?  tokenB?.address : tokenB.wrapped.address,
               amountIn: bigAmountA,
-              amountOutMin: bigAmountB,
+              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 :bigAmountB,
               swapType: swapType,
               path:
                 generatePath(
