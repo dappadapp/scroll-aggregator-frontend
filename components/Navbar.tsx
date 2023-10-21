@@ -25,6 +25,12 @@ const menuItems = [
     active: true,
   },
   {
+    title: "Leaderboard",
+    href: "/leaderboard",
+    type: "",
+    active: true,
+  },
+  {
     title: "Dao",
     href: "/dao",
     active: false,
@@ -99,7 +105,7 @@ const Navbar: React.FC<Props> = (props) => {
           "w-full hidden lg:flex flex-row lg:mb-1 items-center justify-between mt-2 lg:mt-3 gap-2"
         }
       >
-        <div className={"hidden lg:flex gap-12 flex-row items-center justify-start"}>
+        <div className={"hidden lg:flex gap-4 flex-row items-center justify-start"}>
           <Link href={"https://aggre.io"}>
             <ZetaGateLogo />
           </Link>
