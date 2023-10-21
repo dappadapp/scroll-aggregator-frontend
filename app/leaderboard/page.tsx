@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
 interface LeaderboardResponse {
-  walletCount: number;
+  wallets: number;
   data: any;
 }
 
@@ -45,7 +45,6 @@ export default function LeaderBoard() {
 
   useEffect(() => {
     getTime();
-
     getSingleUser();
     getLeaderboard(1);
   }, []);
@@ -58,9 +57,7 @@ export default function LeaderBoard() {
       });
       const total = response.data;
       if (total) {
-        setTotalUsers(total?.walletCount);
-      }
-      if (total) {
+        setTotalUsers(total?.wallets);
         setLeaderboard(total?.data);
       }
     } catch (error) {
@@ -81,21 +78,6 @@ export default function LeaderBoard() {
     } catch (error) {
       // Handle errors
     }
-  };
-
-  const refreshData = async () => {
-    // if (!address) {
-    //   toast("Please connect your wallet");
-    //   return;
-    // }
-    // setIsRefreshing(true);
-    // await refechOFT();
-    // await refetchNFT();
-    // await refecthPass();
-    // getSingleUser();
-    // setIsRefreshing(false);
-    // toast("Successfully refreshed leaderboard");
-    // return;
   };
 
   function renderPaginationButton(page: any, onClick: any) {
@@ -128,10 +110,8 @@ export default function LeaderBoard() {
   const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
   const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-  console.log("user", user);
-
   return (
-    <div className="flex w-full flex-col gap-5 mt-0 lg:mt-7">
+    <div className="flex w-full flex-col gap-5 mt-4 lg:mt-7">
       <div className="flex flex-col lg:flex-row gap-3 lg:gap-0 justify-between items-center border p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
         <div className="flex flex-col items-start">
           <div className="flex items-center mb-3">
@@ -162,18 +142,18 @@ export default function LeaderBoard() {
                 className={`text-[#888888] hover:cursor-pointer items-center ${
                   isRefreshing ? "refreshing" : ""
                 }`}
-                onClick={() => refreshData()}
+                // onClick={() => refreshData()}
               />
             </div>
           </div>
         </div>
       </div>
       <div className="flex gap-4 w-full">
-        <div className="w-full flex flex-col gap-3 lg:gap-2 justify-between items-center border p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
+        <div className="w-full flex flex-col gap-1 lg:gap-2 justify-between items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className="text-md md:text-5xl text-[#FFF0DD]">Total Reward</span>
           <span className="text-md md:text-3xl text-[#ff7c5c]">18695221 XP</span>
         </div>
-        <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
+        <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className="text-md md:text-5xl text-[#FFF0DD]">Epoch</span>
           <div className="text-center text-[#ff7c5c] text-md md:text-3xl font-bold">
             {days >= 10 ? Number(days) : "0" + days} days{" "}
@@ -190,11 +170,11 @@ export default function LeaderBoard() {
             <td className="w-[40.6%]">XP</td>
             <td className=" table-cell w-[40.6%] pr-4">Transactions</td>
           </tr>
-          {leaderboard.map((item: any, index: number) => (
+          {leaderboard?.map((item: any, index: number) => (
             <tr
-              key={item.wallet}
+              key={item.user}
               className={`pt-4  w-[80%] shadow-inner rounded-lg ${
-                item?.wallet.toLowerCase() === address?.toString().toLowerCase()
+                item?.user.toLowerCase() === address?.toString().toLowerCase()
                   ? "bg-[#ff7c5c] text-[#000]"
                   : "text-[#AAA]"
               }`}
@@ -218,13 +198,15 @@ export default function LeaderBoard() {
               </td>
               <td className="table-cell w-[40.6%] flex items-center">
                 <div className="flex items-center">
-                  <Avvvatars value={item?.wallet} style="shape" />
+                  <Avvvatars value={item?.user} style="shape" />
                   <span className="whitespace-nowrap ml-3">
-                    {formatAddress(item.wallet)}
+                    {formatAddress(item.user)}
                   </span>
                 </div>
               </td>
-              <td className="text-sm lg:text-base table-cell w-[40%]">{item?.xp} XP</td>
+              <td className="text-sm lg:text-base table-cell w-[40%]">
+                {item?.amount} XP
+              </td>
               <td className=" pr-2 w-[40%] text-right rounded-r-lg text-sm lg:text-base pr-4">
                 {item.total} TX
               </td>
