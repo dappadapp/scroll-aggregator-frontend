@@ -176,14 +176,14 @@ const SwapCard: React.FC<Props> = () => {
           address: contractAddr?.syncswap?.poolFactory,
           abi: SnycSwapPoolFactory,
           functionName: "getPool",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address],
+          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
         }
       : dexType === SWAP_TYPE.SPACEFI
       ? {
           address: contractAddr?.spacefi?.poolFactory,
           abi: SpaceFiPoolFactoryAbi,
           functionName: "getPair",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address],
+          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
           enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
         }
       : dexType === SWAP_TYPE.SKYDROME
@@ -191,7 +191,7 @@ const SwapCard: React.FC<Props> = () => {
           address: contractAddr?.skydrome?.poolFactory,
           abi: SkydromePoolFactory,
           functionName: "getPair",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address, false],
+          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, false],
           enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
         }
       : dexType === SWAP_TYPE.IZUMI
@@ -199,21 +199,21 @@ const SwapCard: React.FC<Props> = () => {
           address: contractAddr?.iziswap?.liquidityManager,
           abi: IziSwapPoolFactory,
           functionName: "pool",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped?.address, 3000],
+          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 3000],
       }
       : dexType === SWAP_TYPE.PUNKSWAP
       ? {
           address: contractAddr?.punkswap?.poolFactory,
           abi: PunkSwapPoolFactory,
           functionName: "getPair",
-          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address],
+          args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address],
       }
       : dexType === SWAP_TYPE.KYBERSWAP
       ? {
             address: contractAddr?.kyberswap?.poolFactory,
             abi: KyberSwapFactory,
             functionName: "getPool",
-            args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, 100],
+            args: [tokenFrom?.isToken ?tokenFrom?.address  :tokenFrom?.wrapped?.address , tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped.address, 100],
       }
       : {}
   );
@@ -278,6 +278,8 @@ const SwapCard: React.FC<Props> = () => {
       setReceiveAmount(e.target.value);
     }
   };
+
+  console.log("tokenFrom", tokenFrom);
 
   const getCurrentRate = async () => {
     clearTimeout(getCurrentRateTimeout.current!);
