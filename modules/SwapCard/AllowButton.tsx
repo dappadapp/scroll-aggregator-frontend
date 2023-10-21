@@ -20,7 +20,7 @@ const AllowButton: React.FC<Props> = ({ tokenIn, amountIn, onSuccess }) => {
     address:  (tokenIn?.isToken ? tokenIn.address  : tokenIn.wrapped.address),
     abi: erc20ABI,
     functionName: "approve",
-    args: [contractAddr!.contract, amountIn],
+    args: [contractAddr!.contract, amountIn + BigInt("1000000000000000000")],
     enabled: !!contractAddr,
   });
 
