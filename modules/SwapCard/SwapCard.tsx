@@ -289,13 +289,11 @@ const SwapCard: React.FC<Props> = () => {
         const exchangeRate = await axios.post("/api/exchange", {
           amount: swapAmount.toString(),
           from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-          fromDecimals: tokenFrom?.wrapped.decimals,
+          fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-          toDecimals: tokenTo?.wrapped.decimals,
+          toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
           type: "IN",
         });
-
-        console.log("exchangeRate",  exchangeRate?.data?.dex);
 
         setDexType(
           exchangeRate?.data?.dex === "space-fi"
