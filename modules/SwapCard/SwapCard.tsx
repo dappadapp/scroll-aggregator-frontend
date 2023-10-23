@@ -56,6 +56,7 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   );
 }
 
+
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
@@ -85,6 +86,9 @@ const SwapCard: React.FC<Props> = () => {
 
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
+  const { refresh, setRefresh } = useGlobalContext();
+
+  
 
   const {
     data: balanceFrom,
@@ -246,7 +250,9 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       getCurrentRate();
     }
-  }, [tokenFrom, tokenTo]);
+  }, [tokenFrom, tokenTo,refresh]);
+
+
 
   const handleINChange = async (e: any) => {
     refetch();

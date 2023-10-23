@@ -16,7 +16,7 @@ export default function SlippageButton() {
   }, [slippage]);
 
   return (
-    <div className=" max-w-sm px-4 z-[49px]">
+    <div className="max-w-sm px-1 z-[49px]">
       <Popover className="relative z-[49px]">
         {({ open }) => (
           <>

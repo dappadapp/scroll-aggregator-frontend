@@ -1,4 +1,5 @@
 "use client";
+import RefreshButton from "@/modules/SwapCard/RefreshButton";
 import SlippageButton from "@/modules/SwapCard/SlippageButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,10 +49,12 @@ function CardNavbar() {
       >
         Stats
       </Link> */}
-        {path === "/" && (
+        {path === "/" && (<>
           <div className="flex justify-end">
-            <SlippageButton />
-          </div>
+            <RefreshButton />
+              <SlippageButton />
+            </div>
+            </>
         )}
       </div>
     );
