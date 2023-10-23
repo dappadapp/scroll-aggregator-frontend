@@ -39,7 +39,9 @@ const NetworkItemRef: ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps>
       height={25}
       className="rounded-full w-4 h-4 md:w-6 md:h-6"
     />
-    <span className="block truncate text-base font-medium">{chain.name}</span>
+    <span className="block truncate text-base text-[#FFF0DD]/90 font-medium">
+      {chain.name}
+    </span>
   </div>
 );
 

@@ -676,7 +676,7 @@ const SwapCard: React.FC<Props> = () => {
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg text-[#FFF] bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
-                    <span className=" w-1/3 text-center">
+                    <span className=" w-1/3 text-center text-[#FFF]">
                       ~$
                       {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
                         ? (ethUSD * +receiveAmount).toFixed(4)
@@ -686,18 +686,20 @@ const SwapCard: React.FC<Props> = () => {
                 </div>
               </div>
             </div>
-            <Button
-              variant="bordered"
-              disabled={
-                isConnected &&
-                (!tokenFrom || !tokenTo || !swapAmount) &&
-                chain?.id === 534352
-              }
-              className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
-              onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
-            >
-              {isConnected ? "SWAP" : "Connect Wallet"}
-            </Button>
+            <div className="pl-3">
+              <Button
+                variant="bordered"
+                disabled={
+                  isConnected &&
+                  (!tokenFrom || !tokenTo || !swapAmount) &&
+                  chain?.id === 534352
+                }
+                className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
+                onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
+              >
+                {isConnected ? "SWAP" : "Connect Wallet"}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

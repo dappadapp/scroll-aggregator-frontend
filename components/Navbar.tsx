@@ -63,7 +63,7 @@ const Navbar: React.FC<Props> = (props) => {
   const menu = menuItems.map((menuItem) => {
     return (
       <Link
-        href={menuItem.href || ""}
+        href={menuItem.active ? menuItem.href : ""}
         className={`flex items-center gap-2 transition-all hover:text-white ${
           path === menuItem.href
             ? "[&>svg]:fill-[#3AFF4242] text-white"
@@ -118,7 +118,7 @@ const Navbar: React.FC<Props> = (props) => {
       </div>
 
       {/* Mobile */}
-      <div className="flex lg:hidden  items-center self-center z-50">
+      <div className="flex lg:hidden  items-center text-[#FFF0DD]/90 self-center z-50">
         <FaBars className="w-8 h-8" onClick={() => setMenuOpen((prev) => !prev)} />
       </div>
       <div
