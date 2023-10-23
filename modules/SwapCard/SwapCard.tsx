@@ -31,6 +31,7 @@ import SlippageButton from "./SlippageButton";
 import { toast } from "react-toastify";
 import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
+import RefreshButton from "./RefreshButton";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -470,6 +471,7 @@ const SwapCard: React.FC<Props> = () => {
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex lg:hidden w-full justify-end">
+            <RefreshButton />
               <SlippageButton />
             </div>
             <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
