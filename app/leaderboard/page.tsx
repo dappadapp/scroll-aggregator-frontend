@@ -117,8 +117,9 @@ export default function LeaderBoard() {
           <div className="flex items-center mb-3">
             <span className="text-[#FFF0DD] text-5xl lg:text-5xl mr-5">Leaderboard</span>
           </div>
-          <span className="text-cool-gray-400 break-words mt-4">
-          Get rewarded with a portion of our monthly revenue share.          </span>
+          <span className="text-[#FFF0DD]/90 break-words mt-4">
+            Get rewarded with a portion of our monthly revenue share.{" "}
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <Avvvatars
@@ -165,7 +166,9 @@ export default function LeaderBoard() {
         <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">
           <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD] ">
             <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2 py-3"></td>
-            <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">Address</td>
+            <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">
+              Address
+            </td>
             <td className="w-[40.6%] py-3">XP</td>
             <td className=" table-cell w-[40.6%] pr-4 py-3">Transactions</td>
           </tr>
