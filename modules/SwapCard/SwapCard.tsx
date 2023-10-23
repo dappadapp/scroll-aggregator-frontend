@@ -57,7 +57,6 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   );
 }
 
-
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
@@ -88,8 +87,6 @@ const SwapCard: React.FC<Props> = () => {
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
   const { refresh, setRefresh } = useGlobalContext();
-
-  
 
   const {
     data: balanceFrom,
@@ -203,21 +200,21 @@ const SwapCard: React.FC<Props> = () => {
           abi: IziSwapPoolFactory,
           functionName: "pool",
           args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, 3000],
-      }
+        }
       : dexType === SWAP_TYPE.PUNKSWAP
       ? {
           address: contractAddr?.punkswap?.poolFactory,
           abi: PunkSwapPoolFactory,
           functionName: "getPair",
           args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address],
-      }
+        }
       : dexType === SWAP_TYPE.KYBERSWAP
       ? {
-            address: contractAddr?.kyberswap?.poolFactory,
-            abi: KyberSwapFactory,
-            functionName: "getPool",
-            args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, 100],
-      }
+          address: contractAddr?.kyberswap?.poolFactory,
+          abi: KyberSwapFactory,
+          functionName: "getPool",
+          args: [tokenFrom?.wrapped?.address, tokenTo?.wrapped.address, 100],
+        }
       : {}
   );
 
@@ -251,9 +248,7 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       getCurrentRate();
     }
-  }, [tokenFrom, tokenTo,refresh]);
-
-
+  }, [tokenFrom, tokenTo, refresh]);
 
   const handleINChange = async (e: any) => {
     refetch();
@@ -297,7 +292,7 @@ const SwapCard: React.FC<Props> = () => {
           type: "IN",
         });
 
-        console.log("exchangeRate",  exchangeRate?.data?.dex);
+        console.log("exchangeRate", exchangeRate?.data?.dex);
 
         setDexType(
           exchangeRate?.data?.dex === "space-fi"
@@ -311,7 +306,7 @@ const SwapCard: React.FC<Props> = () => {
             : exchangeRate?.data?.dex === "punkswap"
             ? SWAP_TYPE.PUNKSWAP
             : exchangeRate?.data?.dex === "kyberswap"
-            ? SWAP_TYPE.KYBERSWAP 
+            ? SWAP_TYPE.KYBERSWAP
             : SWAP_TYPE.INVALID
         );
         setReceiveAmount(
@@ -392,7 +387,7 @@ const SwapCard: React.FC<Props> = () => {
             : exchangeRate?.data?.dex === "punkswap"
             ? SWAP_TYPE.PUNKSWAP
             : exchangeRate?.data?.dex === "kyberswap"
-            ? SWAP_TYPE.KYBERSWAP 
+            ? SWAP_TYPE.KYBERSWAP
             : SWAP_TYPE.INVALID
         );
         setSwapAmount(
@@ -458,8 +453,7 @@ const SwapCard: React.FC<Props> = () => {
     if (chain && Tokens[chain.id]) {
       const tokens = _.values(Tokens[chain.id]);
       return [native, ...tokens];
-    }
-    else{
+    } else {
       const tokens = _.values(Tokens[534352]);
       return [native, ...tokens];
     }
@@ -471,13 +465,13 @@ const SwapCard: React.FC<Props> = () => {
         <div className="relative w-full flex flex-col">
           <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
             <div className="flex lg:hidden w-full justify-end">
-            <RefreshButton />
+              <RefreshButton />
               <SlippageButton />
             </div>
             <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (
-                <div className="text-right text-lg">
+                <div className="text-right text-lg text-[#FFF]">
                   {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
                 </div>
               )}
@@ -568,7 +562,7 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
               <span className="text-[#FFF0DD]">You Buy</span>
               {balanceTo && (
-                <div className="text-right text-lg">
+                <div className="text-right text-lg text-[#FFF]">
                   {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
                 </div>
               )}
@@ -654,7 +648,7 @@ const SwapCard: React.FC<Props> = () => {
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
-                    <span className="  w-1/3 text-center">
+                    <span className="text-[#FFF] w-1/3 text-center">
                       ~$
                       {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
                         ? (ethUSD * +swapAmount).toFixed(4)
@@ -664,7 +658,7 @@ const SwapCard: React.FC<Props> = () => {
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
-                    <span className="text-sm lg:text-xl w-1/3 text-center">
+                    <span className="text-sm lg:text-xl text-[#FFF] w-1/3 text-center">
                       {!swapAmount || !receiveAmount || Number(swapAmount) === 0
                         ? 0
                         : getPercentageDifference(
@@ -680,7 +674,7 @@ const SwapCard: React.FC<Props> = () => {
                   )}
 
                   {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                    <div className="w-1/3 rounded-lg text-[#FFF] bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
                     <span className=" w-1/3 text-center">
                       ~$

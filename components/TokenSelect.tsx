@@ -25,7 +25,7 @@ const TokenSelect = ({ token, onClick }: Props) => {
           <>
             <div className="flex gap-2 w-20 items-center lg:w-32">
               <CurrencyLogo currency={token} />
-              <span className={`truncate text-xs lg:text-2xl font-medium `}>
+              <span className={`truncate text-[#FFF] text-xs lg:text-2xl font-medium `}>
                 {token?.symbol}
               </span>
             </div>
