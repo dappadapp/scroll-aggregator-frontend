@@ -22,7 +22,9 @@ export default function SlippageButton() {
           <>
             <Popover.Button
               className={`
-                ${open ? " bg-[rgb(255,240,221)]/10" : ""} transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
+                ${
+                  open ? " bg-[rgb(255,240,221)]/10" : ""
+                } transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
             >
               <SlippageIcon />
             </Popover.Button>
@@ -35,10 +37,10 @@ export default function SlippageButton() {
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className="absolute -left-1/4 lg:left-1/2 z-50 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-md">
+              <Popover.Panel className="absolute -left-[120%] lg:left-1/2 z-50 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-md">
                 <div className="overflow-hidden  shadow-lg ring-1  bg-[rgba(26,29,36,1)] backdrop-blur-[52px] rounded-[8px] ring-black ring-opacity-5">
-                  <div className="relative p-7 flex max-h-[150px] gap-4 flex-col">
-                    <span className="text-sm">Slippage Tolerance</span>
+                  <div className="relative p-2 lg:p-7 flex max-h-[150px] gap-4 flex-col">
+                    <span className="text-sm text-[#FFE7DD]">Slippage Tolerance</span>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
                       {percentageButtons.map((val, index) => (
                         <Button

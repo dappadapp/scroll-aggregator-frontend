@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ></script>
       </head>
       <body
-        className={`${spartan.variable} ${spartan.className} h-full tracking-wider text-[20px]`}
+        className={`${spartan.variable} ${spartan.className} h-full lg:body-lg body-sm tracking-wider text-[20px]`}
       >
         <Providers>
           <GlobalContextProvider>

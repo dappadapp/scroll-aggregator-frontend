@@ -9,12 +9,10 @@ type Props = {
 
 export const SwapToken: React.FC<Props> = (props) => {
   return (
-    <div
-      className="flex items-center gap-2"
-    >
+    <div className="flex items-center gap-2">
       <CurrencyLogo currency={props.currency} size={12} />
       <div className={`flex flex-col text-left`}>
-        <span className="text-sm md:text-xl">{props.value}</span>
+        <span className="text-sm text-[#FFE7DD] md:text-xl">{props.value}</span>
         <span className="text-[#fff] text-xs md:text-sm">{props.currency.symbol}</span>
       </div>
     </div>
