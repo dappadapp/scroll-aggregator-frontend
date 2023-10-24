@@ -34,7 +34,7 @@ interface UserResponse {
   wallet: string;
   data: any;
 }
-const deadline = "October, 31, 2023, 03:40";
+const deadline = "November, 1, 2023, 03:40";
 
 export default function LeaderBoard() {
   const { address } = useAccount();
@@ -257,9 +257,11 @@ export default function LeaderBoard() {
         </div>
       </div>
       {loading ? (
-        <div className="flex justify-center text-white items-center h-[300px]">
-          <Loading />
-        </div>
+  <div className="flex justify-center text-white items-center h-[300px] w-full">
+
+    <Loading  />
+
+</div>
       ) : (
         <table className="overflow-y-scroll border-separate border-spacing-y-1 text-xl md:text-base w-full">
           <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">

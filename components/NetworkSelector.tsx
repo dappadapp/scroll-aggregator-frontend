@@ -71,7 +71,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   return (
     <Menu as="div" className="relative inline-block">
       <div>
-        <Menu.Button className="inline-flex cursor-pointer justify-center items-center lg:min-w-[200px] gap-2 p-2 lg:p-3 text-base bg-[#0A0A0A] rounded-lg border border-white/10">
+        <Menu.Button className="text-white inline-flex cursor-pointer justify-center items-center lg:min-w-[200px] gap-2 p-2 lg:p-3 text-base bg-[#0A0A0A] rounded-lg border border-white/10">
           {chain?.id !== 534352 ? (
             <button onClick={() => handleChangeNetworkChain(534352)}>
               Switch Scroll Mainnet
