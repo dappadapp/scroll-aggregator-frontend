@@ -32,6 +32,8 @@ import { toast } from "react-toastify";
 import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
 import RefreshButton from "./RefreshButton";
+import { useFeeData } from 'wagmi'
+
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -83,7 +85,7 @@ const SwapCard: React.FC<Props> = () => {
   const signer = useEthersSigner({ chainId: 534352 });
   const ethPrice = useRealTimeETHPrice();
   const [ethUSD, setEthPrice] = useState<number>(0);
-
+  const [fee, setFee] = useState<string>("0");
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
   const { refresh, setRefresh } = useGlobalContext();
@@ -113,6 +115,27 @@ const SwapCard: React.FC<Props> = () => {
     chainId: tokenTo?.chainId,
     enabled: !!tokenTo,
   });
+
+
+  useEffect(() => {
+    if (isConnected) {
+      getFee();
+    }
+  }, [isConnected, address]);
+
+  const feeData = useFeeData({
+    chainId: tokenTo?.chainId,
+  })
+
+  console.log("feeData", feeData);
+
+  const getFee = async () => {
+
+
+    //if (feeData) setFee(feeData || "0");
+  };
+
+  console.log("fee", fee);
 
   // Instantiate the contract
   const contract = new ethers.Contract(
