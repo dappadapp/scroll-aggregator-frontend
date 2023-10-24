@@ -34,7 +34,7 @@ interface UserResponse {
   wallet: string;
   data: any;
 }
-const deadline = "November, 1, 2023, 03:40";
+const deadline = "October, 31, 2023, 16:00";
 
 export default function LeaderBoard() {
   const { address } = useAccount();
