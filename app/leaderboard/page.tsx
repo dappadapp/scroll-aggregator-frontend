@@ -8,9 +8,11 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
-import { useBalance } from 'wagmi'
+import { useBalance } from "wagmi";
 import useContract from "@/hooks/useContract";
 import { ethers } from "ethers";
+import Loading from "@/assets/images/loading.svg";
+
 interface Token {
   balance: string;
   contractAddress: string;
@@ -40,6 +42,7 @@ export default function LeaderBoard() {
   const [leaderboard, setLeaderboard] = React.useState<any>([]);
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = React.useState<any>([]);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
@@ -52,25 +55,25 @@ export default function LeaderBoard() {
 
   useEffect(() => {
     // Define the API URL to fetch token balances
-    const apiUrl = 'https://blockscout.scroll.io/api?module=account&action=tokenlist&address=0xf11F67e9e019C6bEc24E3f51f5153dEBe7d2c93C';
+    const apiUrl =
+      "https://blockscout.scroll.io/api?module=account&action=tokenlist&address=0xf11F67e9e019C6bEc24E3f51f5153dEBe7d2c93C";
 
     // Fetch data from the API
-    axios.get(apiUrl)
+    axios
+      .get(apiUrl)
       .then((response) => {
         setTokenData(response?.data?.result);
       })
       .catch((error) => {
-        console.error('Error fetching token data:', error);
+        console.error("Error fetching token data:", error);
       });
   }, []);
 
   useEffect(() => {
-
     const symbolMappings: Record<string, string> = {
-
-      'WBTC': 'wrapped-bitcoin',
-      'WETH': 'weth',
-      'PUNK': 'punkswap',
+      WBTC: "wrapped-bitcoin",
+      WETH: "weth",
+      PUNK: "punkswap",
       // Add more mappings as needed
     };
     // Function to fetch token prices from CoinGecko
@@ -86,7 +89,9 @@ export default function LeaderBoard() {
 
       for (const symbol of tokenSymbols) {
         try {
-          const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd`);
+          const response = await axios.get(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd`
+          );
           tokenPrices[symbol] = response.data[symbol.toLowerCase()].usd;
         } catch (error) {
           console.error(`Error fetching ${symbol} price:`, error);
@@ -104,7 +109,9 @@ export default function LeaderBoard() {
 
       tokenData.forEach((token) => {
         const price = tokenPrices[symbolMappings[token.symbol] || token.symbol] || 1; // Use 0 if price data is not available
-        const balanceInUSD = Number(ethers.utils.formatUnits(token.balance, parseInt(token.decimals, 10))) * price;
+        const balanceInUSD =
+          Number(ethers.utils.formatUnits(token.balance, parseInt(token.decimals, 10))) *
+          price;
         totalValueUSD += balanceInUSD;
       });
 
@@ -126,9 +133,10 @@ export default function LeaderBoard() {
   };
 
   useEffect(() => {
+    setLoading(true);
     getTime();
     getSingleUser();
-    getLeaderboard(1);
+    getLeaderboard(1).finally(() => setLoading(false));
   }, []);
 
   const getLeaderboard = async (page: any) => {
@@ -170,10 +178,11 @@ export default function LeaderBoard() {
       <button
         key={page}
         onClick={onClick}
-        className={`mx-1 focus:outline-none ${isActive
+        className={`mx-1 focus:outline-none ${
+          isActive
             ? "bg-[#ff7c5c] text-[white] shadow-lg hover:shadow-xl"
             : "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 hover:bg-gradient-to-r hover:from-gray-400 hover:to-gray-500 hover:text-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out"
-          } rounded-full flex justify-center items-center w-10 h-10 text-sm`}
+        } rounded-full flex justify-center items-center w-10 h-10 text-sm`}
       >
         {page}
       </button>
@@ -222,9 +231,10 @@ export default function LeaderBoard() {
               <span className="text-[#858585] text-2xl mt-1">/ {totalUsers}+</span>
               <FontAwesomeIcon
                 icon={faSync}
-                className={`text-[#888888] hover:cursor-pointer items-center ${isRefreshing ? "refreshing" : ""
-                  }`}
-              // onClick={() => refreshData()}
+                className={`text-[#888888] hover:cursor-pointer items-center ${
+                  isRefreshing ? "refreshing" : ""
+                }`}
+                // onClick={() => refreshData()}
               />
             </div>
           </div>
@@ -233,7 +243,9 @@ export default function LeaderBoard() {
       <div className="flex gap-4 w-full">
         <div className="w-full flex flex-col gap-1 lg:gap-2 justify-between items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className="md:text-5xl text-[#FFF0DD]">Total Reward</span>
-          <span className="text-center text-[#ff7c5c]  md:text-3xl font-bold mt-2">{totalUSDValue?.toFixed(2)} USD</span>
+          <span className="text-center text-[#ff7c5c]  md:text-3xl font-bold mt-2">
+            {totalUSDValue?.toFixed(2)} USD
+          </span>
         </div>
         <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className=" md:text-5xl text-[#FFF0DD]">Epoch #1</span>
@@ -244,65 +256,74 @@ export default function LeaderBoard() {
           </div>
         </div>
       </div>
-      <table className="overflow-y-scroll border-separate border-spacing-y-1 text-xl md:text-base w-full">
-        <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">
-          <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD] ">
-            <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2 py-3"></td>
-            <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">
-              Address
-            </td>
-            <td className="w-[40.6%] py-3">Volume</td>
-            <td className=" table-cell w-[40.6%] pr-4 py-3">Transactions</td>
-          </tr>
-          {leaderboard?.map((item: any, index: number) => (
-            <tr
-              key={item.user}
-              className={`pt-4  w-[80%] shadow-inner rounded-lg ${item?.user.toLowerCase() === address?.toString().toLowerCase()
-                  ? "bg-[#ff7c5c] text-[#000]"
-                  : "text-[#AAA]"
+      {loading ? (
+        <div className="flex justify-center text-white items-center h-[300px]">
+          <Loading />
+        </div>
+      ) : (
+        <table className="overflow-y-scroll border-separate border-spacing-y-1 text-xl md:text-base w-full">
+          <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">
+            <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD] ">
+              <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2 py-3"></td>
+              <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">
+                Address
+              </td>
+              <td className="w-[40.6%] py-3">Volume</td>
+              <td className=" table-cell w-[40.6%] pr-4 py-3">Transactions</td>
+            </tr>
+            {leaderboard?.map((item: any, index: number) => (
+              <tr
+                key={item.user}
+                className={`pt-4  w-[80%] shadow-inner rounded-lg ${
+                  item?.user.toLowerCase() === address?.toString().toLowerCase()
+                    ? "bg-[#ff7c5c] text-[#000]"
+                    : "text-[#AAA]"
                 }`}
-            >
-              <td className="overflow- whitespace-nowrap w-[20%] py-4 rounded-l-lg  pl-2">
-                <span
-                  className={`rounded-full py-1 px-3 ${item?.index === 1
-                      ? "bg-[#FFAD0E]"
-                      : item?.index === 2
+              >
+                <td className="overflow- whitespace-nowrap w-[20%] py-4 rounded-l-lg  pl-2">
+                  <span
+                    className={`rounded-full py-1 px-3 ${
+                      item?.index === 1
+                        ? "bg-[#FFAD0E]"
+                        : item?.index === 2
                         ? "bg-[#AD5707]"
                         : item?.index === 3
-                          ? "bg-[#939393]"
-                          : item?.index === 4
-                            ? "bg-gray-600"
-                            : "bg-gray-800"
+                        ? "bg-[#939393]"
+                        : item?.index === 4
+                        ? "bg-gray-600"
+                        : "bg-gray-800"
                     } text-[#FFF0DD]`}
-                >
-                  {item?.index}
-                </span>
-              </td>
-              <td className="table-cell w-[40.6%] flex items-center">
-                <div className="flex items-center">
-                  <Avvvatars value={item?.user} style="shape" />
-                  <span className="whitespace-nowrap ml-3">
-                    {formatAddress(item.user)}
+                  >
+                    {item?.index}
                   </span>
-                </div>
-              </td>
-              <td className="lg:text-base table-cell w-[40%]">
-                {item?.amount.toFixed()} USD
-              </td>
-              <td className=" pr-2 w-[40%] text-right rounded-r-lg lg:text-base pr-4">
-                {item?.count} TX
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                </td>
+                <td className="table-cell w-[40.6%] flex items-center">
+                  <div className="flex items-center">
+                    <Avvvatars value={item?.user} style="shape" />
+                    <span className="whitespace-nowrap ml-3">
+                      {formatAddress(item.user)}
+                    </span>
+                  </div>
+                </td>
+                <td className="lg:text-base table-cell w-[40%]">
+                  {item?.amount.toFixed()} USD
+                </td>
+                <td className=" pr-2 w-[40%] text-right rounded-r-lg lg:text-base pr-4">
+                  {item?.count} TX
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       <div className="flex justify-center">
         <button
           onClick={() => handlePageChange(1)}
-          className={`mx-1 focus:outline-none ${currentPage === 1
+          className={`mx-1 focus:outline-none ${
+            currentPage === 1
               ? "bg-[#ff7c5c] text-[#FFF0DD] shadow-lg hover:shadow-xl"
               : "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 hover:bg-gradient-to-r hover:from-gray-400 hover:to-gray-500 hover:text-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out"
-            } rounded-full px-2 py-1 text-sm`}
+          } rounded-full px-2 py-1 text-sm`}
         >
           First
         </button>
@@ -331,10 +352,11 @@ export default function LeaderBoard() {
 
         <button
           onClick={() => handlePageChange(totalPages)}
-          className={`mx-1 focus:outline-none ${currentPage === totalPages
+          className={`mx-1 focus:outline-none ${
+            currentPage === totalPages
               ? "bg-[#ff7c5c] text-[#FFF0DD] shadow-lg hover:shadow-xl"
               : "bg-gradient-to-r from-gray-300 to-gray-400 text-gray-600 hover:bg-gradient-to-r hover:from-gray-400 hover:to-gray-500 hover:text-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out"
-            } rounded-full px-2 py-1 text-sm`}
+          } rounded-full px-2 py-1 text-sm`}
         >
           Last
         </button>
