@@ -103,8 +103,8 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
           "z-[9999] py-14 px-10 w-[30vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
-        <div className="flex justify-between mb-1">
-          <h1 className="text-2xl md:text-4xl mb-4">Select Token</h1>
+        <div className="flex justify-between mb-1 text-white">
+          <h1 className="text-white text-2xl md:text-4xl mb-4">Select Token</h1>
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/20 transition-all rounded-md flex justify-center items-center cursor-pointer border border-gray-400 w-8 h-8"
