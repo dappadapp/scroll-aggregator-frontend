@@ -121,7 +121,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
               setSearch(e.target.value);
             }}
             className="w-full px-3 py-2 text-sm lg:text-base lg:py-3 text-gray-100 rounded-3xl placeholder:text-sm placeholder:lg:text-base bg-[rgba(26,29,36,0.50)] focus:ring-1 focus:ring-[#FFF0DD] focus:outline-none"
-            placeholder="Search by tokne name or token symbol"
+            placeholder="Search by token name or token symbol"
           />
           <FontAwesomeIcon
             icon={faSearch}
@@ -131,7 +131,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
 
         <div className="grid grid-cols-3 mb-4 lg:grid-cols-4 gap-2 mt-2 p-2">
           {favTokens.map((favToken) => (
-            <div key={favToken} className="relative group w-full text-sm">
+            <div key={favToken} className="relative group w-full text-sm text-white">
               <div
                 onClick={() => {
                   onSelectToken(tokens.find((tokenX) => tokenX.symbol === favToken));
