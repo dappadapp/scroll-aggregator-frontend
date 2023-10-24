@@ -44,11 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <Script src="https://price-static.crypto.com/latest/public/static/widget/index.js" />
-        <script
-          type="text/javascript"
-          src="https://www.bugherd.com/sidebarv2.js?apikey=rtp3yqfdikrd7pfzs4czgg"
-          async={true}
-        ></script>
 
         <Script
           id="google-analytics"
