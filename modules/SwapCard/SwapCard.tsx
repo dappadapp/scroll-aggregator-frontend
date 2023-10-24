@@ -554,7 +554,7 @@ const SwapCard: React.FC<Props> = () => {
                     onClick={() => handleClickInputPercent(val)}
                   >
                     <span
-                      className={`${percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                      className={` ${percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
                         } transition-all`}
                     >
                       {val}%
@@ -667,7 +667,7 @@ const SwapCard: React.FC<Props> = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex justify-center text-xs gap-2 lg:text-base mt-2">
+                <div className="flex  text-white  justify-center text-xs gap-2 lg:text-base mt-2">
 
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
@@ -682,7 +682,7 @@ const SwapCard: React.FC<Props> = () => {
 
 
                   {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                    <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
                     <span className="text-sm lg:text-xl w-1/3 text-center">
                       {!swapAmount || !receiveAmount || Number(swapAmount) === 0 || ( tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" || tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script")
@@ -700,7 +700,7 @@ const SwapCard: React.FC<Props> = () => {
                   )}
 
                   {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                    <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                     ) : tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
                       <span className="w-1/3 text-center">
                       ~$
