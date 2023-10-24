@@ -46,9 +46,9 @@ function SwapModal({
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
   const [fee, setFee] = useState<string>("0");
-  console.log("contractAddr!.contract", contractAddr!.contract);
+
   const { data: allowance, refetch } = useContractRead({
-    address: tokenA.wrapped.address,
+    address: (tokenA?.isToken ? tokenA.address  : tokenA.wrapped.address),
     abi: erc20ABI,
     functionName: "allowance",
     args: [account!, contractAddr!.contract],
@@ -192,8 +192,7 @@ function SwapModal({
             <span className="text-[#FFE7DD]">Minimum Receive</span>
             <span className="text-right text-[#FFE7DD]">
               {" "}
-              {+amountB - (+amountB * slippage) / 100 - (+amountB * 30) / 10000}{" "}
-              {tokenB?.symbol}
+              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7) } {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -219,15 +218,15 @@ function SwapModal({
           <SwapButton
             swapParam={{
               poolAddress: pool,
-              tokenIn: tokenA.wrapped.address,
-              tokenOut: tokenB.wrapped.address,
+              tokenIn: tokenA?.isToken ?  tokenA?.address : tokenA.wrapped.address,
+              tokenOut: tokenB?.isToken ?  tokenB?.address : tokenB.wrapped.address,
               amountIn: bigAmountA,
-              amountOutMin: bigAmountB,
+              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 :bigAmountB,
               swapType: swapType,
               path:
                 generatePath(
-                  tokenA.wrapped.address,
-                  tokenB.wrapped.address,
+                  tokenA?.isToken ?  tokenA?.address : tokenA?.wrapped.address,
+                  tokenB?.isToken ?  tokenB?.address : tokenB?.wrapped.address,
                   3000
                 ).toString() || "0x0000000000000000000000000000000000000000",
               fee: 300 || UNISWAP_DEFAULT_FEE || 0,

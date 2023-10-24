@@ -44,7 +44,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     value: tokenIn.isNative ? swapParam.amountIn : undefined,
     enabled: !!contractAddr,
   });
-  console.log("swap params", swapParam);
+
   const { config: configDeposit } = usePrepareContractWrite({
     address: "0x5300000000000000000000000000000000000004",
     abi: WETHAbi,
@@ -115,8 +115,6 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   };
 
   const handleDeposit = async () => {
-    console.log("onDeposit", onDeposit);
-
 
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
@@ -140,7 +138,6 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     }
   };
   const handleWithdraw = async () => {
-    console.log("withdraw", onDeposit);
  
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
