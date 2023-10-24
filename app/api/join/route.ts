@@ -8,14 +8,15 @@ export async function POST(request: Request) {
     "x-api-key": process.env.NEXT_PUBLIC_NEW_API_KEY,
   };
 
-  const statusDataResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/history/${data?.wallet}/stats`,
+  const statusDataResponse = await axios.post(
+    `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/apply`,
+    {
+      wallet: data.wallet,
+    },
     {
       headers,
     }
   );
-
-  console.log("statusDataResponse", statusDataResponse.data);
 
   return NextResponse.json(statusDataResponse.data);
 }

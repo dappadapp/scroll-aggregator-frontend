@@ -12,6 +12,7 @@ import { useBalance } from "wagmi";
 import useContract from "@/hooks/useContract";
 import { ethers } from "ethers";
 import Loading from "@/assets/images/loading.svg";
+import Button from "@/components/Button";
 
 interface Token {
   balance: string;
@@ -47,6 +48,7 @@ export default function LeaderBoard() {
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   const contractAddr = useContract();
 
@@ -171,7 +173,20 @@ export default function LeaderBoard() {
       // Handle errors
     }
   };
+  const handleJoin = async () => {
+    if (!address) return;
+    try {
+      const response = await axios.post("/api/join", {
+        wallet: address,
+      });
 
+      if (response) {
+        console.log(response);
+      }
+    } catch (error) {
+      // Handle errors
+    }
+  };
   function renderPaginationButton(page: any, onClick: any) {
     const isActive = page === currentPage;
     return (
@@ -194,6 +209,7 @@ export default function LeaderBoard() {
     setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
     setHours(Math.floor((time / (1000 * 60 * 60)) % 24));
     setMinutes(Math.floor((time / 1000 / 60) % 60));
+    setSeconds(Math.floor((time / 1000) % 60));
   };
   // Show a fixed number of pages
   const maxVisiblePages = 9;
@@ -214,11 +230,23 @@ export default function LeaderBoard() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <Avvvatars
-            value={address ? formatAddress(address) : ""}
-            style="shape"
-            size={80}
+          <input
+            type="file"
+            onChange={() => {}}
+            id="upload"
+            accept="image/*"
+            style={{ display: "none" }}
           />
+          <label
+            htmlFor="upload"
+            className="hover:scale-125 transition-all cursor-pointer"
+          >
+            <Avvvatars
+              value={address ? formatAddress(address) : ""}
+              style="shape"
+              size={80}
+            />
+          </label>
           <div className="flex flex-col text-lg text-[#FFF0DD]">
             <span className="font-semibold text-grey-cool-500 text-grey-cool-500 text-lg lg:text-3xl">
               Your Ranking:
@@ -226,7 +254,7 @@ export default function LeaderBoard() {
 
             <div className="flex items-center mt-1 gap-3">
               <div className="bg-[#ff7c5c] text-[#FFF0DD] rounded-md w-10 h-10 justify-center items-center flex text-2xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                {user?.sortIndex || "-"}
+                {user?.leaderboard?.index || "-"}
               </div>
               <span className="text-[#858585] text-2xl mt-1">/ {totalUsers}+</span>
               <FontAwesomeIcon
@@ -249,29 +277,30 @@ export default function LeaderBoard() {
         </div>
         <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className=" md:text-5xl text-[#FFF0DD]">Epoch #1</span>
-          <div className="text-center text-[#ff7c5c]  md:text-3xl font-bold mt-2">
-            {days >= 10 ? Number(days) : "0" + days} days{" "}
-            {hours >= 10 ? hours : "0" + hours} hours{" "}
-            {minutes > 10 ? minutes : "0" + minutes} minutes
+          <div className="text-center text-[#ff7c5c]  text-sm lg:text-2xl font-bold mt-2">
+            {days >= 10 ? Number(days) : "0" + days} days{" : "}
+            {hours >= 10 ? hours : "0" + hours} hours{" : "}
+            {minutes >= 10 ? minutes : "0" + minutes} minutes{" : "}
+            {seconds > 10 ? seconds : "0" + seconds} seconds
           </div>
         </div>
       </div>
       {loading ? (
-  <div className="flex justify-center text-white items-center h-[300px] w-full">
-
-    <Loading  />
-
-</div>
+        <div className="flex justify-center text-white items-center h-[300px] w-full">
+          <Loading />
+        </div>
       ) : (
-        <table className="overflow-y-scroll border-separate border-spacing-y-1 text-xl md:text-base w-full">
+        <table className="overflow-y-scroll border-separate border-spacing-y-1 lg:text-xl text-xs w-full">
           <tbody className="overflow-y-scroll block table-fixed w-full mx-auto h-[auto]">
             <tr className="bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] w-[80%] text-[#FFF0DD] ">
-              <td className="overflow-hidden w-[20%] whitespace-nowrap pl-2 py-3"></td>
-              <td className="overflow-hidden w-[40%] whitespace-nowrap pl-2 py-3">
+              <td className="overflow-hidden w-[13.5%] whitespace-nowrap pl-2 py-3"></td>
+              <td className="overflow-hidden w-[18.5%] whitespace-nowrap pl-2 py-3">
                 Address
               </td>
-              <td className="w-[40.6%] py-3">Volume</td>
-              <td className=" table-cell w-[40.6%] pr-4 py-3">Transactions</td>
+              <td className="w-[23.5%] hidden lg:table-cell py-3">Volume</td>
+              <td className=" table-cell w-[13.5%] lg: py-3">Transactions</td>
+              <td className=" table-cell w-[28.5%] py-3">Loyalty Points</td>
+              <td className=" table-cell w-[13.5%] pr-2 py-3 pl-2">Status</td>
             </tr>
             {leaderboard?.map((item: any, index: number) => (
               <tr
@@ -299,7 +328,7 @@ export default function LeaderBoard() {
                     {item?.index}
                   </span>
                 </td>
-                <td className="table-cell w-[40.6%] flex items-center">
+                <td className="table-cell w-[21.74%] flex items-center">
                   <div className="flex items-center">
                     <Avvvatars value={item?.user} style="shape" />
                     <span className="whitespace-nowrap ml-3">
@@ -307,14 +336,101 @@ export default function LeaderBoard() {
                     </span>
                   </div>
                 </td>
-                <td className="lg:text-base table-cell w-[40%]">
+                <td className="lg:text-base hidden lg:table-cell w-[21.74%]">
                   {item?.amount.toFixed()} USD
                 </td>
-                <td className=" pr-2 w-[40%] text-right rounded-r-lg lg:text-base pr-4">
-                  {item?.count} TX
+                <td className="lg:text-base table-cell lg:text-left text-center w-[21.74%]">
+                  {item?.count || 0} TX
+                </td>
+                <td className="lg:text-base table-cell w-[21.74%]">
+                  {item?.loyalty.toFixed(2) || 0} P
+                </td>
+                <td className="w-[40%] text-right rounded-r-lg lg:text-base pr-2">
+                  {item?.joined ? (
+                    <span className=" text-[#fff]">Joined</span>
+                  ) : (
+                    <span
+                      className={`text-[#fff] lg:w-32`}
+                      onClick={() => {
+                        handleJoin();
+                      }}
+                    >
+                      Joinable
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}
+            {user?.leaderboard?.index &&
+            user?.leaderboard?.index > 10 &&
+            !leaderboard.some((item: any) => item?.user === user?.leaderboard?.user) ? (
+              <>
+                <div className="w-full text-center flex justify-center text-[#fff]">
+                  ...
+                </div>
+                <tr
+                  key={user?.leaderboard?.user}
+                  className={`pt-4 w-[80%] shadow-inner rounded-lg text-[#AAA]`}
+                >
+                  <td className="overflow- whitespace-nowrap w-[20%] py-4 rounded-l-lg  pl-2">
+                    <span
+                      className={`rounded-full py-1 px-3 ${
+                        user?.leaderboard?.index === 1
+                          ? "bg-[#FFAD0E]"
+                          : user?.leaderboard?.index === 2
+                          ? "bg-[#AD5707]"
+                          : user?.leaderboard?.index === 3
+                          ? "bg-[#939393]"
+                          : user?.leaderboard?.index === 4
+                          ? "bg-gray-600"
+                          : "bg-gray-800"
+                      } text-[#FFF0DD]`}
+                    >
+                      {user?.leaderboard?.index}
+                    </span>
+                  </td>
+                  <td className="table-cell w-[21.74%] flex items-center">
+                    <div className="flex items-center">
+                      <Avvvatars value={user?.leaderboard?.user} style="shape" />
+                      <span className="whitespace-nowrap ml-3">
+                        {formatAddress(user?.leaderboard?.user)}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="lg:text-base hidden lg:table-cell w-[21.74%]">
+                    {user?.leaderboard?.amount.toFixed()} USD
+                  </td>
+                  <td className="lg:text-base table-cell lg:text-left text-center w-[21.74%]">
+                    {user?.leaderboard?.count || 0} TX
+                  </td>
+                  <td className="lg:text-base table-cell w-[21.74%]">
+                    {user?.leaderboard?.loyalty.toFixed(2) || 0} P
+                  </td>
+                  <td className="w-[40%] text-right rounded-r-lg lg:text-base pr-2">
+                    {user?.leaderboard?.joined ? (
+                      <Button className="text-[#fff]" variant={"disabled"}>
+                        Joined
+                      </Button>
+                    ) : (
+                      <Button
+                        className={`${
+                          user?.leaderboard?.joinable
+                            ? "bg-[#ff7c5c]/90 text-[#FFF0DD]"
+                            : "text-[#fff]"
+                        } lg:w-16`}
+                        onClick={async () => {
+                          await handleJoin();
+                          await getSingleUser();
+                        }}
+                        variant={user?.leaderboard?.joinable ? "primary" : "disabled"}
+                      >
+                        Join
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              </>
+            ) : null}
           </tbody>
         </table>
       )}
