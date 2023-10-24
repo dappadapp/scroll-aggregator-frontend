@@ -227,7 +227,7 @@ function SwapModal({
                 generatePath(
                   tokenA?.isToken ?  tokenA?.address : tokenA?.wrapped.address,
                   tokenB?.isToken ?  tokenB?.address : tokenB?.wrapped.address,
-                  3000
+                  300
                 ).toString() || "0x0000000000000000000000000000000000000000",
               fee: 300 || UNISWAP_DEFAULT_FEE || 0,
             }}
