@@ -15,7 +15,6 @@ import Loading from "@/assets/images/loading.svg";
 import Button from "@/components/Button";
 import Image from "next/image";
 
-
 interface Token {
   balance: string;
   contractAddress: string;
@@ -37,7 +36,7 @@ interface UserResponse {
   wallet: string;
   data: any;
 }
-const deadline = "October, 31, 2023, 16:00";
+const deadline = "November, 01, 2023, 14:30";
 
 export default function LeaderBoard() {
   const { address } = useAccount();
@@ -152,8 +151,6 @@ export default function LeaderBoard() {
     return () => clearInterval(interval);
   }, []);
 
-
-
   const getLeaderboard = async (page: any) => {
     try {
       const response = await axios.post<LeaderboardResponse>("/api/getLeaderboard", {
@@ -194,14 +191,16 @@ export default function LeaderBoard() {
       });
 
       if (response) {
-        toast("Congratulations! You're now in the running to win amazing prizes in our draw. Best of luck, and thank you for joining!",{autoClose: 10000})
+        toast(
+          "Congratulations! You're now in the running to win amazing prizes in our draw. Best of luck, and thank you for joining!",
+          { autoClose: 10000 }
+        );
         return;
       }
     } catch (error) {
       // Handle errors
     }
   };
-
 
   function renderPaginationButton(page: any, onClick: any) {
     const isActive = page === currentPage;
@@ -242,7 +241,9 @@ export default function LeaderBoard() {
             <span className="text-[#FFF0DD] text-5xl lg:text-5xl mr-5">Leaderboard</span>
           </div>
           <span className="text-[#FFF0DD] break-words mt-4 gap-4">
-          Explore our loyalty dashboard designed exclusively for our aggregator,{<br></br>} offering decentralized weekly revenue sharing with automatic distribution of earnings.{" "}
+            Explore our loyalty dashboard designed exclusively for our aggregator,
+            {<br></br>} offering decentralized weekly revenue sharing with automatic
+            distribution of earnings.{" "}
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -283,7 +284,13 @@ export default function LeaderBoard() {
                 size={80}
               />
             ) : (
-              <Image src={user?.avatar} alt="user-avatar" width={80} height={80} />
+              <Image
+                src={file ? file : user?.avatar}
+                alt="user-avatar"
+                width={80}
+                height={80}
+                className="rounded-full w-20 h-20"
+              />
             )}
           </label>
           <div className="flex flex-col text-lg text-[#FFF0DD]">
@@ -409,9 +416,9 @@ export default function LeaderBoard() {
                 </div>
                 <tr
                   key={user?.leaderboard?.user}
-                  className={`pt-4 w-[80%] shadow-inner rounded-lg text-[#AAA]`}
+                  className={`pt-4 w-[80%] shadow-inner bg-[#3DAFA5] rounded-lg text-[#000]`}
                 >
-                  <td className="overflow- whitespace-nowrap w-[20%] py-4 rounded-l-lg  pl-2">
+                  <td className="overflow- whitespace-nowrap w-[17%] lg:w-[20%] py-4 rounded-l-lg  pl-2">
                     <span
                       className={`rounded-full py-1 px-3 ${
                         user?.leaderboard?.index === 1
@@ -442,10 +449,10 @@ export default function LeaderBoard() {
                   <td className="lg:text-base table-cell lg:text-left text-center w-[22.74%]">
                     {user?.leaderboard?.count || 0} TX
                   </td>
-                  <td className="lg:text-base table-cell w-[16.74%]">
+                  <td className="lg:text-base table-cell w-[22.74%] lg:w-[16.74%]">
                     {user?.leaderboard?.loyalty.toFixed(2) || 0} P
                   </td>
-                  <td className="w-[40%] text-right rounded-r-lg lg:text-base pr-2">
+                  <td className="w-[40%] rounded-r-lg lg:text-base pr-2">
                     {user?.leaderboard?.joined ? (
                       <Button className="text-[#fff]" variant={"disabled"}>
                         Joined
@@ -454,9 +461,9 @@ export default function LeaderBoard() {
                       <Button
                         className={`${
                           user?.leaderboard?.joinable
-                            ? "bg-[#ff7c5c]/90 text-[#FFF0DD]"
+                            ? "bg-[#000] hover:bg-opacity-50 hover:text-[#000] text-[#FFF0DD]"
                             : "text-[#fff]"
-                        } lg:w-16`}
+                        } w-12 lg:w-16`}
                         onClick={async () => {
                           await handleJoin();
                           await getSingleUser();
