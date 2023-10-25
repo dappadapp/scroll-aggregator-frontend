@@ -327,15 +327,14 @@ const SwapCard: React.FC<Props> = () => {
 
         if (exchangeRate?.data?.dex === "skydrome") {
           const pool = await getPair();
-          console.log("pool", pool);
+
           if (pool) setPairAddress(pool[0]);
         } else if (exchangeRate?.data?.dex === "iziswap") {
           const pool = await getPool();
-          console.log("pool", pool);
+
           if (pool) setPairAddress(pool?.toString());
         } else if (exchangeRate?.data?.dex === "syncswap") {
-          console.log("tokenFrom", tokenFrom);
-          console.log("tokenTo", tokenTo);
+
           if (
             (tokenFrom.isToken ?tokenFrom?.address : tokenFrom?.wrapped?.address  ===
               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&

@@ -143,6 +143,16 @@ export default function LeaderBoard() {
     getLeaderboard(1).finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getTime();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   const getLeaderboard = async (page: any) => {
     try {
       const response = await axios.post<LeaderboardResponse>("/api/getLeaderboard", {
@@ -227,8 +237,8 @@ export default function LeaderBoard() {
           <div className="flex items-center mb-3">
             <span className="text-[#FFF0DD] text-5xl lg:text-5xl mr-5">Leaderboard</span>
           </div>
-          <span className="text-[#FFF0DD]/90 break-words mt-4">
-            Get rewarded with a portion of our monthly revenue share.{" "}
+          <span className="text-[#FFF0DD] break-words mt-4 gap-4">
+          Explore our loyalty dashboard designed exclusively for our aggregator,{<br></br>} offering decentralized weekly revenue sharing with automatic distribution of earnings.{" "}
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -305,7 +315,7 @@ export default function LeaderBoard() {
           <div className="text-center text-[#ff7c5c]  text-sm lg:text-2xl font-bold mt-2">
             {days >= 10 ? Number(days) : "0" + days} days{" : "}
             {hours >= 10 ? hours : "0" + hours} hours{" : "}
-            {minutes >= 10 ? minutes : "0" + minutes} minutes{" : "}
+            {minutes >= 10 ? minutes : "0" + minutes} minutes{<br></br>}
             {seconds > 10 ? seconds : "0" + seconds} seconds
           </div>
         </div>
