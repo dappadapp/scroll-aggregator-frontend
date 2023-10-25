@@ -15,6 +15,8 @@ import SyncSwapClassicAbi from "@/constants/abis/SyncSwapClassicPool.json";
 import SyncSwapStableAbi from "@/constants/abis/SyncSwapStablePool.json";
 import PunkSwapAbi from "@/constants/abis/punkswap.json";
 import KyberSwapQuteAbi from "@/constants/abis/KyberSwapQuote.json";
+import CoffeSwapAbi from "@/constants/abis/coffeswapFactory.json";
+import CoffeeRouter from "@/constants/abis/coffeeRouter.json";
 
 interface Dex {
   name: string;
@@ -208,6 +210,56 @@ export async function POST(request: Request) {
         const data = await contract.callStatic.quoteExactOutputSingle(params);
 
         return BigInt(data.amountIn);
+      },
+    },
+    coffeswap: {
+      name: "Coffeswap",
+      id: "coffeswap",
+      router: "0xdAF8b79B3C46db8bE754Fc5E98b620ee243eb279",
+      abi: CoffeeRouter, // Replace with the actual ABI
+      fee: 0,
+      inFunction: "getAmountsIn",
+      outFunction: "getAmountsOut",
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        const data = await contract.getAmountsIn(parseUnits(amount, toDecimals), [from, to]);
+        return BigInt(data?.[0]);
+      },
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", parseUnits(amount, fromDecimals));
+        if(from === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && to === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df"){
+          const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to,true]);
+          console.log("data out", [from, to]);
+          return BigInt(data?.[1]);
+        }
+        else{
+          const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [[from, to,false]]);
+          console.log("data out", [from, to]);
+          return BigInt(data?.[1]);
+        }
+  
+      },
+    },
+    papyrusswap: {
+      name: "Papyrusswap",
+      id: "papyrusswap",
+      router: "0x29ACA061b49753765A3DBC130DBF16D4477bFd3F",
+      abi: SpaceFiAbi, // Replace with the actual ABI
+      fee: 0,
+      inFunction: "getAmountsIn",
+      outFunction: "getAmountsOut",
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        const data = await contract.getAmountsIn(parseUnits(amount, toDecimals), [from, to]);
+        return BigInt(data?.[0]);
+      },
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", parseUnits(amount, fromDecimals));
+        const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to]);
+        console.log("data", [from, to]);
+        return BigInt(data?.[1]);
       },
     },
   };

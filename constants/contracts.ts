@@ -48,6 +48,15 @@ export const aggregator : {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
     },
+    coffeswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
+    papyrusswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
+
   }    
 } = {
 
@@ -73,7 +82,7 @@ export const aggregator : {
 
   }, 
   [ChainId.SCROLL_MAINNET]: {
-    contract: "0x32fF95c4E776D783d34e338a59C1E345Ae73B08c",
+    contract: "0xFA3B36de422ABD3e656669107b7A0Eed895026E6",
     spacefi: {
       router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"
@@ -97,6 +106,14 @@ export const aggregator : {
     kyberswap: {
       router: "0xF9c2b5746c946EF883ab2660BbbB1f10A5bdeAb4",
       poolFactory: "0xC7a590291e07B9fe9E64b86c58fD8fC764308C4A"
+    },
+    coffeswap: {
+      router: "0xdAF8b79B3C46db8bE754Fc5E98b620ee243eb279",
+      poolFactory: "0x23537BCe0533e53609A49dffdd400e54A825cb81"
+    },
+    papyrusswap: {
+      router: "0x29ACA061b49753765A3DBC130DBF16D4477bFd3F",
+      poolFactory: "0xD5f3D3fb72210bfe71a59c05e0b8D72973baa2a6"
     },
     
   }
