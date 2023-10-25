@@ -422,13 +422,13 @@ export default function LeaderBoard() {
                       </span>
                     </div>
                   </td>
-                  <td className="lg:text-base hidden lg:table-cell w-[21.74%]">
+                  <td className="lg:text-base hidden lg:table-cell w-[22.74%]">
                     {user?.leaderboard?.amount.toFixed()} USD
                   </td>
-                  <td className="lg:text-base table-cell lg:text-left text-center w-[21.74%]">
+                  <td className="lg:text-base table-cell lg:text-left text-center w-[22.74%]">
                     {user?.leaderboard?.count || 0} TX
                   </td>
-                  <td className="lg:text-base table-cell w-[21.74%]">
+                  <td className="lg:text-base table-cell w-[16.74%]">
                     {user?.leaderboard?.loyalty.toFixed(2) || 0} P
                   </td>
                   <td className="w-[40%] text-right rounded-r-lg lg:text-base pr-2">
