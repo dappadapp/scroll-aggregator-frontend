@@ -416,7 +416,7 @@ export default function LeaderBoard() {
                 </div>
                 <tr
                   key={user?.leaderboard?.user}
-                  className={`pt-4 w-[80%] shadow-inner rounded-lg text-[#AAA]`}
+                  className={`pt-4 w-[80%] shadow-inner bg-[#3DAFA5] rounded-lg text-[#000]`}
                 >
                   <td className="overflow- whitespace-nowrap w-[17%] lg:w-[20%] py-4 rounded-l-lg  pl-2">
                     <span
@@ -461,7 +461,7 @@ export default function LeaderBoard() {
                       <Button
                         className={`${
                           user?.leaderboard?.joinable
-                            ? "bg-[#ff7c5c]/90 text-[#FFF0DD]"
+                            ? "bg-[#000] hover:bg-opacity-50 hover:text-[#000] text-[#FFF0DD]"
                             : "text-[#fff]"
                         } w-12 lg:w-16`}
                         onClick={async () => {
