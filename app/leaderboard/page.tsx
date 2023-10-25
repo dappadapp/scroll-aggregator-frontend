@@ -13,6 +13,7 @@ import useContract from "@/hooks/useContract";
 import { ethers } from "ethers";
 import Loading from "@/assets/images/loading.svg";
 import Button from "@/components/Button";
+import Image from "next/image";
 
 interface Token {
   balance: string;
@@ -235,12 +236,22 @@ export default function LeaderBoard() {
             <input
               type="file"
               onChange={async (e) => {
+                if (!e.target.files) return;
                 e.preventDefault();
-                setFile(e.target.files![0]);
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("wallet", address!);
-                const response = await axios.post("/api/avatar", formData);
+                var reader = new FileReader();
+                reader.readAsDataURL(e.target.files![0]);
+                reader.onload = async function () {
+                  const response = await axios.post("/api/avatar", {
+                    wallet: address,
+                    image: reader.result,
+                  });
+                  if (response.status === 200) {
+                    setFile(reader.result);
+                  }
+                };
+                reader.onerror = function (error) {
+                  console.log("Error: ", error);
+                };
               }}
               id="upload"
               accept="image/*"
@@ -251,11 +262,15 @@ export default function LeaderBoard() {
             htmlFor="upload"
             className="hover:scale-125 transition-all cursor-pointer"
           >
-            <Avvvatars
-              value={address ? formatAddress(address) : ""}
-              style="shape"
-              size={80}
-            />
+            {!user?.avatar ? (
+              <Avvvatars
+                value={address ? formatAddress(address) : ""}
+                style="shape"
+                size={80}
+              />
+            ) : (
+              <Image src={user?.avatar} alt="user-avatar" width={80} height={80} />
+            )}
           </label>
           <div className="flex flex-col text-lg text-[#FFF0DD]">
             <span className="font-semibold text-grey-cool-500 text-grey-cool-500 text-lg lg:text-3xl">
