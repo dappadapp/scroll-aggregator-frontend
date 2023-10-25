@@ -1,10 +1,6 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+
 export async function POST(request: Request) {
   const data = await request.json();
   const headers = {
