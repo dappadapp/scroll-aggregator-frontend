@@ -45,6 +45,7 @@ export default function LeaderBoard() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = React.useState<any>([]);
+  const [file, setFile] = React.useState<any>();
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -230,13 +231,22 @@ export default function LeaderBoard() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <input
-            type="file"
-            onChange={() => {}}
-            id="upload"
-            accept="image/*"
-            style={{ display: "none" }}
-          />
+          {address && user?.leaderboard?.index && (
+            <input
+              type="file"
+              onChange={async (e) => {
+                e.preventDefault();
+                setFile(e.target.files![0]);
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("wallet", address!);
+                const response = await axios.post("/api/avatar", formData);
+              }}
+              id="upload"
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+          )}
           <label
             htmlFor="upload"
             className="hover:scale-125 transition-all cursor-pointer"
