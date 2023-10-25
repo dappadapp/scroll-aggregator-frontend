@@ -4,7 +4,7 @@ import Avvvatars from "avvvatars-react";
 import { useAccount } from "wagmi";
 import formatAddress from "@/utils/formatAddress";
 import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +14,7 @@ import { ethers } from "ethers";
 import Loading from "@/assets/images/loading.svg";
 import Button from "@/components/Button";
 import Image from "next/image";
+
 
 interface Token {
   balance: string;
@@ -193,12 +194,15 @@ export default function LeaderBoard() {
       });
 
       if (response) {
-        console.log(response);
+        toast("Congratulations! You're now in the running to win amazing prizes in our draw. Best of luck, and thank you for joining!",{autoClose: 10000})
+        return;
       }
     } catch (error) {
       // Handle errors
     }
   };
+
+
   function renderPaginationButton(page: any, onClick: any) {
     const isActive = page === currentPage;
     return (
