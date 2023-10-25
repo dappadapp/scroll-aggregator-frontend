@@ -418,7 +418,7 @@ export default function LeaderBoard() {
                   key={user?.leaderboard?.user}
                   className={`pt-4 w-[80%] shadow-inner rounded-lg text-[#AAA]`}
                 >
-                  <td className="overflow- whitespace-nowrap w-[20%] py-4 rounded-l-lg  pl-2">
+                  <td className="overflow- whitespace-nowrap w-[17%] lg:w-[20%] py-4 rounded-l-lg  pl-2">
                     <span
                       className={`rounded-full py-1 px-3 ${
                         user?.leaderboard?.index === 1
@@ -449,10 +449,10 @@ export default function LeaderBoard() {
                   <td className="lg:text-base table-cell lg:text-left text-center w-[22.74%]">
                     {user?.leaderboard?.count || 0} TX
                   </td>
-                  <td className="lg:text-base table-cell w-[16.74%]">
+                  <td className="lg:text-base table-cell w-[22.74%] lg:w-[16.74%]">
                     {user?.leaderboard?.loyalty.toFixed(2) || 0} P
                   </td>
-                  <td className="w-[40%] text-right rounded-r-lg lg:text-base pr-2">
+                  <td className="w-[40%] rounded-r-lg lg:text-base pr-2">
                     {user?.leaderboard?.joined ? (
                       <Button className="text-[#fff]" variant={"disabled"}>
                         Joined
@@ -463,7 +463,7 @@ export default function LeaderBoard() {
                           user?.leaderboard?.joinable
                             ? "bg-[#ff7c5c]/90 text-[#FFF0DD]"
                             : "text-[#fff]"
-                        } lg:w-16`}
+                        } w-12 lg:w-16`}
                         onClick={async () => {
                           await handleJoin();
                           await getSingleUser();
