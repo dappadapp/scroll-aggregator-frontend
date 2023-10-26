@@ -8,7 +8,7 @@ type Props = {
 
 function TotalTx(props: Props) {
   return (
-    <div className="w-full max-w-[413px] justify-center items-center p-6 flex flex-col h-[267px] flex-1 gap-6 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[40px]">
+    <div className="w-full justify-center items-center p-6 flex flex-col h-[267px] flex-1 gap-6 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[40px]">
       <ProgressBar
         progress={60}
         radius={100}
@@ -23,7 +23,7 @@ function TotalTx(props: Props) {
         <span className="text-[#FFF0DD] text-lg lg:text-[40px] font-light">
           {props.total_tx}
         </span>
-        <span className="text-[#EBC28E] flex gap-2 text-sm lg:text-[20x]">
+        <span className="text-[#EBC28E] flex gap-2 text-sm lg:text-[20px]">
           Total Transactions
         </span>
       </div>

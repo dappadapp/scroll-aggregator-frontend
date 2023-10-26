@@ -5,14 +5,17 @@ import VolumeCart from "@/components/VolumeCart";
 import { formatAddress } from "@/utils/address";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import Loading from "@/assets/images/loading.svg";
+
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 function Page() {
   const [statsData, setStatsData] = useState<any>();
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    getStatsData();
+    getStatsData().finally(() => setLoading(false));
   }, []);
   const getStatsData = async () => {
     const response = await axios.get("/api/stats");
@@ -29,7 +32,11 @@ function Page() {
       today.getFullYear();
     return date;
   };
-  return (
+  return loading ? (
+    <div className="flex w-full flex-col mt-[25px] gap-12 h-[300px] text-[#FFF0DD] justify-center items-center lg:mt-12 mb-10">
+      <Loading />
+    </div>
+  ) : (
     <div className="flex w-full flex-col mt-[25px] gap-12 text-[#FFF0DD] justify-start lg:mt-12 mb-10">
       <h1 className="text-lg lg:text-[64px] font-bold">Statistics</h1>
       <span className="text-sm lg:text-base">
