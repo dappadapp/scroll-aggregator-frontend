@@ -16,7 +16,7 @@ function VolumeCart(props: Props) {
         className="absolute left-0 right-0 w-full h-full object-scale-down rounded-[40px]"
       />
       <div className="flex py-8 px-6 justify-start flex-col w-full items-start gap-4">
-        <span className="text-[#FFF0DD] text-base lg:text-[40px] font-light">
+        <span className="text-[#FFF0DD] text-lg lg:text-[40px] font-light">
           {props.volume_day}$
         </span>
         <span className="text-[#EBC28E] flex gap-2 text-sm lg:text-[20px]">
@@ -24,7 +24,7 @@ function VolumeCart(props: Props) {
         </span>
       </div>
       <div className="flex p-6 justify-end flex-col items-end gap-4">
-        <span className="text-[#FFF0DD] text-base lg:text-[40px] font-light">
+        <span className="text-[#FFF0DD] text-lg lg:text-[40px] font-light">
           {props.volume_total}$
         </span>
         <span className="text-[#EBC28E] flex gap-2 text-sm lg:text-[20x]">

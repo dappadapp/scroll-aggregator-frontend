@@ -20,7 +20,7 @@ function TotalTx(props: Props) {
         className="w-5 h-5 circular-bar"
       ></ProgressBar>
       <div className="flex p-6 justify-end flex-col items-center gap-4">
-        <span className="text-[#FFF0DD] text-base lg:text-[40px] font-light">
+        <span className="text-[#FFF0DD] text-lg lg:text-[40px] font-light">
           {props.total_tx}
         </span>
         <span className="text-[#EBC28E] flex gap-2 text-sm lg:text-[20x]">
