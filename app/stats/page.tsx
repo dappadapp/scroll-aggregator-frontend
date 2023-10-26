@@ -75,7 +75,7 @@ function Page() {
                 className={`pt-4 w-[80%] bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] shadow-inner rounded-lg `}
               >
                 <td className="table-cell w-[12%] pl-2 py-2 rounded-l-2xl first-letter:uppercase">
-                  {SWAP_TYPE[Number(item?.tx?.dexType)]?.toLowerCase()}
+                  {SWAP_TYPE[Number(item?.tx?.dexType)]?.toLowerCase() || "Unknown"}
                 </td>
                 <td className="lg:text-base table-cell ">
                   {formatAddress(item?.tx?.userWalletAddress)}
