@@ -34,20 +34,23 @@ function Page() {
     return date;
   };
   return loading ? (
-    <div className="flex w-full flex-col mt-[25px] gap-12 h-[300px] text-[#FFF0DD] justify-center items-center lg:mt-12 mb-10">
+    <div className="flex w-full flex-col mt-10 gap-12 h-[300px] text-[#FFF0DD] justify-center items-center lg:mt-12 mb-10">
       <Loading />
     </div>
   ) : (
-    <div className="flex w-full flex-col mt-[25px] gap-12 text-[#FFF0DD] justify-start lg:mt-12 mb-10">
-      <h1 className="text-lg lg:text-[64px] font-bold">Statistics</h1>
-      <span className="text-sm lg:text-base">
-        According to the <span className="text-[#FF7C5C]">DAO decision</span>, Instant
-        governance functionality has been deprecated in the{" "}
-        <span className="text-[#FF7C5C]">V2 Staking protocol. </span>
-        Nevertheless, any AGGRE staker can make proposals for parameter changes on the
-        <span className="text-[#FF7C5C]"> Governance Forum</span> and vote for them on
-        <span className="text-[#FF7C5C]"> Snapshot.</span>
+    <div className="flex w-full flex-col gap-12 text-[#FFF0DD] justify-start lg:mt-12 mb-10 mt-10">
+        <h1 className="text-lg lg:text-[64px] font-bold">Statistics</h1>
+    {/*  
+      <span className="lg:text-base font-normal">
+      The stats page of a DEX aggregator 
+      The stats page of the <span className="text-[#FF7C5C]">Aggre</span>, provides users with a comprehensive overview of the platform's performance and key metrics.{" "}
+        <span className="text-[#FF7C5C]">Optimized Routing. </span>
+        It offers real-time data on trading volume, liquidity, transaction fees, and historical price trends, 
+        <span className="text-[#FF7C5C]">  empowering traders</span> to make informed decisions and monitor the health of the  
+        <span className="text-[#FF7C5C]"> decentralized exchange ecosystem.</span>
       </span>
+
+      */} 
       <div className="flex flex-col lg:flex-row justify-center gap-4">
         <VolumeCart
           volume_day={Number(Number(statsData?.volume24h).toFixed(2))}

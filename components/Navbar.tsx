@@ -41,11 +41,11 @@ const menuItems = [
     href: "/dao",
     active: false,
   },
-  {
-    title: "Earn",
-    href: "/dao",
-    active: false,
-  },
+ // {
+ //   title: "Earn",
+ //   href: "/dao",
+ //   active: false,
+ // },
   // {
   //   title: "Buy Crypto",
   //   href: "/",
