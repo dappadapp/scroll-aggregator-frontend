@@ -1,3 +1,4 @@
+"use client";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import SlippageIcon from "@/assets/images/slippageIcon.svg";

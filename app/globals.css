@@ -61,7 +61,14 @@ input[type="number"] {
   position: relative;
   display: inline-block; /* If you want dots under the hoverable text */
 }
-
+.circular-bar {
+  width: 80px !important;
+  height: 80px;
+}
+.circular-bar > svg {
+  width: 80px !important;
+  height: 80px;
+}
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
