@@ -21,6 +21,8 @@ export enum SWAP_TYPE {
   SYNCSWAP = 4,
   PUNKSWAP = 5,
   KYBERSWAP = 6,
+  COFFEESWAP = 7,
+  PAPYRUSSWAP = 8,
   
   INVALID = 0,
 }

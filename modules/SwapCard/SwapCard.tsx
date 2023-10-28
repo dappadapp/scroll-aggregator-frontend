@@ -129,7 +129,7 @@ const SwapCard: React.FC<Props> = () => {
   async function getPair() {
     try {
       const pair = await contract.functions.getPair(
-        tokenFrom?.isToken ? tokenFrom?.address: tokenFrom?.wrapped?.address,
+        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
         tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
         false
       );
@@ -219,7 +219,27 @@ const SwapCard: React.FC<Props> = () => {
                   functionName: "getPool",
                   args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address, 100],
                 }
-                : {}
+                : dexType === SWAP_TYPE.COFFEESWAP
+                  ? {
+                    address: contractAddr?.coffeswap?.poolFactory,
+                    abi: SpaceFiPoolFactoryAbi,
+                    functionName: "getPair",
+                    args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
+                    enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+                  }
+                  : dexType === SWAP_TYPE.PAPYRUSSWAP
+                    ? {
+                      address: contractAddr?.papyrusswap?.poolFactory,
+                      abi: SpaceFiPoolFactoryAbi,
+                      functionName: "getPair",
+                      args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
+                      enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+                    }
+
+
+
+                    :
+                    {}
   );
 
 
@@ -312,7 +332,11 @@ const SwapCard: React.FC<Props> = () => {
                     ? SWAP_TYPE.PUNKSWAP
                     : exchangeRate?.data?.dex === "kyberswap"
                       ? SWAP_TYPE.KYBERSWAP
-                      : SWAP_TYPE.INVALID
+                      : exchangeRate?.data?.dex === "coffeeswap"
+                        ? SWAP_TYPE.COFFEESWAP
+                        : exchangeRate?.data?.dex === "papyrusswap"
+                          ? SWAP_TYPE.PAPYRUSSWAP
+                          : SWAP_TYPE.INVALID
         );
         setReceiveAmount(
           (
@@ -321,7 +345,7 @@ const SwapCard: React.FC<Props> = () => {
             .toString()
         );
         setRate(
-          ethers.utils.formatUnits(exchangeRate?.data.amount,  tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
+          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
         );
         setIsLoadingReceiveAmount(false);
 
@@ -336,11 +360,11 @@ const SwapCard: React.FC<Props> = () => {
         } else if (exchangeRate?.data?.dex === "syncswap") {
 
           if (
-            (tokenFrom.isToken ?tokenFrom?.address : tokenFrom?.wrapped?.address  ===
+            (tokenFrom.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address ===
               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
               tokenTo.isToken ? tokenTo?.address : tokenTo?.wrapped?.address ===
-              "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
-            (tokenFrom.isToken ?tokenFrom?.address : tokenFrom?.wrapped?.address ===
+            "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
+            (tokenFrom.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address ===
               "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" &&
               tokenTo.isToken ? tokenTo?.address : tokenTo?.wrapped?.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
           ) {
@@ -393,7 +417,11 @@ const SwapCard: React.FC<Props> = () => {
                     ? SWAP_TYPE.PUNKSWAP
                     : exchangeRate?.data?.dex === "kyberswap"
                       ? SWAP_TYPE.KYBERSWAP
-                      : SWAP_TYPE.INVALID
+                      : exchangeRate?.data?.dex === "coffeeswap"
+                        ? SWAP_TYPE.COFFEESWAP
+                        : exchangeRate?.data?.dex === "papyrusswap"
+                          ? SWAP_TYPE.PAPYRUSSWAP
+                          : SWAP_TYPE.INVALID
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
@@ -667,7 +695,7 @@ const SwapCard: React.FC<Props> = () => {
                     <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
                     <span className="text-sm lg:text-xl w-1/3 text-center">
-                      {!swapAmount || !receiveAmount || Number(swapAmount) === 0 || ( tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" || tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script")
+                      {!swapAmount || !receiveAmount || Number(swapAmount) === 0 || (tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" || tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script")
                         ? 0
                         : getPercentageDifference(
                           tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
@@ -683,8 +711,8 @@ const SwapCard: React.FC<Props> = () => {
 
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                    ) : tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
-                      <span className="w-1/3 text-center">
+                  ) : tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
+                    <span className="w-1/3 text-center">
                       ~$
                       {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
                         ? (ethUSD * +receiveAmount).toFixed(4)

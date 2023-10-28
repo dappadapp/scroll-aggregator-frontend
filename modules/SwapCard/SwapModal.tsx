@@ -167,7 +167,27 @@ function SwapModal({
                 />
                 <p className="inline-block text-[#FFE7DD]">PunkSwap</p>
               </div>
-            ) : (
+            ) : swapType === SWAP_TYPE.PAPYRUSSWAP ? (
+              <div className="flex items-center">
+                <img
+                  src="https://papyrusswap.com/static/media/papyrus-logo.a7f47ae8.png"
+                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                  alt="PAPYRUSSWAP"
+                />
+                <p className="inline-block text-[#FFE7DD]">PapyrusSwap</p>
+              </div>
+            )
+             : swapType === SWAP_TYPE.COFFEESWAP ? (
+                <div className="flex items-center">
+                  <img
+                    src="https://www.coffeefi.xyz/logo/logo.png"
+                    className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
+                    alt="COFFEESWAP"
+                  />
+                  <p className="inline-block text-[#FFE7DD]">CoffeeSwap</p>
+                </div>
+             )
+            : (
               <div className="flex items-center">
                 <img
                   src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
