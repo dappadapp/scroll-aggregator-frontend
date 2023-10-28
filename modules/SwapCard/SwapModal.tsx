@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faX } from "@fortawesome/free-solid-svg-icons";
 import { SwapToken } from "@/components/SwapToken";
 import { SwapSteps } from "@/components/SwapSteps";
-import { Currency, SWAP_TYPE } from "@/types";
+import { Currency, SWAP_TYPE, swapTypeMapping } from "@/types";
 import useContract from "@/hooks/useContract";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
@@ -14,6 +14,7 @@ import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
 import { fetchFeeData } from "@wagmi/core";
 import { useNetwork } from "wagmi";
 import { generatePath } from "@/utils/path";
+import DexOffers from "./DexOffers";
 type Props = {
   onCloseModal: () => void;
   pool: string;
@@ -22,6 +23,7 @@ type Props = {
   amountA: number;
   amountB: string;
   swapType: SWAP_TYPE;
+  offers: any;
   rate: string;
   swapSuccess: () => void;
   slippage: number;
@@ -37,6 +39,7 @@ function SwapModal({
   amountA,
   amountB,
   swapType,
+  offers,
   rate,
   swapSuccess,
   slippage,
@@ -48,7 +51,7 @@ function SwapModal({
   const [fee, setFee] = useState<string>("0");
 
   const { data: allowance, refetch } = useContractRead({
-    address: (tokenA?.isToken ? tokenA.address  : tokenA.wrapped.address),
+    address: (tokenA?.isToken ? tokenA.address : tokenA.wrapped.address),
     abi: erc20ABI,
     functionName: "allowance",
     args: [account!, contractAddr!.contract],
@@ -116,87 +119,27 @@ function SwapModal({
           />
           <SwapToken value={+amountB} currency={tokenB} />
         </div>
+       
+
+        <DexOffers offers={offers} tokenTo={tokenB} />
+
         <div className="w-full bg-[#AAA] h-[1px] my-6 mb-10"></div>
 
         <div className="flex justify-between items-center mt-4">
           <span className="text-xl text-[#FFE7DD]">Liquidity source</span>
-
           <span>
-            {swapType === SWAP_TYPE.SKYDROME ? (
-              <div className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-8 h-8 mr-2 rounded-full overflow-hidden">
                 <img
-                  src="https://skydrome.finance/assets/Logos/PNG/Logo.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Skydrome"
+                  src={swapTypeMapping[swapType]?.icon}
+                  alt={swapTypeMapping[swapType]?.name}
                 />
-                <p className="inline-block mt-1 text-[#FFE7DD]">Skydrome</p>
               </div>
-            ) : swapType === SWAP_TYPE.SPACEFI ? (
-              <div className="flex items-center">
-                <img
-                  src=" https://raw.githubusercontent.com/SpaceFinance/default-token-list/master/assets/0x4E2D4F33d759976381D9DeE04B197bF52F6bC1FC.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Spacefi"
-                />
-                <p className="inline-block text-[#FFE7DD]">SpaceFi</p>
-              </div>
-            ) : swapType === SWAP_TYPE.IZUMI ? (
-              <div className="flex items-center">
-                <img
-                  src="https://izumi.finance/assets/home/iziLogo/logo.svg"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Izumi"
-                />
-                <p className="inline-block text-[#FFE7DD]">Izumi</p>
-              </div>
-            ) : swapType === SWAP_TYPE.KYBERSWAP ? (
-              <div className="flex items-center">
-                <img
-                  src="https://storage.googleapis.com/ks-setting-1d682dca/70129bd5-c3eb-44e8-b9fc-e6d76bf80b921697557071098.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Kyberswap"
-                />
-                <p className="inline-block text-[#FFE7DD]">KyberSwap</p>
-              </div>
-            ) : swapType === SWAP_TYPE.PUNKSWAP ? (
-              <div className="flex items-center">
-                <img
-                  src="https://storage.googleapis.com/ks-setting-1d682dca/bcc2ed81-3d91-4b71-a615-ed4102cf8fb41697557738542.png"
-                  className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="PunkSwap"
-                />
-                <p className="inline-block text-[#FFE7DD]">PunkSwap</p>
-              </div>
-            ) : swapType === SWAP_TYPE.PAPYRUSSWAP ? (
-              <div className="flex items-center">
-                <img
-                  src="https://papyrusswap.com/static/media/papyrus-logo.a7f47ae8.png"
-                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="PAPYRUSSWAP"
-                />
-                <p className="inline-block text-[#FFE7DD]">PapyrusSwap</p>
-              </div>
-            )
-             : swapType === SWAP_TYPE.COFFEESWAP ? (
-                <div className="flex items-center">
-                  <img
-                    src="https://www.coffeefi.xyz/logo/logo.png"
-                    className="w-8 h-8 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                    alt="COFFEESWAP"
-                  />
-                  <p className="inline-block text-[#FFE7DD]">CoffeeSwap</p>
-                </div>
-             )
-            : (
-              <div className="flex items-center">
-                <img
-                  src="https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F3580858907-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252Fa1srPi3SG0RLa68aU4tX%252Ficon%252Fr9gnUAaUG96bxSLZ02SC%252Flogo-192.png%3Falt%3Dmedia%26token%3Db68cb07a-5d86-40c7-88e0-1a9fcc52ede6"
-                  className="w-10 h-10 inline-block mr-2 rounded-full" // Add margin-right for spacing
-                  alt="Syncswap"
-                />
-                <p className="inline-block text-[#FFE7DD]">Syncswap</p>
-              </div>
-            )}
+              <p className="inline-block mt-1 text-[#FFE7DD]">
+                <span className="text-4xl">{swapTypeMapping[swapType]?.name[0]}</span>
+                {swapTypeMapping[swapType]?.name.slice(1)}
+              </p>
+            </div>
           </span>
         </div>
 
@@ -212,7 +155,7 @@ function SwapModal({
             <span className="text-[#FFE7DD]">Minimum Receive</span>
             <span className="text-right text-[#FFE7DD]">
               {" "}
-              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7) } {tokenB?.symbol}
+              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7)} {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -238,15 +181,15 @@ function SwapModal({
           <SwapButton
             swapParam={{
               poolAddress: pool,
-              tokenIn: tokenA?.isToken ?  tokenA?.address : tokenA.wrapped.address,
-              tokenOut: tokenB?.isToken ?  tokenB?.address : tokenB.wrapped.address,
+              tokenIn: tokenA?.isToken ? tokenA?.address : tokenA.wrapped.address,
+              tokenOut: tokenB?.isToken ? tokenB?.address : tokenB.wrapped.address,
               amountIn: bigAmountA,
-              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 :bigAmountB,
+              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 : bigAmountB,
               swapType: swapType,
               path:
                 generatePath(
-                  tokenA?.isToken ?  tokenA?.address : tokenA?.wrapped.address,
-                  tokenB?.isToken ?  tokenB?.address : tokenB?.wrapped.address,
+                  tokenA?.isToken ? tokenA?.address : tokenA?.wrapped.address,
+                  tokenB?.isToken ? tokenB?.address : tokenB?.wrapped.address,
                   300
                 ).toString() || "0x0000000000000000000000000000000000000000",
               fee: 300 || UNISWAP_DEFAULT_FEE || 0,

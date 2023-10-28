@@ -575,6 +575,19 @@
     },
     {
         "inputs": [],
+        "name": "sushiRouterAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "syncRouterAddress",
         "outputs": [
             {

@@ -33,7 +33,7 @@ import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
 import RefreshButton from "./RefreshButton";
 import { useFeeData } from 'wagmi'
-
+import { swapTypeMapping } from "@/types";
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -58,6 +58,72 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
     [walletClient]
   );
 }
+interface DexOffer {
+  dex: string;
+  amount: string;
+}
+
+interface DexOffersProps {
+  offers: DexOffer[];
+  tokenTo: Currency | undefined;
+}
+
+function mapDexType(inputDexType: string): SWAP_TYPE {
+  switch (inputDexType) {
+    case 'space-fi':
+      return SWAP_TYPE.SPACEFI;
+    case 'skydrome':
+      return SWAP_TYPE.SKYDROME;
+    case 'iziswap':
+      return SWAP_TYPE.IZUMI;
+    case 'syncswap':
+      return SWAP_TYPE.SYNCSWAP;
+    case 'punkswap':
+      return SWAP_TYPE.PUNKSWAP;
+    case 'kyberswap':
+      return SWAP_TYPE.KYBERSWAP;
+    case 'coffeswap':
+      return SWAP_TYPE.COFFEESWAP;
+    case 'papyrusswap':
+      return SWAP_TYPE.PAPYRUSSWAP;
+    default:
+      return SWAP_TYPE.INVALID;
+  }
+}
+
+export const DexOffers: React.FC<DexOffersProps> = ({ offers, tokenTo }) => {
+  const firstThreeOffers = offers?.slice(0, 3);
+
+  return (
+    <div className="flex flex-row">
+      {firstThreeOffers?.map((offer, index) => (
+        <div key={index} className="mx-4">
+          <div className="flex items-center">
+            <div className="w-8 h-8 mr-2 rounded-full overflow-hidden">
+              <img
+                src={swapTypeMapping[mapDexType(offer?.dex)]?.icon}
+                alt={swapTypeMapping[mapDexType(offer?.dex)]?.name}
+              />
+            </div>
+            <p className="text-[#FFE7DD] text-lg">
+              <span className="text-4xl">{swapTypeMapping[mapDexType(offer?.dex)]?.name[0]}</span>
+              {swapTypeMapping[mapDexType(offer?.dex)]?.name?.slice(1)}
+            </p>
+          </div>
+          <p className="text-[#FFE7DD] text-lg mt-2 text-center">
+            {ethers.utils.formatUnits(offer.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo?.wrapped?.decimals).toString()}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+  
+  
+  
+  
+  
+  
+};
 
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
@@ -89,6 +155,7 @@ const SwapCard: React.FC<Props> = () => {
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
   const { refresh, setRefresh } = useGlobalContext();
+  const [offers, setOffers] = useState<DexOffer[]>([]);
 
   const {
     data: balanceFrom,
@@ -124,6 +191,11 @@ const SwapCard: React.FC<Props> = () => {
     SkydromePoolFactory,
     signer
   );
+
+
+
+
+
 
   // Send a call to the getPair function using ethers.js
   async function getPair() {
@@ -235,11 +307,19 @@ const SwapCard: React.FC<Props> = () => {
                       args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
                       enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
                     }
-
-
-
                     :
-                    {}
+                    dexType === SWAP_TYPE.SUSHISWAP
+                      ? {
+                        address: contractAddr?.sushiswap?.poolFactory,
+                        abi: SpaceFiPoolFactoryAbi,
+                        functionName: "getPair",
+                        args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
+                        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
+                      }
+
+
+                      :
+                      {}
   );
 
 
@@ -319,9 +399,10 @@ const SwapCard: React.FC<Props> = () => {
           type: "IN",
         });
 
+        setOffers(exchangeRate.data);
         console.log("exchangeRate", exchangeRate);
 
-        switch (exchangeRate?.data?.dex) {
+        switch (exchangeRate?.data[0]?.dex) {
           case "space-fi":
             setDexType(SWAP_TYPE.SPACEFI);
             break;
@@ -351,12 +432,12 @@ const SwapCard: React.FC<Props> = () => {
         }
         setReceiveAmount(
           (
-            ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
+            ethers.utils.formatUnits(exchangeRate?.data[0]?.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
           )
             .toString()
         );
         setRate(
-          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
+          ethers.utils.formatUnits(exchangeRate?.data[0]?.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
         );
         setIsLoadingReceiveAmount(false);
 
@@ -505,7 +586,10 @@ const SwapCard: React.FC<Props> = () => {
     return [];
   }, [chain, native]);
 
-  console.log("dexType",dexType);
+  console.log("dexType", dexType);
+
+
+
 
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
@@ -733,6 +817,8 @@ const SwapCard: React.FC<Props> = () => {
                   )}
                 </div>
               </div>
+
+  
             </div>
             <div className="pl-3">
               <Button
@@ -773,6 +859,7 @@ const SwapCard: React.FC<Props> = () => {
           amountA={+swapAmount}
           amountB={receiveAmount}
           swapType={dexType}
+          offers={offers}
           swapSuccess={() => {
             setSwapAmount("0");
             setReceiveAmount("0");

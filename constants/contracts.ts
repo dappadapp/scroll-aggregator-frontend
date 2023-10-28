@@ -56,6 +56,10 @@ export const aggregator : {
       router: `0x${string}`,
       poolFactory: `0x${string}`,
     },
+    sushiswap?: {
+      router: `0x${string}`,
+      poolFactory: `0x${string}`,
+    },
 
   }    
 } = {
@@ -82,7 +86,7 @@ export const aggregator : {
 
   }, 
   [ChainId.SCROLL_MAINNET]: {
-    contract: "0xFA3B36de422ABD3e656669107b7A0Eed895026E6",
+    contract: "0xcf8bcaCb401C31774EA39296b367B9DaB4F72267",
     spacefi: {
       router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"
@@ -114,6 +118,10 @@ export const aggregator : {
     papyrusswap: {
       router: "0x29ACA061b49753765A3DBC130DBF16D4477bFd3F",
       poolFactory: "0xD5f3D3fb72210bfe71a59c05e0b8D72973baa2a6"
+    },
+    sushiswap: {
+      router: "0x9B3336186a38E1b6c21955d112dbb0343Ee061eE",
+      poolFactory: "0xB45e53277a7e0F1D35f2a77160e91e25507f1763"
     },
     
   }

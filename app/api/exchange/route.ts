@@ -263,6 +263,28 @@ export async function POST(request: Request) {
         return BigInt(data?.[1]);
       },
     },
+
+    sushiswap: {
+      name: "Sushiswap",
+      id: "sushiswap",
+      router: "0x9B3336186a38E1b6c21955d112dbb0343Ee061eE",
+      abi: SpaceFiAbi, // Replace with the actual ABI
+      fee: 0,
+      inFunction: "getAmountsIn",
+      outFunction: "getAmountsOut",
+      async runInFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        const data = await contract.getAmountsIn(parseUnits(amount, toDecimals), [from, to]);
+        return BigInt(data?.[0]);
+      },
+      async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {
+        const contract = new ethers.Contract(this.router, this.abi, provider);
+        console.log("amount parse", parseUnits(amount, fromDecimals));
+        const data = await contract.getAmountsOut(parseUnits(amount, fromDecimals), [from, to]);
+        console.log("data", [from, to]);
+        return BigInt(data?.[1]);
+      },
+    },
   };
 
   async function getBestExchange(amount: any, from: any, to: any, type: string, fromDecimals: any, toDecimals: any) {
@@ -291,7 +313,7 @@ export async function POST(request: Request) {
       }
     }
     temp.sort((a, b) => parseInt(b.amount) - parseInt(a.amount));
-    return temp[0];
+    return temp;
   }
 
   const res = await getBestExchange(data?.amount, data?.from, data?.to, data?.type, data?.fromDecimals, data?.toDecimals);
