@@ -212,6 +212,7 @@ export async function POST(request: Request) {
         return BigInt(data.amountIn);
       },
     },
+    /*
     coffeswap: {
       name: "Coffeswap",
       id: "coffeswap",
@@ -240,7 +241,7 @@ export async function POST(request: Request) {
         }
   
       },
-    },
+    },*/
     papyrusswap: {
       name: "Papyrusswap",
       id: "papyrusswap",

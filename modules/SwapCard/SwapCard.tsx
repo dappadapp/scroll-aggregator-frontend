@@ -319,25 +319,36 @@ const SwapCard: React.FC<Props> = () => {
           type: "IN",
         });
 
-        setDexType(
-          exchangeRate?.data?.dex === "space-fi"
-            ? SWAP_TYPE.SPACEFI
-            : exchangeRate?.data?.dex === "skydrome"
-              ? SWAP_TYPE.SKYDROME
-              : exchangeRate?.data?.dex === "iziswap"
-                ? SWAP_TYPE.IZUMI
-                : exchangeRate?.data?.dex === "syncswap"
-                  ? SWAP_TYPE.SYNCSWAP
-                  : exchangeRate?.data?.dex === "punkswap"
-                    ? SWAP_TYPE.PUNKSWAP
-                    : exchangeRate?.data?.dex === "kyberswap"
-                      ? SWAP_TYPE.KYBERSWAP
-                      : exchangeRate?.data?.dex === "coffeeswap"
-                        ? SWAP_TYPE.COFFEESWAP
-                        : exchangeRate?.data?.dex === "papyrusswap"
-                          ? SWAP_TYPE.PAPYRUSSWAP
-                          : SWAP_TYPE.INVALID
-        );
+        console.log("exchangeRate", exchangeRate);
+
+        switch (exchangeRate?.data?.dex) {
+          case "space-fi":
+            setDexType(SWAP_TYPE.SPACEFI);
+            break;
+          case "skydrome":
+            setDexType(SWAP_TYPE.SKYDROME);
+            break;
+          case "iziswap":
+            setDexType(SWAP_TYPE.IZUMI);
+            break;
+          case "syncswap":
+            setDexType(SWAP_TYPE.SYNCSWAP);
+            break;
+          case "punkswap":
+            setDexType(SWAP_TYPE.PUNKSWAP);
+            break;
+          case "kyberswap":
+            setDexType(SWAP_TYPE.KYBERSWAP);
+            break;
+          case "coffeswap":
+            setDexType(SWAP_TYPE.COFFEESWAP);
+            break;
+          case "papyrusswap":
+            setDexType(SWAP_TYPE.PAPYRUSSWAP);
+            break;
+          default:
+            setDexType(SWAP_TYPE.INVALID);
+        }
         setReceiveAmount(
           (
             ethers.utils.formatUnits(exchangeRate?.data.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
@@ -417,7 +428,7 @@ const SwapCard: React.FC<Props> = () => {
                     ? SWAP_TYPE.PUNKSWAP
                     : exchangeRate?.data?.dex === "kyberswap"
                       ? SWAP_TYPE.KYBERSWAP
-                      : exchangeRate?.data?.dex === "coffeeswap"
+                      : exchangeRate?.data?.dex === "coffeswap"
                         ? SWAP_TYPE.COFFEESWAP
                         : exchangeRate?.data?.dex === "papyrusswap"
                           ? SWAP_TYPE.PAPYRUSSWAP
@@ -494,6 +505,7 @@ const SwapCard: React.FC<Props> = () => {
     return [];
   }, [chain, native]);
 
+  console.log("dexType",dexType);
 
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
