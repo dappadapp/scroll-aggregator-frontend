@@ -51,7 +51,7 @@ function SwapModal({
   const [fee, setFee] = useState<string>("0");
 
   const { data: allowance, refetch } = useContractRead({
-    address: (tokenA?.isToken ? tokenA.address : tokenA.wrapped.address),
+    address: tokenA?.isToken ? tokenA.address : tokenA.wrapped.address,
     abi: erc20ABI,
     functionName: "allowance",
     args: [account!, contractAddr!.contract],
@@ -94,7 +94,7 @@ function SwapModal({
     >
       <div
         className={
-          "z-[9999] p-14 max-w-[95vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "z-[9999] p-6 lg:p-14 max-w-[95vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-8">
@@ -119,7 +119,6 @@ function SwapModal({
           />
           <SwapToken value={+amountB} currency={tokenB} />
         </div>
-       
 
         <DexOffers offers={offers} tokenTo={tokenB} />
 
@@ -155,7 +154,12 @@ function SwapModal({
             <span className="text-[#FFE7DD]">Minimum Receive</span>
             <span className="text-right text-[#FFE7DD]">
               {" "}
-              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7)} {tokenB?.symbol}
+              {(
+                +amountB -
+                (+amountB * slippage) / 100 -
+                (+amountB * 30) / 10000
+              )?.toFixed(7)}{" "}
+              {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -184,7 +188,10 @@ function SwapModal({
               tokenIn: tokenA?.isToken ? tokenA?.address : tokenA.wrapped.address,
               tokenOut: tokenB?.isToken ? tokenB?.address : tokenB.wrapped.address,
               amountIn: bigAmountA,
-              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 : bigAmountB,
+              amountOutMin:
+                tokenA?.symbol === "Script" || tokenB?.symbol === "Script"
+                  ? 0
+                  : bigAmountB,
               swapType: swapType,
               path:
                 generatePath(

@@ -25,26 +25,26 @@ export default function RefreshButton() {
     }, 2000); // Replace 2000 with the actual duration of your refresh operation
   };
 
-
-
   return (
     <div className="max-w-sm px-1 z-[49px]">
-<Popover className="relative z-[49px]">
-  {({ open }) => (
-    <Popover.Button
-      onClick={handleRefreshClick} // Add an onClick handler
-      className={`${
-        open ? "" : ""
-      } transition-all p-3 w-12 h-12 rounded-lg focus:outline-none flex justify-center items-center hover:bg-[rgb(255,240,221)]/10 cursor-pointer ${
-        isRefreshing ? 'animate-spin cursor-pointer' : ""// Add the spinning animation class
-      }`}
-    >
-      <>
-      <RefreshIcon className='cursor-pointer' />
-      </>
-    </Popover.Button>
-  )}
-</Popover>
+      <Popover className="relative z-[49px]">
+        {({ open }) => (
+          <Popover.Button
+            onClick={handleRefreshClick} // Add an onClick handler
+            className={`${
+              open ? "" : ""
+            } transition-all p-3 w-12 h-12 rounded-lg focus:outline-none flex justify-center items-center hover:bg-[rgb(255,240,221)]/10 cursor-pointer ${
+              isRefreshing ? "cursor-pointer" : "" // Add the spinning animation class
+            }`}
+          >
+            <>
+              <RefreshIcon
+                className={`${isRefreshing && "animate-spin"} cursor-pointer`}
+              />
+            </>
+          </Popover.Button>
+        )}
+      </Popover>
     </div>
   );
 }
