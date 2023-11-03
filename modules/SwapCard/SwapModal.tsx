@@ -29,6 +29,7 @@ type Props = {
   slippage: number;
   fetchBalanceFrom: () => void;
   fetchBalanceTo: () => void;
+  signer?: any;
 };
 
 function SwapModal({
@@ -45,6 +46,7 @@ function SwapModal({
   slippage,
   fetchBalanceFrom,
   fetchBalanceTo,
+  signer,
 }: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
@@ -197,6 +199,7 @@ function SwapModal({
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
             tokenOut={tokenB}
+            signer={signer}
           />
         )}
       </div>

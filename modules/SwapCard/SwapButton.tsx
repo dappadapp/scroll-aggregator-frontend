@@ -11,11 +11,21 @@ import AggregatorAbi from "@/constants/abis/aggregator.json";
 import WETHAbi from "@/constants/abis/weth.json";
 import axios from "axios";
 
+import tokens from "../../app/api/getRoute/constants/tokens";
+import {generatePath} from "../../app/api/getRoute/utils/path";
+
+import contracts from "../../app/api/getRoute/constants/contracts";
+
+
+import {generateSwapParams} from "../../app/api/getRoute/core/swap";
+
+
 type Props = {
   swapParam: SwapParam;
   tokenIn: Currency;
   tokenOut: Currency;
   swapSuccess: () => void;
+  signer?: any;
 };
 
 export type SwapParam = {
@@ -29,12 +39,14 @@ export type SwapParam = {
   fee: number;
 };
 
-const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess }) => {
+const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess, signer }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
   const [convEth, setConvEth] = useState<boolean>(true);
   const contractAddr = useContract();
   const { address: userWallet } = useAccount();
+
+
 
   const { config } = usePrepareContractWrite({
     address: contractAddr!.contract,
@@ -83,6 +95,21 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   };
 
   const handleSwap = async () => {
+
+    console.log("signeraaaa: ", signer?.provider);
+
+    const provider = signer;
+    const single = true;
+
+    console.log("swapParam: ", swapParam);
+
+    console.log("contracts: ", contracts.aggreAggregator.abi)
+    
+    const amountIn = "100000000000000000";
+
+    const generatedSwapParams = await generateSwapParams(contracts, provider, single, swapParam.tokenIn,  swapParam.tokenOut, amountIn, 0, 0.5);
+
+    console.log("generatedSwapParams: ", generatedSwapParams);
     if (tokenIn?.symbol === "WETH" && tokenOut?.symbol === "ETH") {
       await handleWithdraw();
     } 
@@ -94,6 +121,11 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
         toast.error("Make sure you have enough GAS and you're on the correct network.");
         return;
       }
+
+  
+
+
+     
       // if (!isSuccess) {
       //   return alert("An unknown error occured. Please try again.");
       // }

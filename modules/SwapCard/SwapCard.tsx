@@ -34,6 +34,8 @@ import TokenModal from "@/components/TokenModal";
 import RefreshButton from "./RefreshButton";
 import { useFeeData } from 'wagmi'
 import { swapTypeMapping } from "@/types";
+
+
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -58,6 +60,8 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
     [walletClient]
   );
 }
+
+
 interface DexOffer {
   dex: string;
   amount: string;
@@ -157,6 +161,8 @@ const SwapCard: React.FC<Props> = () => {
   const { refresh, setRefresh } = useGlobalContext();
   const [offers, setOffers] = useState<DexOffer[]>([]);
 
+
+  console.log("provider", signer?.provider);
   const {
     data: balanceFrom,
     isLoading: isLoadingBalanceFrom,
@@ -383,6 +389,7 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
+  console.log("signer", signer);
   const getCurrentRate = async () => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
@@ -397,6 +404,17 @@ const SwapCard: React.FC<Props> = () => {
           to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
           toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
           type: "IN",
+        });
+
+       
+        const exchangeRate2 = await axios.post("/api/getRoute", {
+          amount: swapAmount.toString(),
+          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+          fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
+          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+          toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
+          type: "IN",
+          sign: signer,
         });
 
         setOffers(exchangeRate.data);
@@ -872,6 +890,7 @@ const SwapCard: React.FC<Props> = () => {
           slippage={slippage}
           fetchBalanceFrom={fetchBalanceFrom}
           fetchBalanceTo={fetchBalanceTo}
+          signer={signer}
         />
       ) : null}
     </div>
