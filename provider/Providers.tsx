@@ -1,9 +1,12 @@
 "use client";
 
 import React from "react";
-import { EthereumClient, w3mConnectors, w3mProvider } from "@web3modal/ethereum";
-import { Web3Modal } from "@web3modal/react";
-import { configureChains, createConfig, WagmiConfig, Chain } from "wagmi";
+import { walletConnectProvider, EIP6963Connector } from '@web3modal/wagmi'
+import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 import {
   mainnet,
   goerli,
@@ -38,6 +41,7 @@ import {
   scrollSepolia,
   mantle,
   scroll,
+  Chain,
 } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -314,7 +318,7 @@ const linea = {
   },
 } as const satisfies Chain;
 
-const chains = [
+const chainList = [
   mainnet,
   goerli,
   zkSync,
@@ -360,13 +364,29 @@ const chains = [
 ];
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!;
 
-const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
+const metadata = {
+  name: 'Aggre',
+  description: '',
+  url: 'https://aggre.io',
+  icons: ['https://avatars.githubusercontent.com/u/37784886']
+}
+
+const { chains, publicClient } = configureChains(
+  chainList,
+  [walletConnectProvider({ projectId }), publicProvider()]
+);
+
 const wagmiConfig = createConfig({
-  autoConnect: true,
-  connectors: w3mConnectors({ projectId, chains }),
-  publicClient,
+    autoConnect: true,
+    connectors: [
+      new WalletConnectConnector({ chains, options: { projectId, showQrModal: false, metadata } }),
+      new EIP6963Connector({ chains }),
+      new InjectedConnector({ chains, options: { shimDisconnect: true } }),
+    ],
+    publicClient
 });
-const ethereumClient = new EthereumClient(wagmiConfig, chains);
+
+createWeb3Modal({ wagmiConfig, projectId, chains })
 
 const queryClient = new QueryClient();
 
@@ -376,7 +396,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
       </QueryClientProvider>
-      <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
   );
 }

@@ -6,11 +6,9 @@ import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import NetworkSelector from "./NetworkSelector";
 import { FaBars } from "react-icons/fa";
+import ConnectButton from "./ConnectButton";
 
 type Props = {};
-const ConnectButton: any = dynamic(() => import("./ConnectButton"), {
-  ssr: false,
-});
 
 const menuItems = [
   {

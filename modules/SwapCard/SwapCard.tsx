@@ -1,7 +1,7 @@
 import React, { use, useEffect, useMemo, useRef, useState } from "react";
 import { useAccount, useBalance, useContractRead, useNetwork } from "wagmi";
 import { readContract } from "@wagmi/core";
-import { useWeb3Modal } from "@web3modal/react";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { formatUnits } from "viem";
 import _, { set } from "lodash";
 
@@ -585,8 +585,6 @@ const SwapCard: React.FC<Props> = () => {
     }
     return [];
   }, [chain, native]);
-
-  console.log("dexType", dexType);
 
 
 
