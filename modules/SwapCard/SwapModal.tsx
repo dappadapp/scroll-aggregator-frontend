@@ -192,7 +192,7 @@ function SwapModal({
                   tokenB?.isToken ? tokenB?.address : tokenB?.wrapped.address,
                   300
                 ).toString() || "0x0000000000000000000000000000000000000000",
-              fee: 300 || UNISWAP_DEFAULT_FEE || 0,
+              fee: 3000 || UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

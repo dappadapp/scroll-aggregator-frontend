@@ -117,12 +117,12 @@ export const DexOffers: React.FC<DexOffersProps> = ({ offers, tokenTo }) => {
       ))}
     </div>
   );
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
 };
 
 const SwapCard: React.FC<Props> = () => {
@@ -394,7 +394,7 @@ const SwapCard: React.FC<Props> = () => {
           amount: swapAmount.toString(),
           from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
           fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
-          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+          to: tokenTo?.isNative ? tokenTo?.wrapped?.address : tokenTo?.address,
           toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
           type: "IN",
         });
@@ -427,6 +427,9 @@ const SwapCard: React.FC<Props> = () => {
           case "papyrusswap":
             setDexType(SWAP_TYPE.PAPYRUSSWAP);
             break;
+          case "sushiswap":
+            setDexType(SWAP_TYPE.SUSHISWAP);
+            break;
           default:
             setDexType(SWAP_TYPE.INVALID);
         }
@@ -441,16 +444,17 @@ const SwapCard: React.FC<Props> = () => {
         );
         setIsLoadingReceiveAmount(false);
 
-        if (exchangeRate?.data?.dex === "skydrome") {
+        if (exchangeRate?.data[0]?.dex === "skydrome") {
           const pool = await getPair();
 
           if (pool) setPairAddress(pool[0]);
-        } else if (exchangeRate?.data?.dex === "iziswap") {
+        } else if (exchangeRate?.data[0]?.dex === "iziswap") {
           const pool = await getPool();
 
           if (pool) setPairAddress(pool?.toString());
-        } else if (exchangeRate?.data?.dex === "syncswap") {
+        } else if (exchangeRate?.data[0]?.dex === "syncswap") {
 
+          console.log("poolAddress", tokenFrom,tokenTo);
           if (
             (tokenFrom.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address ===
               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
@@ -513,6 +517,8 @@ const SwapCard: React.FC<Props> = () => {
                         ? SWAP_TYPE.COFFEESWAP
                         : exchangeRate?.data?.dex === "papyrusswap"
                           ? SWAP_TYPE.PAPYRUSSWAP
+                          : exchangeRate?.data?.dex === "sushiswap"
+                            ? SWAP_TYPE.SUSHISWAP
                           : SWAP_TYPE.INVALID
         );
         setSwapAmount(
@@ -816,7 +822,7 @@ const SwapCard: React.FC<Props> = () => {
                 </div>
               </div>
 
-  
+
             </div>
             <div className="pl-3">
               <Button
