@@ -32,7 +32,7 @@ import { toast } from "react-toastify";
 import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
 import RefreshButton from "./RefreshButton";
-import { useFeeData } from 'wagmi'
+import { useFeeData } from "wagmi";
 import { swapTypeMapping } from "@/types";
 import { BigNumber as BigNumberJS } from "bignumber.js";
 
@@ -74,21 +74,21 @@ interface DexOffersProps {
 
 function mapDexType(inputDexType: string): SWAP_TYPE {
   switch (inputDexType) {
-    case 'space-fi':
+    case "space-fi":
       return SWAP_TYPE.SPACEFI;
-    case 'skydrome':
+    case "skydrome":
       return SWAP_TYPE.SKYDROME;
-    case 'iziswap':
+    case "iziswap":
       return SWAP_TYPE.IZUMI;
-    case 'syncswap':
+    case "syncswap":
       return SWAP_TYPE.SYNCSWAP;
-    case 'punkswap':
+    case "punkswap":
       return SWAP_TYPE.PUNKSWAP;
-    case 'kyberswap':
+    case "kyberswap":
       return SWAP_TYPE.KYBERSWAP;
-    case 'coffeswap':
+    case "coffeswap":
       return SWAP_TYPE.COFFEESWAP;
-    case 'papyrusswap':
+    case "papyrusswap":
       return SWAP_TYPE.PAPYRUSSWAP;
     default:
       return SWAP_TYPE.INVALID;
@@ -110,23 +110,24 @@ export const DexOffers: React.FC<DexOffersProps> = ({ offers, tokenTo }) => {
               />
             </div>
             <p className="text-[#FFE7DD] text-lg">
-              <span className="text-4xl">{swapTypeMapping[mapDexType(offer?.dex)]?.name[0]}</span>
+              <span className="text-4xl">
+                {swapTypeMapping[mapDexType(offer?.dex)]?.name[0]}
+              </span>
               {swapTypeMapping[mapDexType(offer?.dex)]?.name?.slice(1)}
             </p>
           </div>
           <p className="text-[#FFE7DD] text-lg mt-2 text-center">
-            {ethers.utils.formatUnits(offer.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo?.wrapped?.decimals).toString()}
+            {ethers.utils
+              .formatUnits(
+                offer.amount,
+                tokenTo?.isToken ? tokenTo?.decimals : tokenTo?.wrapped?.decimals
+              )
+              .toString()}
           </p>
         </div>
       ))}
     </div>
   );
-  
-  
-  
-  
-  
-  
 };
 
 const SwapCard: React.FC<Props> = () => {
@@ -188,8 +189,6 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-
-
   // Instantiate the contract
   const contract = new ethers.Contract(
     contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004",
@@ -217,8 +216,6 @@ const SwapCard: React.FC<Props> = () => {
       console.error('Error fetching ETH price:', error);
     }
   };
-
-
 
   useEffect(() => {
     getEthPrice();
@@ -408,20 +405,20 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-              ? SWAP_TYPE.SKYDROME
-              : exchangeRate?.data?.dex === "iziswap"
-                ? SWAP_TYPE.IZUMI
-                : exchangeRate?.data?.dex === "syncswap"
-                  ? SWAP_TYPE.SYNCSWAP
-                  : exchangeRate?.data?.dex === "punkswap"
-                    ? SWAP_TYPE.PUNKSWAP
-                    : exchangeRate?.data?.dex === "kyberswap"
-                      ? SWAP_TYPE.KYBERSWAP
-                      : exchangeRate?.data?.dex === "coffeswap"
-                        ? SWAP_TYPE.COFFEESWAP
-                        : exchangeRate?.data?.dex === "papyrusswap"
-                          ? SWAP_TYPE.PAPYRUSSWAP
-                          : SWAP_TYPE.INVALID
+            ? SWAP_TYPE.SKYDROME
+            : exchangeRate?.data?.dex === "iziswap"
+            ? SWAP_TYPE.IZUMI
+            : exchangeRate?.data?.dex === "syncswap"
+            ? SWAP_TYPE.SYNCSWAP
+            : exchangeRate?.data?.dex === "punkswap"
+            ? SWAP_TYPE.PUNKSWAP
+            : exchangeRate?.data?.dex === "kyberswap"
+            ? SWAP_TYPE.KYBERSWAP
+            : exchangeRate?.data?.dex === "coffeswap"
+            ? SWAP_TYPE.COFFEESWAP
+            : exchangeRate?.data?.dex === "papyrusswap"
+            ? SWAP_TYPE.PAPYRUSSWAP
+            : SWAP_TYPE.INVALID
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
@@ -486,8 +483,7 @@ const SwapCard: React.FC<Props> = () => {
     if (chain && Tokens[chain.id]) {
       const tokens = _.values(Tokens[chain.id]);
       return [native, ...tokens];
-    }
-    else {
+    } else {
       const tokens = _.values(Tokens[534352]);
       return [native, ...tokens];
     }
@@ -557,20 +553,23 @@ const SwapCard: React.FC<Props> = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
                 {percentageButtons.map((val, index) => (
                   <div
-                    className={`${percentage === val ? "scale-125" : "scale-100"
-                      }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
+                    className={`${
+                      percentage === val ? "scale-125" : "scale-100"
+                    }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
                     <span
-                      className={` ${percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
-                        } transition-all`}
+                      className={` ${
+                        percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                      } transition-all`}
                     >
                       {val}%
                     </span>
                     <div
-                      className={`${percentage === val ? "w-full" : "w-0"
-                        } transition-all bg-[#FF7C5C]  h-1`}
+                      className={`${
+                        percentage === val ? "w-full" : "w-0"
+                      } transition-all bg-[#FF7C5C]  h-1`}
                     ></div>
                   </div>
                 ))}
@@ -677,10 +676,13 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 </div>
                 <div className="flex  text-white  justify-center text-xs gap-2 lg:text-base mt-2">
-
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
+                  ) : tokenFrom?.symbol === "PUNK" ||
+                    tokenFrom?.symbol === "WBTC" ||
+                    tokenFrom?.symbol === "Script" ? (
+                    <span className="  w-1/3 text-center"> ~$0.0000</span>
+                  ) : (
                     <span className="  w-1/3 text-center">
                       ~$
                       {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
@@ -689,28 +691,39 @@ const SwapCard: React.FC<Props> = () => {
                     </span>
                   )}
 
-
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
                   ) : (
                     <span className="text-sm lg:text-xl w-1/3 text-center">
-                      {!swapAmount || !receiveAmount || Number(swapAmount) === 0 || (tokenFrom?.symbol === "PUNK" || tokenFrom?.symbol === "WBTC" || tokenFrom?.symbol === "Script" || tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script")
+                      {!swapAmount ||
+                      !receiveAmount ||
+                      Number(swapAmount) === 0 ||
+                      tokenFrom?.symbol === "PUNK" ||
+                      tokenFrom?.symbol === "WBTC" ||
+                      tokenFrom?.symbol === "Script" ||
+                      tokenTo?.symbol === "PUNK" ||
+                      tokenTo?.symbol === "WBTC" ||
+                      tokenTo?.symbol === "Script"
                         ? 0
                         : getPercentageDifference(
-                          tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                            ? ethUSD * +swapAmount
-                            : +swapAmount,
-                          tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                            ? ethUSD * +receiveAmount
-                            : +receiveAmount
-                        ).toFixed(2)}
+                            tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
+                              ? ethUSD * +swapAmount
+                              : +swapAmount,
+                            tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
+                              ? ethUSD * +receiveAmount
+                              : +receiveAmount
+                          ).toFixed(2)}
                       %
                     </span>
                   )}
 
                   {isLoadingReceiveAmount ? (
                     <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : tokenTo?.symbol === "PUNK" || tokenTo?.symbol === "WBTC" || tokenTo?.symbol === "Script" ? <span className="  w-1/3 text-center"> ~$0.0000</span> : (
+                  ) : tokenTo?.symbol === "PUNK" ||
+                    tokenTo?.symbol === "WBTC" ||
+                    tokenTo?.symbol === "Script" ? (
+                    <span className="  w-1/3 text-center"> ~$0.0000</span>
+                  ) : (
                     <span className="w-1/3 text-center">
                       ~$
                       {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
@@ -720,8 +733,6 @@ const SwapCard: React.FC<Props> = () => {
                   )}
                 </div>
               </div>
-
-  
             </div>
             <div className="pl-3">
               <Button
@@ -742,7 +753,10 @@ const SwapCard: React.FC<Props> = () => {
       </div>
       {showFrom && (
         <TokenModal
-          onSelectToken={(token: any) => { setTokenFrom(token); fetchBalanceFrom(); }}
+          onSelectToken={(token: any) => {
+            setTokenFrom(token);
+            fetchBalanceFrom();
+          }}
           onCloseModal={() => setShowFrom(false)}
           tokenList={tokens}
         />

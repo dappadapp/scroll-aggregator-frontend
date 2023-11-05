@@ -397,9 +397,9 @@ export default function LeaderBoard() {
                   ) : (
                     <span
                       className={`text-[#fff] lg:w-32`}
-                      onClick={() => {
-                        handleJoin();
-                      }}
+                      // onClick={() => {
+                      //   handleJoin();
+                      // }}
                     >
                       Joinable
                     </span>
@@ -468,7 +468,7 @@ export default function LeaderBoard() {
                           await handleJoin();
                           await getSingleUser();
                         }}
-                        variant={user?.leaderboard?.joinable ? "primary" : "disabled"}
+                        variant={"primary"}
                       >
                         Join
                       </Button>
