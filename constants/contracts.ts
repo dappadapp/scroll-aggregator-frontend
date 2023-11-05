@@ -86,7 +86,7 @@ export const aggregator : {
 
   }, 
   [ChainId.SCROLL_MAINNET]: {
-    contract: "0xcf8bcaCb401C31774EA39296b367B9DaB4F72267",
+    contract: "0xa6b6021c7cB90873D34180B8e7bfC1bB63b66D10",
     spacefi: {
       router: "0x18b71386418A9FCa5Ae7165E31c385a5130011b6",
       poolFactory: "0x6cc370ed99f1c11e7ac439f845d0ba6aed55cf50"

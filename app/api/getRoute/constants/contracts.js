@@ -25,13 +25,13 @@ const {
 
 const contracts = {
     aggreAggregator: {
-        address: "0x55E4DE637dAB6a5A98bC643ED3918B35AA20407E",
+        address: "0xa6b6021c7cB90873D34180B8e7bfC1bB63b66D10",
         abi: aggreAggregatorAbi
     },
     children: {
         aggreChildIziSwap: {
             child: {
-                address: "0x84fF8F8B818076584b911E55E8926D6b4E4926cf",
+                address: "0x61Aa78C3194f327b34a321FdE0358c1DE3c43C52",
                 abi: aggreChildAbi
             },
             router: {
@@ -49,7 +49,7 @@ const contracts = {
         },
         aggreChildKyberSwap: {
             child: {
-                address: "0x3e9d679506F890390Cc390db8bD23b0e8406d2D8",
+                address: "0x049B33db89E6a0D89E5B8E4210dBEcCD892cD491",
                 abi: aggreChildAbi
             },
             router: {
@@ -67,7 +67,7 @@ const contracts = {
         },
         aggreChildPunkSwap: {
             child: {
-                address: "0xe66003Db59C674F9a6325BB7F91ca78d8f5057C8",
+                address: "0x207bCC253ba86ae10158c7642cE515e09Ff02F6A",
                 abi: aggreChildAbi
             },
             router: {
@@ -81,7 +81,7 @@ const contracts = {
         },
         aggreChildSkyDrome: {
             child: {
-                address: "0x9388Fd3A80ee9F217844817bD2828FD8BDCD4821",
+                address: "0xC3684ce3a900585a319d3E2fA6386b7B38307290",
                 abi: aggreChildAbi
             },
             router: {
@@ -95,7 +95,7 @@ const contracts = {
         },
         aggreChildSpaceFi: {
             child: {
-                address: "0x0d93878c96d9B39122a629047Eb8EEc722663790",
+                address: "0x3C547C4b1a43ed699aaDf5Acb949D50BD33E84D1",
                 abi: aggreChildAbi
             },
             router: {
@@ -109,7 +109,7 @@ const contracts = {
         },
         aggreChildSyncSwap: {
             child: {
-                address: "0x5F20904177292a06F00Edafc3b8a9f9DAEcfE250",
+                address: "0x8865f9022f3a8A0d9bCa407C1DC2151A19671f57",
                 abi: aggreChildAbi
             },
             router: {
@@ -123,7 +123,7 @@ const contracts = {
         },
         aggreChildCoffeeSwap: {
             child: {
-                address: "0x4c54231925c848B6f85277657EF344699EB98aE7",
+                address: "0x3F30F823c16BEb60C0b55c9CE7EaFC6Bd80694a9",
                 abi: aggreChildAbi
             },
             router: {
@@ -137,7 +137,7 @@ const contracts = {
         },
         aggreChildPapyrusSwap: {
             child: {
-                address: "0x0000000000000000000000000000000000000000",
+                address: "0xcF124FBC20d5C1841352B0460BD81cc6eAD53055",
                 abi: aggreChildAbi
             },
             router: {
@@ -151,7 +151,7 @@ const contracts = {
         },
         aggreChildSushiSwap: {
             child: {
-                address: "0x0000000000000000000000000000000000000000",
+                address: "0x8B876D9DA60D54210EfbD17a94dD3981ddD78055",
                 abi: aggreChildAbi
             },
             router: {
@@ -165,7 +165,7 @@ const contracts = {
         },
         aggreChildZebraSwap: {
             child: {
-                address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+                address: "0x64ccEB94453710a301580Ef0dabf3CF461D37cf5",
                 abi: aggreChildAbi
             },
             router: {

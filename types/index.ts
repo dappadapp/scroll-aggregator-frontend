@@ -15,16 +15,16 @@ export enum ChainId {
 }
 
 export enum SWAP_TYPE {
-  SPACEFI = 1,
-  SKYDROME = 2,
-  IZUMI = 3,
-  SYNCSWAP = 4,
-  PUNKSWAP = 5,
-  KYBERSWAP = 6,
+  IZUMI = 1,
+  KYBERSWAP = 2,
+  PUNKSWAP = 3,
+  SKYDROME = 4,
+  SPACEFI = 5,
+  SYNCSWAP = 6,
   COFFEESWAP = 7,
   PAPYRUSSWAP = 8,
   SUSHISWAP = 9,
-  
+  ZEBRASWAP = 10,
   INVALID = 0,
 }
 interface SwapTypeInfo {
@@ -68,6 +68,10 @@ export const swapTypeMapping: Record<SWAP_TYPE, SwapTypeInfo> = {
   },
   [SWAP_TYPE.SUSHISWAP]: {
     name: 'Sushiswap',
+    icon: 'https://cryptologos.cc/logos/sushiswap-sushi-logo.png?v=026',
+  },
+  [SWAP_TYPE.ZEBRASWAP]: {
+    name: 'ZebraSwap',
     icon: 'https://cryptologos.cc/logos/sushiswap-sushi-logo.png?v=026',
   },
   [SWAP_TYPE.INVALID]: {

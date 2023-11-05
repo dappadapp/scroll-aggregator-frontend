@@ -8,7 +8,7 @@ export const scrollMainnetTokens = {
   usdt: USDT[ChainId.SCROLL_MAINNET],
   punk: PUNK_TOKEN,
   wbtc: WBTC,
-  //wsETH: wsETH,
-  script: script
+  wsETH: wsETH,
+  //script: script
 
 }

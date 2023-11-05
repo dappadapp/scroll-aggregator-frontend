@@ -30,6 +30,8 @@ type Props = {
   fetchBalanceFrom: () => void;
   fetchBalanceTo: () => void;
   signer?: any;
+  fee: any;
+  swapParams?: any;
 };
 
 function SwapModal({
@@ -47,10 +49,12 @@ function SwapModal({
   fetchBalanceFrom,
   fetchBalanceTo,
   signer,
+  fee,
+  swapParams,
 }: Props) {
   const { address: account, isConnected } = useAccount();
   const contractAddr = useContract();
-  const [fee, setFee] = useState<string>("0");
+  const [feeN, setFee] = useState<string>("0");
 
   const { data: allowance, refetch } = useContractRead({
     address: (tokenA?.isToken ? tokenA.address : tokenA.wrapped.address),
@@ -59,6 +63,9 @@ function SwapModal({
     args: [account!, contractAddr!.contract],
     enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
+  console.log("slippage: ", slippage);
+
+  console.log("swapType: ", swapType);
 
   const handleRefetchs = () => {
     refetch();
@@ -74,19 +81,7 @@ function SwapModal({
     return parseUnits(amountB?.toString(), tokenB?.decimals);
   }, [amountB, tokenB]);
 
-  useEffect(() => {
-    if (isConnected) {
-      getFee();
-    }
-  }, [isConnected, account]);
 
-  const getFee = async () => {
-    const feeData = await fetchFeeData({
-      chainId: networks[0].chainId,
-      formatUnits: "ether",
-    });
-    if (feeData) setFee(feeData?.formatted?.gasPrice ?? "0");
-  };
 
   return (
     <div
@@ -157,7 +152,7 @@ function SwapModal({
             <span className="text-[#FFE7DD]">Minimum Receive</span>
             <span className="text-right text-[#FFE7DD]">
               {" "}
-              {((+amountB - (+amountB * slippage) / 100) - (+amountB * 30 / 10000))?.toFixed(7)} {tokenB?.symbol}
+              {(+amountB).toFixed(7) } {tokenB?.symbol}
             </span>
           </div>
           <div className="flex justify-between">
@@ -181,21 +176,7 @@ function SwapModal({
           />
         ) : (
           <SwapButton
-            swapParam={{
-              poolAddress: pool,
-              tokenIn: tokenA?.isToken ? tokenA?.address : tokenA.wrapped.address,
-              tokenOut: tokenB?.isToken ? tokenB?.address : tokenB.wrapped.address,
-              amountIn: bigAmountA,
-              amountOutMin: tokenA?.symbol === "Script" || tokenB?.symbol === "Script" ? 0 : bigAmountB,
-              swapType: swapType,
-              path:
-                generatePath(
-                  tokenA?.isToken ? tokenA?.address : tokenA?.wrapped.address,
-                  tokenB?.isToken ? tokenB?.address : tokenB?.wrapped.address,
-                  300
-                ).toString() || "0x0000000000000000000000000000000000000000",
-              fee: 300 || UNISWAP_DEFAULT_FEE || 0,
-            }}
+            swapParams={swapParams}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
             tokenOut={tokenB}

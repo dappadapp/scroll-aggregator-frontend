@@ -12,20 +12,21 @@ import WETHAbi from "@/constants/abis/weth.json";
 import axios from "axios";
 
 import tokens from "../../app/api/getRoute/constants/tokens";
-import {generatePath} from "../../app/api/getRoute/utils/path";
+import { generatePath } from "../../app/api/getRoute/utils/path";
 
 import contracts from "../../app/api/getRoute/constants/contracts";
 
 
-import {generateSwapParams} from "../../app/api/getRoute/core/swap";
+import { generateSwapParams } from "../../app/api/getRoute/core/swap";
 
 
 type Props = {
-  swapParam: SwapParam;
+  swapParams?: any;
   tokenIn: Currency;
   tokenOut: Currency;
   swapSuccess: () => void;
   signer?: any;
+
 };
 
 export type SwapParam = {
@@ -39,7 +40,7 @@ export type SwapParam = {
   fee: number;
 };
 
-const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess, signer }) => {
+const SwapButton: React.FC<Props> = ({ swapParams, tokenIn, tokenOut, swapSuccess, signer }) => {
   const [loading, setLoading] = useState(false);
   const [minTotalAmountOut, setMinTotalAmountOut] = useState(0);
   const [convEth, setConvEth] = useState<boolean>(true);
@@ -47,13 +48,14 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
   const { address: userWallet } = useAccount();
 
 
+  console.log("swapParams: ", swapParams);
 
   const { config } = usePrepareContractWrite({
     address: contractAddr!.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
-    args: [[swapParam], parseUnits(`${minTotalAmountOut || 0}`, 18), convEth],
-    value: tokenIn.isNative ? swapParam.amountIn : undefined,
+    args: [[swapParams]],
+    value: tokenIn.isNative ? BigInt(swapParams.amountIn) : BigInt(0),
     enabled: !!contractAddr,
   });
 
@@ -62,7 +64,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     abi: WETHAbi,
     functionName: "deposit",
     args: [],
-    value: swapParam.amountIn,
+    value: swapParams.amountIn,
     enabled: !!contractAddr && tokenIn?.symbol === "ETH" && tokenOut?.symbol === "WETH",
   });
 
@@ -70,7 +72,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     address: "0x5300000000000000000000000000000000000004",
     abi: WETHAbi,
     functionName: "withdraw",
-    args: [swapParam.amountIn],
+    args: [swapParams.amountIn],
     value: undefined,
     enabled: !!contractAddr && tokenIn?.symbol === "WETH" && tokenOut?.symbol === "ETH",
   });
@@ -84,36 +86,21 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     await axios.post("/api/create", {
       wallet: userWallet,
       txHash: hash,
-      fromTokenAddress: swapParam.tokenIn,
-      toTokenAddress: swapParam.tokenOut,
-      fromAmount: (swapParam.amountOutMin).toString(),
-      toAmount: (swapParam.amountIn).toString(),
+      fromTokenAddress: swapParams.tokenIn,
+      toTokenAddress: swapParams.tokenOut,
+      fromAmount: (swapParams.amountOutMin).toString(),
+      toAmount: (swapParams.amountIn).toString(),
       chainId: tokenIn.chainId.toString(),
-      sourceDex: swapParam.poolAddress,
-      dexType: swapParam.swapType.toString(),
+      sourceDex: swapParams.poolAddress,
+      dexType: swapParams.swapType.toString(),
     });
   };
 
   const handleSwap = async () => {
-
-    console.log("signeraaaa: ", signer?.provider);
-
-    const provider = signer;
-    const single = true;
-
-    console.log("swapParam: ", swapParam);
-
-    console.log("contracts: ", contracts.aggreAggregator.abi)
-    
-    const amountIn = "100000000000000000";
-
-    const generatedSwapParams = await generateSwapParams(contracts, provider, single, swapParam.tokenIn,  swapParam.tokenOut, amountIn, 0, 0.5);
-
-    console.log("generatedSwapParams: ", generatedSwapParams);
     if (tokenIn?.symbol === "WETH" && tokenOut?.symbol === "ETH") {
       await handleWithdraw();
-    } 
-    
+    }
+
     if (tokenIn?.symbol === "ETH" && tokenOut?.symbol === "WETH") {
       await handleDeposit();
     } else {
@@ -121,11 +108,6 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
         toast.error("Make sure you have enough GAS and you're on the correct network.");
         return;
       }
-
-  
-
-
-     
       // if (!isSuccess) {
       //   return alert("An unknown error occured. Please try again.");
       // }
@@ -170,7 +152,7 @@ const SwapButton: React.FC<Props> = ({ swapParam, tokenIn, tokenOut, swapSuccess
     }
   };
   const handleWithdraw = async () => {
- 
+
     // if (!isSuccess) {
     //   return alert("An unknown error occured. Please try again.");
     // }

@@ -12,13 +12,13 @@ interface IGlobalContextProps {
 
 export const GlobalContext = React.createContext<IGlobalContextProps>({
   setSlippage: (slippage: number) => {},
-  slippage: 0.5,
+  slippage: 0.05,
   refresh: false,
   setRefresh: (refresh: boolean) => {},
 });
 
 export const GlobalContextProvider = (props: any) => {
-  const [slippage, setSlippage] = useState(0.5);
+  const [slippage, setSlippage] = useState(0.05);
   const [refresh, setRefresh] = useState(false);
   return (
     <GlobalContext.Provider

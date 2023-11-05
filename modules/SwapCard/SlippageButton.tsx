@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useGlobalContext } from "@/contexts";
 
-const percentageButtons = [0.5, 1.0, 3.0];
+const percentageButtons = [0.01, 0.05, 0.5];
 
 export default function SlippageButton() {
   const { slippage, setSlippage } = useGlobalContext();

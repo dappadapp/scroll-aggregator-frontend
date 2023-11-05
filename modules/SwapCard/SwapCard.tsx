@@ -15,7 +15,7 @@ import { ChainId, Currency, SWAP_TYPE } from "@/types";
 import SwapModal from "./SwapModal";
 import SpaceFiPoolFactoryAbi from "@/constants/abis/spacefi.pool-factory.json";
 import { toFixedValue } from "@/utils/address";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import axios from "axios";
 import Image from "next/image";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
@@ -34,7 +34,7 @@ import TokenModal from "@/components/TokenModal";
 import RefreshButton from "./RefreshButton";
 import { useFeeData } from 'wagmi'
 import { swapTypeMapping } from "@/types";
-
+import { BigNumber as BigNumberJS } from "bignumber.js";
 
 type Props = {};
 
@@ -143,7 +143,7 @@ const SwapCard: React.FC<Props> = () => {
     Tokens[ChainId.SCROLL_MAINNET]?.usdc
   );
   const { slippage } = useGlobalContext();
-  const [percentage, setPercentage] = useState<number>(0.5);
+  const [percentage, setPercentage] = useState<number>(0.01);
   const [isChangeFrom, setChangeFrom] = useState(true);
   const [rate, setRate] = useState("0");
   const getCurrentRateTimeout = useRef<any>(null);
@@ -160,9 +160,8 @@ const SwapCard: React.FC<Props> = () => {
   const [showTo, setShowTo] = useState(false);
   const { refresh, setRefresh } = useGlobalContext();
   const [offers, setOffers] = useState<DexOffer[]>([]);
+  const [swapParams, setSwapParams] = useState<any>();
 
-
-  console.log("provider", signer?.provider);
   const {
     data: balanceFrom,
     isLoading: isLoadingBalanceFrom,
@@ -201,48 +200,21 @@ const SwapCard: React.FC<Props> = () => {
 
 
 
-
-
-  // Send a call to the getPair function using ethers.js
-  async function getPair() {
-    try {
-      const pair = await contract.functions.getPair(
-        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-        false
-      );
-      return pair;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-  const contractIzumi = new ethers.Contract(
-    contractAddr?.iziswap?.liquidityManager ||
-    "0x5300000000000000000000000000000000000004",
-    IziSwapPoolFactory,
-    signer
-  );
-  async function getPool() {
-    try {
-      const pair = await contractIzumi.pool(
-        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-        3000
-      );
-      return pair;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
   const getEthPrice = async () => {
-    if (!ethPrice) {
-      const res = await axios.get(
-        "https://api.binance.com/api/v3/avgPrice?symbol=ETHUSDT"
-      );
-      setEthPrice(res.data.price);
-    } else {
-      setEthPrice(ethPrice);
+    try {
+     
+        const response = await axios.get(
+          'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'
+        );
+  
+        const ethPriceInUSD = response?.data?.ethereum?.usd;
+        if (ethPriceInUSD) {
+        setEthPrice(ethPriceInUSD);
+      } else {
+        setEthPrice(ethPrice);
+      }
+    } catch (error) {
+      console.error('Error fetching ETH price:', error);
     }
   };
 
@@ -252,87 +224,12 @@ const SwapCard: React.FC<Props> = () => {
     getEthPrice();
   }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
 
-  const { data: poolAddress, refetch } = useContractRead(
-    dexType === SWAP_TYPE.SYNCSWAP
-      ? {
-        address: contractAddr?.syncswap?.poolFactory,
-        abi: SnycSwapPoolFactory,
-        functionName: "getPool",
-        args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-      }
-      : dexType === SWAP_TYPE.SPACEFI
-        ? {
-          address: contractAddr?.spacefi?.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-        : dexType === SWAP_TYPE.SKYDROME
-          ? {
-            address: contractAddr?.skydrome?.poolFactory,
-            abi: SkydromePoolFactory,
-            functionName: "getPair",
-            args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address, false],
-            enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-          }
-          : dexType === SWAP_TYPE.IZUMI
-            ? {
-              address: contractAddr?.iziswap?.liquidityManager,
-              abi: IziSwapPoolFactory,
-              functionName: "pool",
-              args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address, 3000],
-            }
-            : dexType === SWAP_TYPE.PUNKSWAP
-              ? {
-                address: contractAddr?.punkswap?.poolFactory,
-                abi: PunkSwapPoolFactory,
-                functionName: "getPair",
-                args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-              }
-              : dexType === SWAP_TYPE.KYBERSWAP
-                ? {
-                  address: contractAddr?.kyberswap?.poolFactory,
-                  abi: KyberSwapFactory,
-                  functionName: "getPool",
-                  args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address, 100],
-                }
-                : dexType === SWAP_TYPE.COFFEESWAP
-                  ? {
-                    address: contractAddr?.coffeswap?.poolFactory,
-                    abi: SpaceFiPoolFactoryAbi,
-                    functionName: "getPair",
-                    args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-                    enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-                  }
-                  : dexType === SWAP_TYPE.PAPYRUSSWAP
-                    ? {
-                      address: contractAddr?.papyrusswap?.poolFactory,
-                      abi: SpaceFiPoolFactoryAbi,
-                      functionName: "getPair",
-                      args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-                      enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-                    }
-                    :
-                    dexType === SWAP_TYPE.SUSHISWAP
-                      ? {
-                        address: contractAddr?.sushiswap?.poolFactory,
-                        abi: SpaceFiPoolFactoryAbi,
-                        functionName: "getPair",
-                        args: [tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address, tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address],
-                        enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-                      }
-
-
-                      :
-                      {}
-  );
 
 
   useEffect(() => {
     fetchBalanceFrom();
     fetchBalanceTo();
-    refetch();
+    
   }, [
     chain,
     address,
@@ -361,10 +258,10 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       getCurrentRate();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenFrom, tokenTo, refresh]);
 
   const handleINChange = async (e: any) => {
-    refetch();
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -389,7 +286,7 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  console.log("signer", signer);
+  
   const getCurrentRate = async () => {
     clearTimeout(getCurrentRateTimeout.current!);
     getCurrentRateTimeout.current = setTimeout(async () => {
@@ -397,92 +294,88 @@ const SwapCard: React.FC<Props> = () => {
       else {
         setIsLoadingReceiveAmount(true);
 
-        const exchangeRate = await axios.post("/api/exchange", {
-          amount: swapAmount.toString(),
-          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-          fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
-          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-          toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
-          type: "IN",
+
+
+        const tokenIn = {
+          symbol: tokenFrom?.symbol,
+          address: tokenFrom?.isNative ? tokenFrom?.wrapped?.address : tokenFrom?.address,
+          decimals: tokenFrom?.decimals,
+        };
+
+        const tokenOut = {
+          symbol: tokenTo?.symbol,
+          address: tokenTo?.isNative ? tokenTo?.wrapped?.address : tokenTo?.address,
+          decimals: tokenTo?.decimals,
+        };
+
+        console.log("tokenFrom", tokenIn);
+        console.log("tokenTo", tokenOut);
+        
+        console.log("token swapAmount", swapAmount);
+
+        const swapIn = ethers.utils.parseUnits(Number(swapAmount).toFixed(6),  tokenFrom?.decimals).toString();
+
+        console.log("ethers",swapIn);
+     
+        const exchangeRate = await axios.post("/api/getSwapParams", {
+          amountIn: swapIn,
+          single: true,
+          fee: 0,
+          slippage: slippage,
+          tokenIn: tokenIn,
+          tokenOut: tokenOut,
         });
 
-       
-        const exchangeRate2 = await axios.post("/api/getRoute", {
-          amount: swapAmount.toString(),
-          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-          fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
-          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-          toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
-          type: "IN",
-          sign: signer,
-        });
-
-        setOffers(exchangeRate.data);
         console.log("exchangeRate", exchangeRate);
+        setPairAddress(exchangeRate?.data?.poolAddress);
+        setFee(exchangeRate?.data?.fee);
 
-        switch (exchangeRate?.data[0]?.dex) {
-          case "space-fi":
-            setDexType(SWAP_TYPE.SPACEFI);
-            break;
-          case "skydrome":
-            setDexType(SWAP_TYPE.SKYDROME);
-            break;
-          case "iziswap":
+        setSwapParams(exchangeRate?.data);
+
+        switch (exchangeRate?.data?.swapType) {
+          case 1:
             setDexType(SWAP_TYPE.IZUMI);
             break;
-          case "syncswap":
-            setDexType(SWAP_TYPE.SYNCSWAP);
-            break;
-          case "punkswap":
-            setDexType(SWAP_TYPE.PUNKSWAP);
-            break;
-          case "kyberswap":
+          case 2:
             setDexType(SWAP_TYPE.KYBERSWAP);
             break;
-          case "coffeswap":
+          case 3:
+            setDexType(SWAP_TYPE.PUNKSWAP);
+            break;
+          case 4:
+            setDexType(SWAP_TYPE.SKYDROME);
+            break;
+          case 5:
+            setDexType(SWAP_TYPE.SPACEFI);
+            break;
+          case 6:
+            setDexType(SWAP_TYPE.SYNCSWAP);
+            break;
+          case 7:
             setDexType(SWAP_TYPE.COFFEESWAP);
             break;
-          case "papyrusswap":
+          case 8:
             setDexType(SWAP_TYPE.PAPYRUSSWAP);
             break;
-          default:
-            setDexType(SWAP_TYPE.INVALID);
+          case 9:
+            setDexType(SWAP_TYPE.SUSHISWAP);
+            break;
+          case 10:
+            setDexType(SWAP_TYPE.ZEBRASWAP);
+            break;
+
         }
         setReceiveAmount(
           (
-            ethers.utils.formatUnits(exchangeRate?.data[0]?.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
+            ethers.utils.formatUnits(exchangeRate?.data?.amountOutMin, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
           )
             .toString()
         );
         setRate(
-          ethers.utils.formatUnits(exchangeRate?.data[0]?.amount, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
+          ethers.utils.formatUnits(exchangeRate?.data?.amountOutMin, tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals)
         );
         setIsLoadingReceiveAmount(false);
 
-        if (exchangeRate?.data?.dex === "skydrome") {
-          const pool = await getPair();
-
-          if (pool) setPairAddress(pool[0]);
-        } else if (exchangeRate?.data?.dex === "iziswap") {
-          const pool = await getPool();
-
-          if (pool) setPairAddress(pool?.toString());
-        } else if (exchangeRate?.data?.dex === "syncswap") {
-
-          if (
-            (tokenFrom.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address ===
-              "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" &&
-              tokenTo.isToken ? tokenTo?.address : tokenTo?.wrapped?.address ===
-            "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
-            (tokenFrom.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address ===
-              "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" &&
-              tokenTo.isToken ? tokenTo?.address : tokenTo?.wrapped?.address === "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
-          ) {
-            setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1");
-          }
-        } else {
-          if (poolAddress) setPairAddress(poolAddress?.toString());
-        }
       }
     }, 200);
   };
@@ -497,10 +390,7 @@ const SwapCard: React.FC<Props> = () => {
     getCurrentRate();
   }, [swapAmount, tokenFrom, tokenTo]);
 
-  useEffect(() => {
-    if (isChangeFrom) return;
-    getTokenRate();
-  }, [receiveAmount, tokenFrom, tokenTo]);
+
 
   const getTokenRate = async () => {
     clearTimeout(getTokenRateTimeout.current!);
@@ -603,11 +493,6 @@ const SwapCard: React.FC<Props> = () => {
     }
     return [];
   }, [chain, native]);
-
-  console.log("dexType", dexType);
-
-
-
 
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
@@ -891,6 +776,8 @@ const SwapCard: React.FC<Props> = () => {
           fetchBalanceFrom={fetchBalanceFrom}
           fetchBalanceTo={fetchBalanceTo}
           signer={signer}
+          fee={fee}
+          swapParams={swapParams}
         />
       ) : null}
     </div>

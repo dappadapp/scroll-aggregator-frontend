@@ -179,7 +179,7 @@ export const PUNK_TOKEN = new ERC20Token(
 
   export const wsETH = new ERC20Token(
     ChainId.SCROLL_MAINNET,
-    "0xf610a9dfb7c89644979b4a0f27063e9e7d7cda32",
+    "0xf610a9dfb7c89644979b4a0f27063e9e7d7Cda32",
     18,
     "wsETH",
     "Wrapped stETH",
