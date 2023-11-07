@@ -63,9 +63,7 @@ function SwapModal({
     args: [account!, contractAddr!.contract],
     enabled: !!contractAddr && !!account && tokenA?.isToken,
   });
-  console.log("slippage: ", slippage);
 
-  console.log("swapType: ", swapType);
 
   const handleRefetchs = () => {
     refetch();

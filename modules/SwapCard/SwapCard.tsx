@@ -189,16 +189,7 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-  // Instantiate the contract
-  const contract = new ethers.Contract(
-    contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004",
-    SkydromePoolFactory,
-    signer
-  );
-
-
-
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getEthPrice = async () => {
     try {
      
@@ -219,32 +210,13 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     getEthPrice();
-  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
-
-
+  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress, getEthPrice]);
 
   useEffect(() => {
     fetchBalanceFrom();
     fetchBalanceTo();
     
-  }, [
-    chain,
-    address,
-    tokenFrom,
-    tokenTo,
-    isConnected,
-    contractAddr,
-    dexType,
-    slippage,
-    isChangeFrom,
-    rate,
-    swapAmount,
-    receiveAmount,
-    balanceFrom,
-    balanceTo,
-    showFrom,
-    showTo,
-  ]);
+  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress, refresh, fetchBalanceFrom, fetchBalanceTo]);
 
   useEffect(() => {
     if (
@@ -289,10 +261,8 @@ const SwapCard: React.FC<Props> = () => {
     getCurrentRateTimeout.current = setTimeout(async () => {
       if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
       else {
+
         setIsLoadingReceiveAmount(true);
-
-
-
         const tokenIn = {
           symbol: tokenFrom?.symbol,
           address: tokenFrom?.isNative ? tokenFrom?.wrapped?.address : tokenFrom?.address,
@@ -305,14 +275,7 @@ const SwapCard: React.FC<Props> = () => {
           decimals: tokenTo?.decimals,
         };
 
-        console.log("tokenFrom", tokenIn);
-        console.log("tokenTo", tokenOut);
-        
-        console.log("token swapAmount", swapAmount);
-
         const swapIn = ethers.utils.parseUnits(Number(swapAmount).toFixed(6),  tokenFrom?.decimals).toString();
-
-        console.log("ethers",swapIn);
      
         const exchangeRate = await axios.post("/api/getSwapParams", {
           amountIn: swapIn,
@@ -323,7 +286,6 @@ const SwapCard: React.FC<Props> = () => {
           tokenOut: tokenOut,
         });
 
-        console.log("exchangeRate", exchangeRate);
         setPairAddress(exchangeRate?.data?.poolAddress);
         setFee(exchangeRate?.data?.fee);
 
