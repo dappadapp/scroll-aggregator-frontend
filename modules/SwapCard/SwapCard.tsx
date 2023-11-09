@@ -191,27 +191,12 @@ const SwapCard: React.FC<Props> = () => {
 
 
   const getEthPrice = async () => {
-    try {
-     
-        const response = await axios.post(
-          '/api/getEthPrice'
-        );
-
-        const ethPriceInUSD = response?.data?.ethereum?.usd;
-        if (ethPriceInUSD) {
-        setEthPrice(ethPriceInUSD);
-      } else {
-        setEthPrice(ethPrice);
-      }
-    } catch (error) {
-      setEthPrice(ethPrice);
-      console.error('Error fetching ETH price:', error);
-    }
+    setEthPrice(ethPrice);
   };
 
   useEffect(() => {
     getEthPrice();
-  }, [tokenFrom, tokenTo]);
+  }, [tokenFrom, tokenTo,swapAmount,receiveAmount]);
 
   useEffect(() => {
     fetchBalanceFrom();

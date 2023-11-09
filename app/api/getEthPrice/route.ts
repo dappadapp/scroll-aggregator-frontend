@@ -11,7 +11,7 @@ export async function POST() {
       `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
       {headers: headers}
     );
-    console.log("statusDataResponse", statusDataResponse);
+   
     return NextResponse.json(statusDataResponse.data);
   } catch (e) {
     console.log("error", e);

@@ -3,12 +3,14 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const data = await request.json();
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": process.env.NEXT_PUBLIC_AGGRE_API_KEY,
-  };
+
 
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.NEXT_PUBLIC_AGGRE_API_KEY,
+      "Access-Control-Allow-Origin": "*",
+    };
     const statusDataResponse = await axios.post(
       `${process.env.NEXT_PUBLIC_AGGRE_API_URL}/swap`,
       {
@@ -24,6 +26,7 @@ export async function POST(request: Request) {
       }
     );
   
+    console.log("statusDataResponse", statusDataResponse);
     // Handle the response here if needed
     return NextResponse.json(statusDataResponse.data);
   
