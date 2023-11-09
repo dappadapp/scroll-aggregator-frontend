@@ -47,9 +47,6 @@ const SwapButton: React.FC<Props> = ({ swapParams, tokenIn, tokenOut, swapSucces
   const contractAddr = useContract();
   const { address: userWallet } = useAccount();
 
-
-  console.log("swapParams: ", swapParams);
-
   const { config } = usePrepareContractWrite({
     address: contractAddr!.contract,
     abi: AggregatorAbi,
@@ -127,7 +124,6 @@ const SwapButton: React.FC<Props> = ({ swapParams, tokenIn, tokenOut, swapSucces
       }
     }
   };
-
   const handleDeposit = async () => {
 
     // if (!isSuccess) {
