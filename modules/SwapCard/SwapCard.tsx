@@ -193,10 +193,10 @@ const SwapCard: React.FC<Props> = () => {
   const getEthPrice = async () => {
     try {
      
-        const response = await axios.get(
-          'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'
+        const response = await axios.post(
+          '/api/getEthPrice'
         );
-  
+
         const ethPriceInUSD = response?.data?.ethereum?.usd;
         if (ethPriceInUSD) {
         setEthPrice(ethPriceInUSD);
@@ -204,6 +204,7 @@ const SwapCard: React.FC<Props> = () => {
         setEthPrice(ethPrice);
       }
     } catch (error) {
+      setEthPrice(ethPrice);
       console.error('Error fetching ETH price:', error);
     }
   };

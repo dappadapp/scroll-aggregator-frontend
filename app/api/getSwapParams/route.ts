@@ -31,6 +31,5 @@ export async function POST(request: Request) {
     // Handle the error here
     console.error("Error during swap request:", error);
   }
-
  
 }
