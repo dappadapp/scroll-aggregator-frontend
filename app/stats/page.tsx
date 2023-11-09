@@ -19,7 +19,7 @@ function Page() {
     getStatsData().finally(() => setLoading(false));
   }, []);
   const getStatsData = async () => {
-    const response = await axios.get("/api/stats");
+    const response = await axios.post("/api/stats");
     setStatsData(response.data);
   };
   const timestampToDate = (timestamp: number) => {

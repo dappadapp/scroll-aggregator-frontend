@@ -1,10 +1,11 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST() {
   const headers = {
     "Content-Type": "application/json",
     "x-api-key": process.env.NEXT_PUBLIC_NEW_API_KEY,
+    "Access-Control-Allow-Origin": "*"
   };
 
   const statsDataResponse = await axios.get(
