@@ -210,7 +210,7 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     getEthPrice();
-  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress, getEthPrice]);
+  }, [tokenFrom, tokenTo]);
 
   useEffect(() => {
     fetchBalanceFrom();
