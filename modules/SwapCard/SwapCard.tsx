@@ -189,7 +189,7 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const getEthPrice = async () => {
     try {
      
@@ -228,7 +228,7 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       getCurrentRate();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [tokenFrom, tokenTo, refresh]);
 
   const handleINChange = async (e: any) => {

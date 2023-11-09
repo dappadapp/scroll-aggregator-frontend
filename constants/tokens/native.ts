@@ -39,7 +39,7 @@ export class Native extends NativeCurrency {
     }
    
     const { decimals, name, symbol, logo } = NATIVE[chainId as keyof typeof WNATIVE]
-    // eslint-disable-next-line no-return-assign
+
     return (this.cache[chainId] = new Native({ chainId, decimals, symbol, name, logo }))
   }
 
