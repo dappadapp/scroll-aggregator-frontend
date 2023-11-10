@@ -187,7 +187,7 @@ export async function POST(request: Request) {
       id: "kyberswap",
       router: "0x4d47fd5a29904Dae0Ef51b1c450C9750F15D7856",
       abi: KyberSwapQuteAbi, // Replace with the actual ABI
-      fee: 300,
+      fee: 250,
       inFunction: "quoteExactInputSingle",
       outFunction: "quoteExactOutputSingle",
       async runOutFunction(amount: any, from: any, to: any, fromDecimals: any, toDecimals: any) {

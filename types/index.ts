@@ -2,6 +2,8 @@ import { mainnet, goerli, bsc, bscTestnet, scrollSepolia, scrollTestnet, zkSync,
 
 export * from './token'
 
+import Skydrome from '@/assets/images/skydrome.png';
+
 export enum ChainId {
   ETHEREUM = mainnet.id,
   GOERLI = goerli.id,
@@ -40,7 +42,7 @@ export const swapTypeMapping: Record<SWAP_TYPE, SwapTypeInfo> = {
   },
   [SWAP_TYPE.SKYDROME]: {
     name: 'Skydrome',
-    icon: 'https://skydrome.finance/assets/Logos/PNG/Logo.png',
+    icon: "/skydrome.png",
   },
   [SWAP_TYPE.IZUMI]: {
     name: 'Izumi',

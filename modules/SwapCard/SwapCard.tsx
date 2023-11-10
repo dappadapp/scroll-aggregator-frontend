@@ -425,7 +425,7 @@ const SwapCard: React.FC<Props> = () => {
         setOffers(exchangeRate.data);
         console.log("exchangeRate", exchangeRate);
 
-        switch (exchangeRate?.data[0]?.dex) {
+        switch (exchangeRate?.data[2]?.dex) {
           case "space-fi":
             setDexType(SWAP_TYPE.SPACEFI);
             break;
