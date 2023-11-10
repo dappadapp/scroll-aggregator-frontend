@@ -124,12 +124,6 @@ export const DexOffers: React.FC<DexOffersProps> = ({ offers, tokenTo }) => {
       ))}
     </div>
   );
-
-
-
-
-
-
 };
 
 const SwapCard: React.FC<Props> = () => {
@@ -481,8 +475,7 @@ const SwapCard: React.FC<Props> = () => {
 
           if (pool) setPairAddress(pool?.toString());
         } else if (exchangeRate?.data[0]?.dex === "syncswap") {
-
-          console.log("poolAddress", tokenFrom,tokenTo);
+          console.log("poolAddress", tokenFrom, tokenTo);
           if (
             (tokenFrom.isToken
               ? tokenFrom?.address
@@ -539,22 +532,22 @@ const SwapCard: React.FC<Props> = () => {
           exchangeRate?.data?.dex === "space-fi"
             ? SWAP_TYPE.SPACEFI
             : exchangeRate?.data?.dex === "skydrome"
-              ? SWAP_TYPE.SKYDROME
-              : exchangeRate?.data?.dex === "iziswap"
-                ? SWAP_TYPE.IZUMI
-                : exchangeRate?.data?.dex === "syncswap"
-                  ? SWAP_TYPE.SYNCSWAP
-                  : exchangeRate?.data?.dex === "punkswap"
-                    ? SWAP_TYPE.PUNKSWAP
-                    : exchangeRate?.data?.dex === "kyberswap"
-                      ? SWAP_TYPE.KYBERSWAP
-                      : exchangeRate?.data?.dex === "coffeswap"
-                        ? SWAP_TYPE.COFFEESWAP
-                        : exchangeRate?.data?.dex === "papyrusswap"
-                          ? SWAP_TYPE.PAPYRUSSWAP
-                          : exchangeRate?.data?.dex === "sushiswap"
-                            ? SWAP_TYPE.SUSHISWAP
-                          : SWAP_TYPE.INVALID
+            ? SWAP_TYPE.SKYDROME
+            : exchangeRate?.data?.dex === "iziswap"
+            ? SWAP_TYPE.IZUMI
+            : exchangeRate?.data?.dex === "syncswap"
+            ? SWAP_TYPE.SYNCSWAP
+            : exchangeRate?.data?.dex === "punkswap"
+            ? SWAP_TYPE.PUNKSWAP
+            : exchangeRate?.data?.dex === "kyberswap"
+            ? SWAP_TYPE.KYBERSWAP
+            : exchangeRate?.data?.dex === "coffeswap"
+            ? SWAP_TYPE.COFFEESWAP
+            : exchangeRate?.data?.dex === "papyrusswap"
+            ? SWAP_TYPE.PAPYRUSSWAP
+            : exchangeRate?.data?.dex === "sushiswap"
+            ? SWAP_TYPE.SUSHISWAP
+            : SWAP_TYPE.INVALID
         );
         setSwapAmount(
           ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
@@ -627,9 +620,6 @@ const SwapCard: React.FC<Props> = () => {
   }, [chain, native]);
 
   console.log("dexType", dexType);
-
-
-
 
   return (
     <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
@@ -771,111 +761,122 @@ const SwapCard: React.FC<Props> = () => {
                 </span>*/}
               </div>
 
-              <div className="flex flex-col justify-between p-5 bg-[#121419] bg-opacity-30 rounded-xl my-4 ml-3">
-                <div className="flex items-center text-[#EBC28E] text-xs lg:text-base font-semibold font-leagueSpartan justify-between">
-                  <div className="flex items-center w-1/3 justify-center">
-                    <img
-                      src={`${tokenFrom?.logo}`}
-                      className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
-                    />
-                    <span className="ml-2">{(+swapAmount).toFixed(4) || 0}</span>
-                  </div>
-                  <div className="flex items-center w-1/3 justify-center">
-                    <svg
-                      width="30"
-                      height="30"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M22 12C22 17.5228 17.5228 22 12 22M2 12C2 6.47715 6.47715 2 12 2"
-                        stroke="#EBC28E"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                      <path
-                        d="M12 12V17M12 7V8"
-                        stroke="#FFF0DD"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex items-center w-1/3 justify-center">
-                    <img
-                      src={`${tokenTo?.logo}`}
-                      className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
-                    />
-                    {isLoadingReceiveAmount ? (
-                      <div className="w-1/3 rounded-lg ml-2 bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                    ) : (
-                      <span className="ml-2">{(+receiveAmount).toFixed(4) || 0}</span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex  text-white  justify-center text-xs gap-2 lg:text-base mt-2">
-                  {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : tokenFrom?.symbol === "PUNK" ||
-                    tokenFrom?.symbol === "WBTC" ||
-                    tokenFrom?.symbol === "Script" ? (
-                    <span className="  w-1/3 text-center"> ~$0.0000</span>
-                  ) : (
-                    <span className="  w-1/3 text-center">
-                      ~$
-                      {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                        ? (ethUSD * +swapAmount).toFixed(4)
-                        : (+swapAmount).toFixed(4)}
-                    </span>
-                  )}
+              <div
+                className={`flex flex-col justify-between p-5 bg-[#121419] bg-opacity-30 rounded-xl my-4 ml-3 ${
+                  isLoadingReceiveAmount && "animate-pulse items-center"
+                }`}
+              >
+                {isLoadingReceiveAmount ? (
+                  <span className="text-[#EBC28E] animate-pulse self-center">
+                    Getting best price...
+                  </span>
+                ) : (
+                  <>
+                    <div className="flex items-center text-[#EBC28E] text-xs lg:text-base font-semibold font-leagueSpartan justify-between">
+                      <div className="flex items-center w-1/3 justify-center">
+                        <img
+                          src={`${tokenFrom?.logo}`}
+                          className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
+                        />
+                        <span className="ml-2">{(+swapAmount).toFixed(4) || 0}</span>
+                      </div>
+                      <div className="flex items-center w-1/3 justify-center">
+                        <svg
+                          width="30"
+                          height="30"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M22 12C22 17.5228 17.5228 22 12 22M2 12C2 6.47715 6.47715 2 12 2"
+                            stroke="#EBC28E"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M12 12V17M12 7V8"
+                            stroke="#FFF0DD"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex items-center w-1/3 justify-center">
+                        <img
+                          src={`${tokenTo?.logo}`}
+                          className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
+                        />
+                        {isLoadingReceiveAmount ? (
+                          <div className="w-1/3 rounded-lg ml-2 bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                        ) : (
+                          <span className="ml-2">{(+receiveAmount).toFixed(4) || 0}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex  text-white  justify-center text-xs gap-2 lg:text-base mt-2">
+                      {isLoadingReceiveAmount ? (
+                        <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                      ) : tokenFrom?.symbol === "PUNK" ||
+                        tokenFrom?.symbol === "WBTC" ||
+                        tokenFrom?.symbol === "Script" ? (
+                        <span className="  w-1/3 text-center"> ~$0.0000</span>
+                      ) : (
+                        <span className="  w-1/3 text-center">
+                          ~$
+                          {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
+                            ? (ethUSD * +swapAmount).toFixed(4)
+                            : (+swapAmount).toFixed(4)}
+                        </span>
+                      )}
 
-                  {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : (
-                    <span className="text-sm lg:text-xl w-1/3 text-center">
-                      {!swapAmount ||
-                      !receiveAmount ||
-                      Number(swapAmount) === 0 ||
-                      tokenFrom?.symbol === "PUNK" ||
-                      tokenFrom?.symbol === "WBTC" ||
-                      tokenFrom?.symbol === "Script" ||
-                      tokenTo?.symbol === "PUNK" ||
-                      tokenTo?.symbol === "WBTC" ||
-                      tokenTo?.symbol === "Script"
-                        ? 0
-                        : getPercentageDifference(
-                            tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                              ? ethUSD * +swapAmount
-                              : +swapAmount,
-                            tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                              ? ethUSD * +receiveAmount
-                              : +receiveAmount
-                          ).toFixed(2)}
-                      %
-                    </span>
-                  )}
+                      {isLoadingReceiveAmount ? (
+                        <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                      ) : (
+                        <span className="text-sm lg:text-xl w-1/3 text-center">
+                          {!swapAmount ||
+                          !receiveAmount ||
+                          Number(swapAmount) === 0 ||
+                          tokenFrom?.symbol === "PUNK" ||
+                          tokenFrom?.symbol === "WBTC" ||
+                          tokenFrom?.symbol === "Script" ||
+                          tokenTo?.symbol === "PUNK" ||
+                          tokenTo?.symbol === "WBTC" ||
+                          tokenTo?.symbol === "Script"
+                            ? 0
+                            : getPercentageDifference(
+                                tokenFrom?.symbol === "ETH" ||
+                                  tokenFrom?.symbol === "WETH"
+                                  ? ethUSD * +swapAmount
+                                  : +swapAmount,
+                                tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
+                                  ? ethUSD * +receiveAmount
+                                  : +receiveAmount
+                              ).toFixed(2)}
+                          %
+                        </span>
+                      )}
 
-                  {isLoadingReceiveAmount ? (
-                    <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                  ) : tokenTo?.symbol === "PUNK" ||
-                    tokenTo?.symbol === "WBTC" ||
-                    tokenTo?.symbol === "Script" ? (
-                    <span className="  w-1/3 text-center"> ~$0.0000</span>
-                  ) : (
-                    <span className="w-1/3 text-center">
-                      ~$
-                      {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                        ? (ethUSD * +receiveAmount).toFixed(4)
-                        : (+receiveAmount).toFixed(4)}
-                    </span>
-                  )}
-                </div>
+                      {isLoadingReceiveAmount ? (
+                        <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
+                      ) : tokenTo?.symbol === "PUNK" ||
+                        tokenTo?.symbol === "WBTC" ||
+                        tokenTo?.symbol === "Script" ? (
+                        <span className="  w-1/3 text-center"> ~$0.0000</span>
+                      ) : (
+                        <span className="w-1/3 text-center">
+                          ~$
+                          {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
+                            ? (ethUSD * +receiveAmount).toFixed(4)
+                            : (+receiveAmount).toFixed(4)}
+                        </span>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
-
-
             </div>
             <div className="pl-3">
               <Button
