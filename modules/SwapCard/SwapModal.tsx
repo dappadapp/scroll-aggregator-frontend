@@ -168,7 +168,7 @@ function SwapModal({
         {!tokenA.isNative && (!allowance || allowance < bigAmountA) ? (
           <AllowButton
             tokenIn={tokenA}
-            amountIn={bigAmountA}
+            amountIn={bigAmountA + BigInt("100000")}
             onSuccess={handleRefetchs}
           />
         ) : (

@@ -24,6 +24,9 @@ const config: Config = {
         inter: "var(--font-spartan)",
       },
       display: ["group-hover"],
+      animation: {
+        "spin-slow": "spin 2s linear infinite",
+      },
     },
   },
   plugins: [],
