@@ -34,7 +34,12 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
     );
   };
   useEffect(() => {
-    let fav_tokens = JSON.parse(localStorage.getItem("fav_tokens")!) || [];
+    let fav_tokens = JSON.parse(localStorage.getItem("fav_tokens")!) || [
+      "ETH",
+      "WETH",
+      "USDC",
+      "USDT",
+    ];
     setFavTokens(fav_tokens);
   }, []);
 
@@ -100,7 +105,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
     >
       <div
         className={
-          "z-[9999] py-14 px-10 w-[30vw] min-w-[400px] md:min-w-[570px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
+          "z-[9999] pt-14 pb-2 px-10 w-[30vw] min-w-[400px] md:min-w-[520px] bg-[rgba(26,29,36,0.80)]  backdrop-blur-[52px] rounded-[48px] border-opacity-10"
         }
       >
         <div className="flex justify-between mb-1 text-white">
@@ -120,7 +125,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
               handleFilter(e.target.value);
               setSearch(e.target.value);
             }}
-            className="w-full px-3 py-2 text-sm lg:text-base lg:py-3 text-gray-100 rounded-3xl placeholder:text-sm placeholder:lg:text-base bg-[rgba(26,29,36,0.50)] focus:ring-1 focus:ring-[#FFF0DD] focus:outline-none"
+            className="w-full px-3 py-2 text-sm lg:text-lg font-bold  lg:py-3 text-gray-100 rounded-3xl placeholder:text-md placeholder:lg:text-base bg-[rgba(26,29,36,0.50)] focus:ring-1 focus:ring-[#FFF0DD] focus:outline-none"
             placeholder="Search by token name or token symbol"
           />
           <FontAwesomeIcon
@@ -131,7 +136,10 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
 
         <div className="grid grid-cols-3 mb-4 lg:grid-cols-4 gap-2 mt-2 p-2">
           {favTokens.map((favToken) => (
-            <div key={favToken} className="relative group w-full text-sm text-white">
+            <div
+              key={favToken}
+              className="relative group w-full text-sm lg:text-base font-bold  text-white"
+            >
               <div
                 onClick={() => {
                   onSelectToken(tokens.find((tokenX) => tokenX.symbol === favToken));
@@ -140,10 +148,12 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
                 className="flex gap-2 bg hover:bg-[rgba(26,29,36,0.90)] p-2 items-center rounded-xl border border-[#FFF0DD]/50 transition-all cursor-pointer"
               >
                 <CurrencyLogo
-                  size={4}
+                  size={6}
                   currency={tokens.find((tokenX) => tokenX.symbol === favToken)}
                 />
-                <span>{tokens.find((tokenX) => tokenX.symbol === favToken)?.symbol}</span>
+                <span className="mt-[4px]">
+                  {tokens.find((tokenX) => tokenX.symbol === favToken)?.symbol}
+                </span>
               </div>
               <div
                 onClick={(e) => {
@@ -157,7 +167,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
             </div>
           ))}
         </div>
-        <div className="max-h-[400px] pt-4 overflow-y-auto gap-4 px-2  flex flex-col mb-4">
+        <div className="max-h-[400px] pt-4 overflow-y-scroll gap-4 px-2 border-t-2 border-t-[#FFF0DD]/70 no-scrollbar flex flex-col mb-4">
           {(search.length ? filteredToken : tokens)
             ?.sort((a: any, b: any) => {
               if (a?.balance > b?.balance) return -1;
@@ -173,20 +183,24 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
                 className="hover:bg-[rgba(26,29,36,0.40)] gap-2 rounded-lg text-[#FFF0DD] cursor-pointer p-2 flex items-center justify-between"
               >
                 <div className="flex gap-5 items-center">
-                  <CurrencyLogo currency={tokenX} />
+                  <CurrencyLogo size={8} currency={tokenX} />
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm">{tokenX.symbol}</span>
-                    <span className="text-opacity-40 text-xs">{tokenX.name}</span>
+                    <span className="text-sm lg:text-lg font-bold ">{tokenX.symbol}</span>
+                    <span className="text-opacity-40 lg:text-sm text-xs">
+                      {tokenX.name}
+                    </span>
                   </div>
                 </div>
                 {loading ? (
-                  <div className="flex justify-end flex-1 items-center text-sm text-black-500 ">
+                  <div className="flex justify-end flex-1 items-center text-sm lg:text-lg font-bold  text-black-500 ">
                     <Loading />
                   </div>
                 ) : (
-                  <div className="flex-1 flex justify-end truncate text-sm">
+                  <div className="flex-1 flex justify-end truncate text-sm lg:text-lg font-bold ">
                     {tokenX.symbol === "ETH"
-                      ? Number(data?.formatted).toFixed(4)
+                      ? Number(data?.formatted).toFixed(4) === "NaN"
+                        ? 0
+                        : Number(data?.formatted).toFixed(4)
                       : tokenX?.balance?.toFixed(4) || 0}
                   </div>
                 )}

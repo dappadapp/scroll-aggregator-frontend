@@ -41,11 +41,11 @@ const menuItems = [
     href: "/dao",
     active: false,
   },
- // {
- //   title: "Earn",
- //   href: "/dao",
- //   active: false,
- // },
+  // {
+  //   title: "Earn",
+  //   href: "/dao",
+  //   active: false,
+  // },
   // {
   //   title: "Buy Crypto",
   //   href: "/",
@@ -121,7 +121,7 @@ const Navbar: React.FC<Props> = (props) => {
       </div>
 
       {/* Mobile */}
-      <div className="flex lg:hidden  items-center text-[#FFF0DD]/90 self-center z-50">
+      <div className="flex lg:hidden  items-center text-[#FFF0DD]/90 self-center z-10">
         <FaBars className="w-8 h-8" onClick={() => setMenuOpen((prev) => !prev)} />
       </div>
       <div
