@@ -135,8 +135,7 @@ function SwapModal({
                 />
               </div>
               <p className="inline-block mt-1 text-[#FFE7DD]">
-                <span className="text-4xl">{swapTypeMapping[swapType]?.name[0]}</span>
-                {swapTypeMapping[swapType]?.name.slice(1)}
+                {swapTypeMapping[swapType]?.name}
               </p>
             </div>
           </span>
@@ -199,7 +198,8 @@ function SwapModal({
                   tokenB?.isToken ? tokenB?.address : tokenB?.wrapped.address,
                   300
                 ).toString() || "0x0000000000000000000000000000000000000000",
-              fee:swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || UNISWAP_DEFAULT_FEE || 0,
+              fee:
+                swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}
