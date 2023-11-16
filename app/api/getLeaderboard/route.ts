@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   };
 
   const statusDataResponse = await axios.get(
-    `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/leaderboard?amount=${data?.pagination}&page=${data?.page}`,
+    `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/leaderboard/${data?.phase}?amount=${data?.pagination}&page=${data?.page}`,
     {
       headers,
     }
