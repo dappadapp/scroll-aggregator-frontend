@@ -38,7 +38,7 @@ interface UserResponse {
 }
 const deadline = "November, 16, 2023, 23:25";
 
-const PHASES = [1, 2];
+const PHASES = [1, 2, 3];
 
 export default function LeaderBoard() {
   const { address } = useAccount();
