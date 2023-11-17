@@ -47,7 +47,7 @@ export default function LeaderBoard() {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [loading, setLoading] = useState(false);
-  const [selectedPhase, setSelectedPhase] = useState(2);
+  const [selectedPhase, setSelectedPhase] = useState(3);
   const [user, setUser] = React.useState<any>([]);
   const [file, setFile] = React.useState<any>();
   const [days, setDays] = useState(0);
