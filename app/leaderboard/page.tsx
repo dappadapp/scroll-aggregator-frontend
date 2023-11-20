@@ -36,9 +36,6 @@ interface UserResponse {
   wallet: string;
   data: any;
 }
-const deadline = "November, 16, 2023, 23:25";
-
-const PHASES = [1, 2, 3];
 
 export default function LeaderBoard() {
   const { address } = useAccount();
@@ -47,7 +44,7 @@ export default function LeaderBoard() {
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [loading, setLoading] = useState(false);
-  const [selectedPhase, setSelectedPhase] = useState(3);
+  const [selectedPhase, setSelectedPhase] = useState(2);
   const [user, setUser] = React.useState<any>([]);
   const [file, setFile] = React.useState<any>();
   const [days, setDays] = useState(0);
@@ -196,6 +193,7 @@ export default function LeaderBoard() {
     try {
       const response = await axios.get("/api/getEpoch");
       var result = Object.entries(response.data);
+      setSelectedPhase(result.length);
       setEpochData(result);
     } catch (error) {
       // Handle errors
@@ -238,7 +236,8 @@ export default function LeaderBoard() {
     );
   }
   const getTime = () => {
-    const epochEndDate = new Date(epochData[epochData.length - 1][1].end * 1000);
+    if (!epochData) return;
+    const epochEndDate = new Date(epochData[epochData?.length - 1][1].end * 1000);
     const time = Date.parse(epochEndDate.toString()) - Date.now();
 
     setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
@@ -354,17 +353,17 @@ export default function LeaderBoard() {
         </div>
       </div>
       <div className="flex w-full justify-start gap-8">
-        {PHASES.map((phase) => (
+        {epochData?.map((phase: any, index: number) => (
           <button
             key={"phase" + phase}
             onClick={() => {
-              setSelectedPhase(phase);
+              setSelectedPhase(index + 1);
             }}
             className={` transition-all border-none flex justify-center bg-[#ff7c5c] items-center p-4 text-xl lg:text-4xl text-[#FFF0DD] ${
-              selectedPhase === phase ? "bg-opacity-50 rounded-2xl" : "bg-opacity-0 "
+              selectedPhase === index + 1 ? "bg-opacity-50 rounded-2xl" : "bg-opacity-0 "
             }`}
           >
-            Epoch {phase}
+            Epoch {index + 1}
           </button>
         ))}
       </div>
