@@ -633,7 +633,10 @@ const SwapCard: React.FC<Props> = () => {
             <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
               <span className="text-[#FFF0DD]">You Sell</span>
               {balanceFrom && (
-                <div className="text-right text-lg text-[#FFF]">
+                <div
+                  className="text-right text-lg text-[#FFF] cursor-pointer"
+                  onClick={() => setSwapAmount(toFixedValue(balanceFrom.formatted, 4))}
+                >
                   {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
                 </div>
               )}
