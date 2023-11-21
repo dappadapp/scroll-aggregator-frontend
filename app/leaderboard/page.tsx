@@ -140,7 +140,14 @@ export default function LeaderBoard() {
     getSingleUser();
     getEpochData();
     setCurrentPage(1);
-    getLeaderboard(1).finally(() => setLoading(false));
+    getLeaderboard(selectedPhase).finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    getSingleUser();
+    setCurrentPage(1);
+    getLeaderboard(selectedPhase).finally(() => setLoading(false));
   }, [selectedPhase]);
 
   useEffect(() => {
@@ -357,6 +364,7 @@ export default function LeaderBoard() {
           <button
             key={"phase" + phase}
             onClick={() => {
+              console.log(index);
               setSelectedPhase(index + 1);
             }}
             className={` transition-all border-none flex justify-center bg-[#ff7c5c] items-center p-4 text-xl lg:text-4xl text-[#FFF0DD] ${
