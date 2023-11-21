@@ -53,13 +53,15 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const [currentNetwork, setCurrentNetwork] = useState<Network>(networks[0]);
   const { chain } = useNetwork();
   const { switchNetwork, isLoading } = useSwitchNetwork();
-
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   useEffect(() => {
     const newNetwork = networks.find((network) => network.chainId === chain?.id);
-
     if (newNetwork) setCurrentNetwork(newNetwork);
     else if (switchNetwork) switchNetwork(networks[0].chainId);
-  }, [chain, switchNetwork]);
+  }, []);
 
   const handleChangeNetwork = (network: Network) => {
     if (switchNetwork) switchNetwork(network.chainId);
@@ -69,6 +71,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
     if (switchNetwork) switchNetwork(chainId);
   };
   return (
+    isClient && (
     <Menu as="div" className="relative inline-block">
       <div>
         <Menu.Button className="text-white inline-flex cursor-pointer justify-center items-center lg:min-w-[200px] gap-2 p-2 lg:p-3 text-base bg-[#0A0A0A] rounded-lg border border-white/10">
@@ -108,6 +111,7 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         </Transition>
       )}
     </Menu>
+    )
   );
 };
 
