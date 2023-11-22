@@ -140,14 +140,14 @@ export default function LeaderBoard() {
     getSingleUser();
     getEpochData();
     setCurrentPage(1);
-    getLeaderboard(selectedPhase).finally(() => setLoading(false));
+    getLeaderboard(1).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     setLoading(true);
     getSingleUser();
     setCurrentPage(1);
-    getLeaderboard(selectedPhase).finally(() => setLoading(false));
+    getLeaderboard(1).finally(() => setLoading(false));
   }, [selectedPhase]);
 
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function LeaderBoard() {
       const response = await axios.post<LeaderboardResponse>("/api/getLeaderboard", {
         pagination: itemsPerPage,
         page: page,
-        phase: selectedPhase,
+        phase: selectedPhase - 1,
       });
       const total = response.data;
 
@@ -199,9 +199,13 @@ export default function LeaderBoard() {
   const getEpochData = async () => {
     try {
       const response = await axios.get("/api/getEpoch");
-      var result = Object.entries(response.data);
-      setSelectedPhase(result.length);
-      setEpochData(result);
+      response.data.map((epoch: any, index: any) => {
+        let now = Date.now();
+        if (epoch.start * 1000 < now && epoch.end * 1000 > now) {
+          setSelectedPhase(index + 1);
+        }
+      });
+      setEpochData(response.data);
     } catch (error) {
       // Handle errors
     }
@@ -244,7 +248,7 @@ export default function LeaderBoard() {
   }
   const getTime = () => {
     if (!epochData) return;
-    const epochEndDate = new Date(epochData[epochData?.length - 1][1].end * 1000);
+    const epochEndDate = new Date(epochData[selectedPhase - 1].end * 1000);
     const time = Date.parse(epochEndDate.toString()) - Date.now();
 
     setDays(Math.floor(time / (1000 * 60 * 60 * 24)));
@@ -349,7 +353,7 @@ export default function LeaderBoard() {
         </div>
         <div className="w-full flex gap-3 flex-col lg:gap-2 justify-center items-center border p-5 lg:p-12  border-white border-opacity-5 bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px]">
           <span className=" md:text-5xl text-[#FFF0DD]">
-            Epoch #{epochData && epochData[epochData?.length - 1][0]}
+            Epoch #{epochData && epochData.length}
           </span>
           <div className="text-center text-[#ff7c5c]  text-sm lg:text-2xl font-bold mt-2">
             {days >= 10 ? Number(days) : "0" + days} days{" : "}
@@ -360,20 +364,26 @@ export default function LeaderBoard() {
         </div>
       </div>
       <div className="flex w-full justify-start gap-8">
-        {epochData?.map((phase: any, index: number) => (
-          <button
-            key={"phase" + phase}
-            onClick={() => {
-              console.log(index);
-              setSelectedPhase(index + 1);
-            }}
-            className={` transition-all border-none flex justify-center bg-[#ff7c5c] items-center p-4 text-xl lg:text-4xl text-[#FFF0DD] ${
-              selectedPhase === index + 1 ? "bg-opacity-50 rounded-2xl" : "bg-opacity-0 "
-            }`}
-          >
-            Epoch {index + 1}
-          </button>
-        ))}
+        {epochData?.map((phase: any, index: number) => {
+          let now = Date.now();
+          if (phase.end * 1000 > now && phase.start * 1000 > now) return;
+
+          return (
+            <button
+              key={"phase" + phase}
+              onClick={() => {
+                setSelectedPhase(index + 1);
+              }}
+              className={` transition-all border-none flex justify-center bg-[#ff7c5c] items-center p-4 text-xl lg:text-4xl text-[#FFF0DD] ${
+                selectedPhase === index + 1
+                  ? "bg-opacity-50 rounded-2xl"
+                  : "bg-opacity-0 "
+              }`}
+            >
+              Epoch {index + 1}
+            </button>
+          );
+        })}
       </div>
       {loading ? (
         <div className="flex justify-center text-white items-center h-[300px] w-full">
