@@ -182,6 +182,7 @@ export async function POST(request: Request) {
         return BigInt(data?.[1]);
       },
     },
+    /*
     kyberswap: {
       name: "Kyberswap",
       id: "kyberswap",
@@ -217,7 +218,7 @@ export async function POST(request: Request) {
 
         return BigInt(data.amountIn);
       },
-    },
+    },*/
     /*
     coffeswap: {
       name: "Coffeswap",
