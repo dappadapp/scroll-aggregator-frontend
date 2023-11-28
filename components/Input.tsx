@@ -36,16 +36,18 @@ const Input: React.FC<Props> = ({
       placeholder={placeholder}
       type={type}
       disabled={disabled}
-      className={`rounded-lg p-2 w-full focus:outline-0 text-[#FFF0DD]/90 text-md lg:text-[64px] bg-transparent  placeholder:text-base placeholder:lg:text-xl tracking-wide ${className} `}
+      className={`w-full focus:outline-0 text-[#FFF0DD]/90 text-sm xs:text-base lg:text-xl xs:py-2 py-1 bg-transparent border-b-2 transition-all duration-150  border-white focus:border-[#EBC28E] placeholder:text-sm placeholder:xs:text-base placeholder:lg:text-xl tracking-wide ${className} ` + (
+        disabled ? "border-opacity-0 focus:border-opacity-0 " : "border-opacity-10 focus:border-opacity-100 "
+      )}
     />
   ) : (
     <div
-      className={`${className} rounded-xl ml-2 w-full flex justify-center items-center focus:outline-0 bg-slate-200 mb-2 bg-opacity-25 h-[60px] lg:h-[80px] text-[64px] lg:mt-2 tracking-wide animate-pulse`}
+      className={`${className} rounded-lg w-full flex justify-center items-center focus:outline-0 bg-white bg-opacity-10 lg:text-4xl py-3 text-[64px] tracking-wide animate-pulse`}
     >
       <Image
         src={"/logo.png"}
         alt="logo-loading"
-        className="animate-bounce"
+        className="animate-spin-slow"
         width={48}
         height={48}
       />

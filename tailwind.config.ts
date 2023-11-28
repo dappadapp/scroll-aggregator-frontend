@@ -21,11 +21,14 @@ const config: Config = {
         panel: "rgba(255,255,255,0.04)",
       },
       fontFamily: {
-        inter: "var(--font-spartan)",
+        spartan: "var(--font-spartan)",
       },
       display: ["group-hover"],
       animation: {
         "spin-slow": "spin 2s linear infinite",
+      },
+      screens: {
+        'xs': '425px'
       },
     },
   },

@@ -11,10 +11,10 @@ function CardNavbar() {
     return (
       <div
         className={
-          "hidden lg:flex w-full max-w-[600px] px-8 justify-between items-center  "
+          "flex xl:w-[520px] lg:w-[480px] md:w-[400px] sm:w-[360px] w-full xs:max-w-full max-w-[320px] lg:px-12 xs:px-10 px-10 py-2 xs:my-2 my-0 justify-between items-center  "
         }
       >
-        <div className="flex justify-start items-baseline lg:text-4xl text-xs gap-5 text-[#FFF0DD] ">
+        <div className="flex justify-start items-baseline lg:text-xl sm:text-base xs:text-sm text-xs gap-5 text-[#FFF0DD] ">
           <Link
             href={"/"}
             className={`transition-all ${
@@ -34,7 +34,7 @@ function CardNavbar() {
             }`}
           >
             Limit Order
-            <span className={"tooltipbottom text-sm"}>Soon</span>
+            <span className={"tooltiptext text-sm"}>Soon</span>
           </Link>
         </div>
         {/* <Link
@@ -49,12 +49,13 @@ function CardNavbar() {
       >
         Stats
       </Link> */}
-        {path === "/" && (<>
-          <div className="flex justify-end">
-            <RefreshButton />
+        {path === "/" && (
+          <>
+            <div className="flex justify-end items-center xs:gap-2 gap-1">
+              <RefreshButton />
               <SlippageButton />
             </div>
-            </>
+          </>
         )}
       </div>
     );

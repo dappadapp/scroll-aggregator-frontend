@@ -13,7 +13,7 @@ export const buttonVariants = cva(
         secondary: "bg-[#3AFF4242] text-white",
         disabled: "bg-[#202020] text-[#AAA] cursor-not-allowed",
         bordered:
-          "bg-[#3DAFA5]/[.04]  text-white/75 hover:bg-[#3DAFA5] hover:text-black border border-[#FF7C5C] hover:border-none",
+          "bg-[#3DAFA5]/[.04] text-white/75 hover:bg-[#3DAFA5] hover:text-black border border-[#FF7C5C] hover:border-transparent",
       },
     },
     defaultVariants: {

@@ -5,6 +5,7 @@ import SlippageIcon from "@/assets/images/slippageIcon.svg";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { useGlobalContext } from "@/contexts";
+import { AnimatePresence, motion } from "framer-motion";
 
 const percentageButtons = [0.5, 1.0, 3.0];
 
@@ -17,41 +18,51 @@ export default function SlippageButton() {
   }, [slippage]);
 
   return (
-    <div className="max-w-sm px-1 z-[49px]">
-      <Popover className="relative z-[49px]">
+    <div className="flex justify-center items-center sm:w-12 sm:h-12 xs:w-9 xs:h-9 w-8 h-8">
+      <Popover className="flex justify-center items-center relative w-full h-full">
         {({ open }) => (
           <>
             <Popover.Button
               className={`
                 ${
                   open ? " bg-[rgb(255,240,221)]/10" : ""
-                } transition-all p-3 w-12 h-12 rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
+                } transition-all w-full h-full rounded-lg focus:outline-none hover:bg-[rgb(255,240,221)]/10 flex justify-center items-center`}
             >
-              <SlippageIcon />
+              <AnimatePresence>
+                <motion.div whileHover={{ scale: 1.25, transition: { duration: 0.15 }}}>
+                  <SlippageIcon className="sm:p-3 p-2 w-full h-full" />
+                </motion.div>
+              </AnimatePresence>
             </Popover.Button>
             <Transition
               as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
+              enter="transition ease-out duration-150"
+              enterFrom="opacity-0 translate-y-1/3"
+              enterTo="opacity-100 translate-y-1/2"
               leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
+              leaveFrom="opacity-100 translate-y-1/2"
+              leaveTo="opacity-0 translate-y-1/3"
             >
-              <Popover.Panel className="absolute -left-[120%] lg:left-1/2 z-50 mt-3 w-screen max-w-xs -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-md">
-                <div className="overflow-hidden  shadow-lg ring-1  bg-[rgba(26,29,36,1)] backdrop-blur-[52px] rounded-[8px] ring-black ring-opacity-5">
-                  <div className="relative p-2 lg:p-7 flex max-h-[150px] gap-4 flex-col">
-                    <span className="text-sm text-[#FFE7DD]">Slippage Tolerance</span>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              <Popover.Panel className="absolute z-[2] -left-[120%] lg:left-1/2 xl:w-[26.25rem] sm:w-[24.25rem] w-[16.75rem] xs:mt-20 mt-16 translate-y-1/2 -translate-x-[calc(50%+2rem)] bg-transparent transform sm:px-4 px-2">
+                <div className="overflow-hidden  shadow-lg shadow-black/25 ring-1  bg-[rgb(26,29,36)] backdrop-blur-[52px] rounded-3xl ring-black ring-opacity-5">
+                  <div className="relative p-4 sm:p-6 flex max-h-[150px] xs:gap-4 gap-2 flex-col">
+                    <span className="sm:text-lg xs:text-base text-sm text-[#FFE7DD]">Slippage Tolerance</span>
+                    <div className="flex flex-row justify-between items-center gap-3">
                       {percentageButtons.map((val, index) => (
                         <Button
-                          className={`font-monteserrat max-h-[50px] text-sm ${
+                          className={`cursor-pointer select-none text-white p-2 xl:h-[2rem] sm:h-[1.75rem] h-[1.5rem] xl:min-w-[4.5rem] sm:min-w-[3.75rem] min-w-[2.5rem] rounded-full flex flex-col text-center xs:text-sm text-xs transition-all duration-150 hover:cursor-pointer ${
                             slippage === val
-                              ? "bg-[#FFE7DD] text-black"
-                              : "bg-transparent text-white"
+                              ? "scale-[1.15] bg-[#EBC28E] bg-opacity-100 text-black hover:text-black hover:bg-[#EBC28E] hover:bg-opacity-100"
+                              : "bg-black bg-opacity-[0.15] hover:text-white hover:bg-white hover:bg-opacity-10"
                           }`}
                           key={"perc-button-" + index}
                           onClick={() => {
+                            if(slippage == val) {
+                              setCustomSlippage(null);
+                              setSlippage(0.5);
+                              return;
+                            }
+
                             setCustomSlippage(null);
                             setSlippage(val);
                           }}
@@ -67,7 +78,8 @@ export default function SlippageButton() {
                         value={customSlippage}
                         type="number"
                         placeholder="Custom"
-                        className="w-full m-h-[50px] text-[#FFE7DD] text-center lg:!text-[20px] crosschainswap-input"
+                        onKeyDown={(e) => {}}
+                        className="text-white text-center sm:!text-lg xs:!text-base !text-sm placeholder:sm:!text-lg placeholder:xs:!text-base placeholder:!text-sm h-[2rem] w-full crosschainswap-input"
                       />
                     </div>
                   </div>

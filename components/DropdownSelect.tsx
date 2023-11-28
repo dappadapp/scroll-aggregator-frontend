@@ -55,9 +55,9 @@ const DropdownSelect = ({
 
   return (
     <Listbox value={value} onChange={onChange}>
-      <div className="static inline-block lg:max-w-none z-20" ref={dropdownRef}>
+      <div className="static inline-block lg:max-w-none" ref={dropdownRef}>
         <div
-          className={`${className} static cursor-pointer z-10 bg-transparent rounded-lg focus:outline-none`}
+          className={`${className} static cursor-pointer bg-transparent rounded-lg focus:outline-none`}
           onClick={toggleDropdown}
         >
           <div className="flex items-start justify-between p-2 ">
@@ -80,7 +80,7 @@ const DropdownSelect = ({
           leaveTo="opacity-0 scale-0"
         >
           <div
-            className={` ${className} ${dropdownClassName}  absolute right-0 top-full z-10 mt-2 w-44 lg:w-64 max-h-60 overflow-y-auto bg-[rgba(26,29,36,1)] backdrop-blur-[52px] rounded-[8px] text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
+            className={` ${className} ${dropdownClassName}  absolute right-0 top-full mt-2 w-44 lg:w-64 max-h-60 overflow-y-auto bg-[rgba(26,29,36,1)] backdrop-blur-[52px] rounded-[8px] text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm`}
           >
             {onSearch && (
               <div className="p-2">

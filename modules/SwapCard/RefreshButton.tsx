@@ -6,6 +6,7 @@ import Input from "@/components/Input";
 import { useGlobalContext } from "@/contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function RefreshButton() {
   const { refresh, setRefresh } = useGlobalContext();
@@ -26,24 +27,26 @@ export default function RefreshButton() {
   };
 
   return (
-    <div className="max-w-sm px-1 z-[49px]">
-      <Popover className="relative z-[49px]">
-        {({ open }) => (
-          <Popover.Button
-            onClick={handleRefreshClick} // Add an onClick handler
-            className={`${
-              open ? "" : ""
-            } transition-all p-3 w-12 h-12 rounded-lg focus:outline-none flex justify-center items-center hover:bg-[rgb(255,240,221)]/10 cursor-pointer ${
-              isRefreshing ? "cursor-pointer" : "" // Add the spinning animation class
-            }`}
-          >
-            <>
-              <RefreshIcon
-                className={`${isRefreshing && "animate-spin"} cursor-pointer`}
-              />
-            </>
-          </Popover.Button>
-        )}
+      <div className="flex justify-center items-center sm:w-12 sm:h-12 xs:w-9 xs:h-9 w-8 h-8">
+        <Popover className="flex justify-center items-center relative w-full h-full">
+          {({ open }) => (
+            <Popover.Button
+              onClick={handleRefreshClick} // Add an onClick handler
+              className={`${
+                open ? "" : ""
+              } transition-all w-full h-full rounded-lg focus:outline-none flex justify-center items-center hover:bg-[rgb(255,240,221)]/10 cursor-pointer ${
+                isRefreshing ? "cursor-pointer" : "" // Add the spinning animation class
+              }`}
+            > 
+              <AnimatePresence>
+                <motion.div whileHover={{ rotate: 135, scale: 1.125, transition: { duration: 0.15 }}}>
+                  <RefreshIcon
+                    className={`${isRefreshing && "animate-spin"} sm:p-3 p-2 cursor-pointer w-full h-full`}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </Popover.Button>
+          )}
       </Popover>
     </div>
   );

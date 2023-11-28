@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import Image from "next/image";
 import { Menu, Transition } from "@headlessui/react";
 import { networks } from "@/constants/networks";
@@ -28,7 +28,7 @@ const NetworkItemRef: ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps>
   ref
 ) => (
   <div
-    className={`${className} flex items-center gap-2 cursor-pointer`}
+    className={`${className} flex flex-row justify-center items-center xs:gap-3 gap-2 cursor-pointer`}
     ref={ref}
     onClick={() => (onClick ? onClick(chain) : undefined)}
   >
@@ -37,10 +37,15 @@ const NetworkItemRef: ForwardRefRenderFunction<HTMLDivElement, NetworkItemProps>
       alt={chain.name}
       width={25}
       height={25}
-      className="rounded-full w-4 h-4 md:w-6 md:h-6"
+      className="md:w-5 md:h-5 w-4 h-4"
     />
-    <span className="block truncate text-base text-[#FFF0DD]/90 font-medium">
-      {chain.name}
+    <span className="block text-[#FFF0DD]/90 font-medium mt-1 xl:text-base xs:text-sm text-xs">
+      <span className="hidden xs:flex truncate">
+        {chain.name + (chain.isTestnet ? " Testnet" : " Mainnet")}
+      </span>
+      <span className="flex xs:hidden">
+        {chain.name}
+      </span>
     </span>
   </div>
 );
@@ -53,15 +58,19 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const [currentNetwork, setCurrentNetwork] = useState<Network>(networks[0]);
   const { chain } = useNetwork();
   const { switchNetwork, isLoading } = useSwitchNetwork();
-  const [isClient, setIsClient] = useState(false);
+  const { isConnected } = useAccount();
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-  useEffect(() => {
-    const newNetwork = networks.find((network) => network.chainId === chain?.id);
-    if (newNetwork) setCurrentNetwork(newNetwork);
-    else if (switchNetwork) switchNetwork(networks[0].chainId);
-  }, []);
+    setIsWalletConnected(isConnected);
+  }, [isConnected])
+
+  // useEffect(() => {
+  //   const newNetwork = networks.find((network) => network.chainId === chain?.id);
+
+  //   if (newNetwork) setCurrentNetwork(newNetwork);
+  //   else if (switchNetwork) switchNetwork(networks[0].chainId);
+  // }, [chain, switchNetwork]);
 
   const handleChangeNetwork = (network: Network) => {
     if (switchNetwork) switchNetwork(network.chainId);
@@ -70,31 +79,40 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
   const handleChangeNetworkChain = (chainId: number) => {
     if (switchNetwork) switchNetwork(chainId);
   };
+
   return (
-    isClient && (
     <Menu as="div" className="relative inline-block">
-      <div>
-        <Menu.Button className="text-white inline-flex cursor-pointer justify-center items-center lg:min-w-[200px] gap-2 p-2 lg:p-3 text-base bg-[#0A0A0A] rounded-lg border border-white/10">
+      {!isWalletConnected ? 
+        <span className="select-none md:whitespace-normal whitespace-nowrap text-white opacity-50 flex flex-row justify-center items-center duration-150 transition gap-2 px-6 py-3 md:min-w-[10rem] md:w-auto xs:w-[9.25rem] w-[8.25rem] xl:max-h-[3rem] md:max-h-[2.75rem] xs:max-h-[2.5rem] max-h-[2rem] xl:text-base text-sm bg-[#0A0A0A] rounded-lg border border-white/10">
+          Switch Network
+        </span>
+      : 
+        <div className="text-white flex flex-row justify-center items-center cursor-pointer duration-150 transition gap-2 px-6 py-3 md:min-w-[10rem] md:w-auto xs:w-[9.25rem] w-[8.25rem] xl:max-h-[3rem] md:max-h-[2.75rem] xs:max-h-[2.5rem] max-h-[2rem] xl:text-base text-sm bg-[#0A0A0A] rounded-lg border border-white/10 hover:bg-[#151515]">
           {chain?.id !== 534352 ? (
-            <button onClick={() => handleChangeNetworkChain(534352)}>
-              Switch Scroll Mainnet
+            <button onClick={() => handleChangeNetworkChain(534352)} className="select-none md:whitespace-normal whitespace-nowrap">
+              {isLoading ? 
+                <div className="flex justify-center items-center xl:w-[1.75rem] w-[1.5rem]">
+                  <Loading />
+                </div>
+              : 
+               "Switch Network"
+              }
             </button>
           ) : (
             <Fragment>
-              <NetworkItem chain={currentNetwork} />
-              {isLoading && <Loading />}
+              <NetworkItem chain={currentNetwork} className="select-none" />
             </Fragment>
           )}
-        </Menu.Button>
-      </div>
-      {chain?.id !== 534352 ? null : (
+        </div>
+      } 
+      {chain?.id !== 534352 && (
         <Transition
           as={Fragment}
           leave="transition ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[200px] origin-top-right z-10 backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+          <Menu.Items className="absolute bg-[#202020] rounded-md right-0 mt-2 w-[200px] origin-top-right backdrop-blur-xl py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
             {networks.map((network) => (
               <Menu.Item as={Fragment} key={network.chainId}>
                 {({ active }) => (
@@ -111,7 +129,6 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
         </Transition>
       )}
     </Menu>
-    )
   );
 };
 

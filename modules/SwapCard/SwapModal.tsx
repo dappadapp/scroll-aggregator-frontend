@@ -17,13 +17,11 @@ import { generatePath } from "@/utils/path";
 import DexOffers from "./DexOffers";
 type Props = {
   onCloseModal: () => void;
-  pool: string;
   tokenA: Currency;
   tokenB: Currency;
   amountA: number;
   amountB: string;
-  swapType: SWAP_TYPE;
-  offers: any;
+  swapParams: SwapParam[];
   rate: string;
   swapSuccess: () => void;
   slippage: number;
@@ -33,13 +31,11 @@ type Props = {
 
 function SwapModal({
   onCloseModal,
-  pool,
   tokenA,
   tokenB,
   amountA,
   amountB,
-  swapType,
-  offers,
+  swapParams,
   rate,
   swapSuccess,
   slippage,
@@ -120,7 +116,7 @@ function SwapModal({
           <SwapToken value={+amountB} currency={tokenB} />
         </div>
 
-        <DexOffers offers={offers} tokenTo={tokenB} />
+        {/* <DexOffers offers={offers} tokenTo={tokenB} /> */}
 
         <div className="w-full bg-[#AAA] h-[1px] my-6 mb-10"></div>
 
@@ -129,13 +125,13 @@ function SwapModal({
           <span>
             <div className="flex items-center">
               <div className="w-8 h-8 mr-2 rounded-full overflow-hidden">
-                <img
+                {/* <img
                   src={swapTypeMapping[swapType]?.icon}
                   alt={swapTypeMapping[swapType]?.name}
-                />
+                /> */}
               </div>
               <p className="inline-block mt-1 text-[#FFE7DD]">
-                {swapTypeMapping[swapType]?.name}
+                {/* {swapTypeMapping[swapType]?.name} */}
               </p>
             </div>
           </span>
@@ -183,7 +179,7 @@ function SwapModal({
         ) : (
           <SwapButton
             swapParam={{
-              poolAddress: pool,
+              poolAddress: "0x0000000000000000000000000000000000000000",
               tokenIn: tokenA?.isToken ? tokenA?.address : tokenA.wrapped.address,
               tokenOut: tokenB?.isToken ? tokenB?.address : tokenB.wrapped.address,
               amountIn: bigAmountA - BigInt(100),
@@ -191,15 +187,15 @@ function SwapModal({
                 tokenA?.symbol === "Script" || tokenB?.symbol === "Script"
                   ? 0
                   : bigAmountB,
-              swapType: swapType,
+              swapType: SWAP_TYPE.KYBERSWAP,
               path:
                 generatePath(
                   tokenA?.isToken ? tokenA?.address : tokenA?.wrapped.address,
                   tokenB?.isToken ? tokenB?.address : tokenB?.wrapped.address,
                   300
                 ).toString() || "0x0000000000000000000000000000000000000000",
-              fee:
-                swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || UNISWAP_DEFAULT_FEE || 0,
+              fee: 0
+                // swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || UNISWAP_DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

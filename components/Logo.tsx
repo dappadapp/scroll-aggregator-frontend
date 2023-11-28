@@ -4,8 +4,8 @@ import Image from "next/image";
 
 const Logo = () => {
   return (
-    <div className="select-none">
-      <LogoSvg alt="Aggregator" width={200} height={100} />
+    <div className="h-full w-full select-none">
+      <LogoSvg alt="Aggregator" width={200} height={100} className="w-full h-full" />
     </div>
   );
 };

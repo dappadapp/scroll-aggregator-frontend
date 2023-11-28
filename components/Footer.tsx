@@ -8,14 +8,14 @@ const Footer = () => {
   return (
     <div
       className={
-        "flex flex-col-reverse w-full z-[1] lg:flex-row gap-5 justify-between bottom-0 items-center mt-8"
+        "flex w-full sm:flex-row flex-col sm:gap-4 gap-2 px-4 sm:justify-between justify-center bottom-0 sm:items-start items-center sm:mt-8 xs:mt-6 mt-2 sm:text-base xs:text-sm text-xs"
       }
     >
-      <p className={"text-[#FFF0DD] font-light"}>2023 © aggre! </p>
+      <p className={"text-[#FFF0DD]"}>2023 © aggre! </p>
       <div className="flex flex-col gap-4 items-center">
         <p
           onClick={() => window.open("https://dapplabs.tech/")}
-          className={"cursor-pointer text-[#FFF0DD] font-light"}
+          className={"cursor-pointer text-[#FFF0DD]"}
         >
           Powered By DappLabs
         </p>
@@ -38,7 +38,7 @@ const Footer = () => {
       </div>
       <div className="flex gap-4 items-center">
         <div className="bg-[#3DAFA5] w-2 h-2 rounded-full"></div>
-        <p className={"text-[#FFF0DD] font-light"}>{Number(blockNumber?.data)}</p>
+        <p className={"text-[#FFF0DD]"}>{Number(blockNumber?.data) || "666999"}</p>
       </div>
     </div>
   );

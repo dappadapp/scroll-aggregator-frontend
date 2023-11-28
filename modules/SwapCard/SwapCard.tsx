@@ -4,7 +4,6 @@ import { readContract } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
 import { formatUnits } from "viem";
 import _, { set } from "lodash";
-
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import TokenSelect from "@/components/TokenSelect";
@@ -31,9 +30,13 @@ import SlippageButton from "./SlippageButton";
 import { toast } from "react-toastify";
 import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
+import RouteModal from "@/components/RouteModal";
 import RefreshButton from "./RefreshButton";
 import { useFeeData } from "wagmi";
-import { swapTypeMapping } from "@/types";
+import { swapTypeMapping, SwapParams, Route } from "@/types";
+import { AnimatePresence, motion } from "framer-motion";
+import RightArrowIcon from "@/assets/images/right-arrow.svg";
+
 type Props = {};
 
 const percentageButtons = [25, 50, 75, 100];
@@ -58,80 +61,13 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
     [walletClient]
   );
 }
-interface DexOffer {
-  dex: string;
-  amount: string;
-}
-
-interface DexOffersProps {
-  offers: DexOffer[];
-  tokenTo: Currency | undefined;
-}
-
-function mapDexType(inputDexType: string): SWAP_TYPE {
-  switch (inputDexType) {
-    case "space-fi":
-      return SWAP_TYPE.SPACEFI;
-    case "skydrome":
-      return SWAP_TYPE.SKYDROME;
-    case "iziswap":
-      return SWAP_TYPE.IZUMI;
-    case "syncswap":
-      return SWAP_TYPE.SYNCSWAP;
-    case "punkswap":
-      return SWAP_TYPE.PUNKSWAP;
-    case "kyberswap":
-      return SWAP_TYPE.KYBERSWAP;
-    case "coffeswap":
-      return SWAP_TYPE.COFFEESWAP;
-    case "papyrusswap":
-      return SWAP_TYPE.PAPYRUSSWAP;
-    default:
-      return SWAP_TYPE.INVALID;
-  }
-}
-
-export const DexOffers: React.FC<DexOffersProps> = ({ offers, tokenTo }) => {
-  const firstThreeOffers = offers?.slice(0, 3);
-
-  return (
-    <div className="flex flex-row">
-      {firstThreeOffers?.map((offer, index) => (
-        <div key={index} className="mx-4">
-          <div className="flex items-center">
-            <div className="w-8 h-8 mr-2 rounded-full overflow-hidden">
-              <img
-                src={swapTypeMapping[mapDexType(offer?.dex)]?.icon}
-                alt={swapTypeMapping[mapDexType(offer?.dex)]?.name}
-              />
-            </div>
-            <p className="text-[#FFE7DD] text-lg">
-              <span className="text-4xl">
-                {swapTypeMapping[mapDexType(offer?.dex)]?.name[0]}
-              </span>
-              {swapTypeMapping[mapDexType(offer?.dex)]?.name?.slice(1)}
-            </p>
-          </div>
-          <p className="text-[#FFE7DD] text-lg mt-2 text-center">
-            {ethers.utils
-              .formatUnits(
-                offer.amount,
-                tokenTo?.isToken ? tokenTo?.decimals : tokenTo?.wrapped?.decimals
-              )
-              .toString()}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-};
 
 const SwapCard: React.FC<Props> = () => {
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
   const contractAddr = useContract();
-  const [swapAmount, setSwapAmount] = useState("0");
-  const [receiveAmount, setReceiveAmount] = useState("0");
+  const [swapAmount, setSwapAmount] = useState("");
+  const [receiveAmount, setReceiveAmount] = useState("");
   const [isSwapModalOpen, setIsSwapModalOpen] = useState(false);
   const [dexType, setDexType] = useState<SWAP_TYPE>(SWAP_TYPE.SKYDROME);
   //TODO: Add tokens
@@ -153,10 +89,61 @@ const SwapCard: React.FC<Props> = () => {
   const ethPrice = useRealTimeETHPrice();
   const [ethUSD, setEthPrice] = useState<number>(0);
   const [fee, setFee] = useState<string>("0");
+  const [minimumReceived, setMinimumReceived] = useState<string>("0");
+  const [estGasFee, setEstGasFee] = useState<string>("0");
+  const [priceImpact, setPriceImpact] = useState<string>("0");
+  const [swapParams, setSwapParams] = useState<SwapParams[]>([]);
+  const [routes, setRoutes] = useState<Route[]>([
+    {
+      tokenIn: "",
+      tokenOut: "",
+      amountIn: "",
+      childIndex: 0,
+      amountOut: BigInt(0),
+      minAmountOut: BigInt(0),
+      tokenOutLiquidity: BigInt(0),
+      routePercentage: 0,
+      fee: 0,
+    },
+    {
+      tokenIn: "",
+      tokenOut: "",
+      amountIn: "",
+      childIndex: 0,
+      amountOut: BigInt(0),
+      minAmountOut: BigInt(0),
+      tokenOutLiquidity: BigInt(0),
+      routePercentage: 0,
+      fee: 0,
+    },
+    {
+      tokenIn: "",
+      tokenOut: "",
+      amountIn: "",
+      childIndex: 0,
+      amountOut: BigInt(0),
+      minAmountOut: BigInt(0),
+      tokenOutLiquidity: BigInt(0),
+      routePercentage: 0,
+      fee: 0,
+    },
+    {
+      tokenIn: "",
+      tokenOut: "",
+      amountIn: "",
+      childIndex: 0,
+      amountOut: BigInt(0),
+      minAmountOut: BigInt(0),
+      tokenOutLiquidity: BigInt(0),
+      routePercentage: 0,
+      fee: 0,
+    }
+  ]);
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
+  const [showRouteModal, setShowRouteModal] = useState(false);
   const { refresh, setRefresh } = useGlobalContext();
-  const [offers, setOffers] = useState<DexOffer[]>([]);
+  // const [offers, setOffers] = useState<DexOffer[]>([]);
 
   const {
     data: balanceFrom,
@@ -184,378 +171,268 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokenTo,
   });
 
-  // Instantiate the contract
-  const contract = new ethers.Contract(
-    contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004",
-    SkydromePoolFactory,
-    signer
-  );
+  // // Instantiate the contract
+  // const contract = new ethers.Contract(
+  //   contractAddr?.skydrome?.poolFactory || "0x5300000000000000000000000000000000000004",
+  //   SkydromePoolFactory,
+  //   signer
+  // );
 
-  // Send a call to the getPair function using ethers.js
-  async function getPair() {
-    try {
-      const pair = await contract.functions.getPair(
-        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-        false
-      );
-      return pair;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-  const contractIzumi = new ethers.Contract(
-    contractAddr?.iziswap?.liquidityManager ||
-      "0x5300000000000000000000000000000000000004",
-    IziSwapPoolFactory,
-    signer
-  );
-  async function getPool() {
-    try {
-      const pair = await contractIzumi.pool(
-        tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-        tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-        3000
-      );
-      return pair;
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+  // // Send a call to the getPair function using ethers.js
+  // async function getPair() {
+  //   try {
+  //     const pair = await contract.functions.getPair(
+  //       tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
+  //       tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
+  //       false
+  //     );
+  //     return pair;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
+  // const contractIzumi = new ethers.Contract(
+  //   contractAddr?.iziswap?.liquidityManager ||
+  //     "0x5300000000000000000000000000000000000004",
+  //   IziSwapPoolFactory,
+  //   signer
+  // );
+  // async function getPool() {
+  //   try {
+  //     const pair = await contractIzumi.pool(
+  //       tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
+  //       tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
+  //       3000
+  //     );
+  //     return pair;
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   }
+  // }
 
-  const getEthPrice = async () => {
-    if (!ethPrice) {
-      const res = await axios.get(
-        "https://api.binance.com/api/v3/avgPrice?symbol=ETHUSDT"
-      );
-      setEthPrice(res.data.price);
-    } else {
-      setEthPrice(ethPrice);
-    }
-  };
+  // const getEthPrice = async () => {
+  //   if (!ethPrice) {
+  //     const res = await axios.get(
+  //       "https://api.binance.com/api/v3/avgPrice?symbol=ETHUSDT"
+  //     );
+  //     setEthPrice(res.data.price);
+  //   } else {
+  //     setEthPrice(ethPrice);
+  //   }
+  // };
 
-  useEffect(() => {
-    getEthPrice();
-  }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
+  // useEffect(() => {
+  //   //getEthPrice();
+  // }, [tokenFrom, tokenTo, swapAmount, receiveAmount, dexType, pairAddress]);
 
-  const { data: poolAddress, refetch } = useContractRead(
-    dexType === SWAP_TYPE.SYNCSWAP
-      ? {
-          address: contractAddr?.syncswap?.poolFactory,
-          abi: SnycSwapPoolFactory,
-          functionName: "getPool",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-        }
-      : dexType === SWAP_TYPE.SPACEFI
-      ? {
-          address: contractAddr?.spacefi?.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.SKYDROME
-      ? {
-          address: contractAddr?.skydrome?.poolFactory,
-          abi: SkydromePoolFactory,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-            false,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.IZUMI
-      ? {
-          address: contractAddr?.iziswap?.liquidityManager,
-          abi: IziSwapPoolFactory,
-          functionName: "pool",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-            3000,
-          ],
-        }
-      : dexType === SWAP_TYPE.PUNKSWAP
-      ? {
-          address: contractAddr?.punkswap?.poolFactory,
-          abi: PunkSwapPoolFactory,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-        }
-      : dexType === SWAP_TYPE.KYBERSWAP
-      ? {
-          address: contractAddr?.kyberswap?.poolFactory,
-          abi: KyberSwapFactory,
-          functionName: "getPool",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-            100,
-          ],
-        }
-      : dexType === SWAP_TYPE.COFFEESWAP
-      ? {
-          address: contractAddr?.coffeswap?.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.PAPYRUSSWAP
-      ? {
-          address: contractAddr?.papyrusswap?.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : dexType === SWAP_TYPE.SUSHISWAP
-      ? {
-          address: contractAddr?.sushiswap?.poolFactory,
-          abi: SpaceFiPoolFactoryAbi,
-          functionName: "getPair",
-          args: [
-            tokenFrom?.isToken ? tokenFrom?.address : tokenFrom?.wrapped?.address,
-            tokenTo?.isToken ? tokenTo?.address : tokenTo?.wrapped?.address,
-          ],
-          enabled: !!contractAddr && !!tokenFrom && !!tokenTo,
-        }
-      : {}
-  );
+  // const { data: poolAddress, refetch } = useContractRead(
+    
+  // );
 
-  useEffect(() => {
-    fetchBalanceFrom();
-    fetchBalanceTo();
-    refetch();
-  }, [
-    chain,
-    address,
-    tokenFrom,
-    tokenTo,
-    isConnected,
-    contractAddr,
-    dexType,
-    slippage,
-    isChangeFrom,
-    rate,
-    swapAmount,
-    receiveAmount,
-    balanceFrom,
-    balanceTo,
-    showFrom,
-    showTo,
-  ]);
+  // useEffect(() => {
+  //   fetchBalanceFrom();
+  //   fetchBalanceTo();
+  //   refetch();
+  // }, [
+  //   chain,
+  //   address,
+  //   tokenFrom,
+  //   tokenTo,
+  //   isConnected,
+  //   contractAddr,
+  //   dexType,
+  //   slippage,
+  //   isChangeFrom,
+  //   rate,
+  //   swapAmount,
+  //   receiveAmount,
+  //   balanceFrom,
+  //   balanceTo,
+  //   showFrom,
+  //   showTo,
+  // ]);
 
-  useEffect(() => {
-    if (
-      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
-      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    ) {
-      setReceiveAmount(swapAmount);
-    } else {
-      getCurrentRate();
-    }
-  }, [tokenFrom, tokenTo, refresh]);
+  // useEffect(() => {
+  //   if (
+  //     (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+  //     (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+  //   ) {
+  //     setReceiveAmount(swapAmount);
+  //   } else {
+  //     getCurrentRate();
+  //   }
+  // }, [tokenFrom, tokenTo, refresh]);
 
-  const handleINChange = async (e: any) => {
-    refetch();
-    if (
-      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
-      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    ) {
-      setSwapAmount(e.target.value);
-      setReceiveAmount(e.target.value);
-    } else {
-      console.log(e.target.value);
-      setSwapAmount(e.target.value);
-    }
-  };
+  // const handleINChange = async (e: any) => {
+  //   // refetch();
+  //   if (
+  //     (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+  //     (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+  //   ) {
+  //     setSwapAmount(e.target.value);
+  //     setReceiveAmount(e.target.value);
+  //   } else {
+  //     console.log(e.target.value);
+  //     setSwapAmount(e.target.value);
+  //   }
+  // };
 
-  const handleOUTChange = async (e: any) => {
-    if (
-      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
-      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    ) {
-      setSwapAmount(e.target.value);
-      setReceiveAmount(e.target.value);
-    } else {
-      setReceiveAmount(e.target.value);
-    }
-  };
+  // const getCurrentRate = async () => {
+  //   clearTimeout(getCurrentRateTimeout.current!);
+  //   getCurrentRateTimeout.current = setTimeout(async () => {
+  //     if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
+  //     else {
+  //       setIsLoadingReceiveAmount(true);
 
-  const getCurrentRate = async () => {
-    clearTimeout(getCurrentRateTimeout.current!);
-    getCurrentRateTimeout.current = setTimeout(async () => {
-      if (!tokenFrom || !tokenTo || !swapAmount || +swapAmount === 0) return;
-      else {
-        setIsLoadingReceiveAmount(true);
+  //       const exchangeRate = await axios.post("/api/exchange", {
+  //         amount: swapAmount.toString(),
+  //         from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+  //         fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
+  //         to: tokenTo?.isNative ? tokenTo?.wrapped?.address : tokenTo?.address,
+  //         toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
+  //         type: "IN",
+  //       });
 
-        const exchangeRate = await axios.post("/api/exchange", {
-          amount: swapAmount.toString(),
-          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-          fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
-          to: tokenTo?.isNative ? tokenTo?.wrapped?.address : tokenTo?.address,
-          toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
-          type: "IN",
-        });
+  //       // setOffers(exchangeRate.data);
+  //       console.log("exchangeRate", exchangeRate);
 
-        setOffers(exchangeRate.data);
-        console.log("exchangeRate", exchangeRate);
+  //       switch (exchangeRate?.data[0]?.dex) {
+  //         case "space-fi":
+  //           setDexType(SWAP_TYPE.SPACEFI);
+  //           break;
+  //         case "skydrome":
+  //           setDexType(SWAP_TYPE.SKYDROME);
+  //           break;
+  //         case "iziswap":
+  //           setDexType(SWAP_TYPE.IZUMI);
+  //           break;
+  //         case "syncswap":
+  //           setDexType(SWAP_TYPE.SYNCSWAP);
+  //           break;
+  //         case "punkswap":
+  //           setDexType(SWAP_TYPE.PUNKSWAP);
+  //           break;
+  //         case "kyberswap":
+  //           setDexType(SWAP_TYPE.KYBERSWAP);
+  //           break;
+  //         case "coffeswap":
+  //           setDexType(SWAP_TYPE.COFFEESWAP);
+  //           break;
+  //         case "papyrusswap":
+  //           setDexType(SWAP_TYPE.PAPYRUSSWAP);
+  //           break;
+  //         case "sushiswap":
+  //           setDexType(SWAP_TYPE.SUSHISWAP);
+  //           break;
+  //         default:
+  //           setDexType(SWAP_TYPE.INVALID);
+  //       }
+  //       setReceiveAmount(
+  //         ethers.utils
+  //           .formatUnits(
+  //             exchangeRate?.data[0]?.amount,
+  //             tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
+  //           )
+  //           .toString()
+  //       );
+  //       setRate(
+  //         ethers.utils.formatUnits(
+  //           exchangeRate?.data[0]?.amount,
+  //           tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
+  //         )
+  //       );
+  //       setIsLoadingReceiveAmount(false);
 
-        switch (exchangeRate?.data[0]?.dex) {
-          case "space-fi":
-            setDexType(SWAP_TYPE.SPACEFI);
-            break;
-          case "skydrome":
-            setDexType(SWAP_TYPE.SKYDROME);
-            break;
-          case "iziswap":
-            setDexType(SWAP_TYPE.IZUMI);
-            break;
-          case "syncswap":
-            setDexType(SWAP_TYPE.SYNCSWAP);
-            break;
-          case "punkswap":
-            setDexType(SWAP_TYPE.PUNKSWAP);
-            break;
-          case "kyberswap":
-            setDexType(SWAP_TYPE.KYBERSWAP);
-            break;
-          case "coffeswap":
-            setDexType(SWAP_TYPE.COFFEESWAP);
-            break;
-          case "papyrusswap":
-            setDexType(SWAP_TYPE.PAPYRUSSWAP);
-            break;
-          case "sushiswap":
-            setDexType(SWAP_TYPE.SUSHISWAP);
-            break;
-          default:
-            setDexType(SWAP_TYPE.INVALID);
-        }
-        setReceiveAmount(
-          ethers.utils
-            .formatUnits(
-              exchangeRate?.data[0]?.amount,
-              tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
-            )
-            .toString()
-        );
-        setRate(
-          ethers.utils.formatUnits(
-            exchangeRate?.data[0]?.amount,
-            tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
-          )
-        );
-        setIsLoadingReceiveAmount(false);
+  //       if (exchangeRate?.data[0]?.dex === "skydrome") {
+  //         const pool = await getPair();
 
-        if (exchangeRate?.data[0]?.dex === "skydrome") {
-          const pool = await getPair();
+  //         if (pool) setPairAddress(pool[0]);
+  //       } else if (exchangeRate?.data[0]?.dex === "iziswap") {
+  //         const pool = await getPool();
 
-          if (pool) setPairAddress(pool[0]);
-        } else if (exchangeRate?.data[0]?.dex === "iziswap") {
-          const pool = await getPool();
+  //         if (pool) setPairAddress(pool?.toString());
+  //       } else if (exchangeRate?.data[0]?.dex === "syncswap") {
+  //         console.log("poolAddress", tokenFrom, tokenTo);
+  //         if (
+  //           (tokenFrom.isToken
+  //             ? tokenFrom?.address
+  //             : tokenFrom?.wrapped?.address ===
+  //                 "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" && tokenTo.isToken
+  //             ? tokenTo?.address
+  //             : tokenTo?.wrapped?.address ===
+  //               "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
+  //           (tokenFrom.isToken
+  //             ? tokenFrom?.address
+  //             : tokenFrom?.wrapped?.address ===
+  //                 "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && tokenTo.isToken
+  //             ? tokenTo?.address
+  //             : tokenTo?.wrapped?.address ===
+  //               "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
+  //         ) {
+  //           setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1");
+  //         }
+  //       } else {
+  //         if (poolAddress) setPairAddress(poolAddress?.toString());
+  //       }
+  //     }
+  //   }, 200);
+  // };
 
-          if (pool) setPairAddress(pool?.toString());
-        } else if (exchangeRate?.data[0]?.dex === "syncswap") {
-          console.log("poolAddress", tokenFrom, tokenTo);
-          if (
-            (tokenFrom.isToken
-              ? tokenFrom?.address
-              : tokenFrom?.wrapped?.address ===
-                  "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df" && tokenTo.isToken
-              ? tokenTo?.address
-              : tokenTo?.wrapped?.address ===
-                "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4") ||
-            (tokenFrom.isToken
-              ? tokenFrom?.address
-              : tokenFrom?.wrapped?.address ===
-                  "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && tokenTo.isToken
-              ? tokenTo?.address
-              : tokenTo?.wrapped?.address ===
-                "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df")
-          ) {
-            setPairAddress("0x2076d4632853FB165Cf7c7e7faD592DaC70f4fe1");
-          }
-        } else {
-          if (poolAddress) setPairAddress(poolAddress?.toString());
-        }
-      }
-    }, 200);
-  };
+  // useEffect(() => {
+  //   if (!isChangeFrom) return;
+  //   if (
+  //     (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
+  //     (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
+  //   )
+  //     return;
+  //   getCurrentRate();
+  // }, [swapAmount, tokenFrom, tokenTo]);
 
-  useEffect(() => {
-    if (!isChangeFrom) return;
-    if (
-      (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
-      (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
-    )
-      return;
-    getCurrentRate();
-  }, [swapAmount, tokenFrom, tokenTo]);
+  // useEffect(() => {
+  //   if (isChangeFrom) return;
+  //   getTokenRate();
+  // }, [receiveAmount, tokenFrom, tokenTo]);
 
-  useEffect(() => {
-    if (isChangeFrom) return;
-    getTokenRate();
-  }, [receiveAmount, tokenFrom, tokenTo]);
-
-  const getTokenRate = async () => {
-    clearTimeout(getTokenRateTimeout.current!);
-    getTokenRateTimeout.current = setTimeout(async () => {
-      if (!tokenFrom || !tokenTo) return;
-      else {
-        setIsLoadingSwapAmount(true);
-        const exchangeRate = await axios.post("/api/exchange", {
-          amount: receiveAmount.toString(),
-          from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-          to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
-          type: "OUT",
-        });
-        setDexType(
-          exchangeRate?.data?.dex === "space-fi"
-            ? SWAP_TYPE.SPACEFI
-            : exchangeRate?.data?.dex === "skydrome"
-            ? SWAP_TYPE.SKYDROME
-            : exchangeRate?.data?.dex === "iziswap"
-            ? SWAP_TYPE.IZUMI
-            : exchangeRate?.data?.dex === "syncswap"
-            ? SWAP_TYPE.SYNCSWAP
-            : exchangeRate?.data?.dex === "punkswap"
-            ? SWAP_TYPE.PUNKSWAP
-            : exchangeRate?.data?.dex === "kyberswap"
-            ? SWAP_TYPE.KYBERSWAP
-            : exchangeRate?.data?.dex === "coffeswap"
-            ? SWAP_TYPE.COFFEESWAP
-            : exchangeRate?.data?.dex === "papyrusswap"
-            ? SWAP_TYPE.PAPYRUSSWAP
-            : exchangeRate?.data?.dex === "sushiswap"
-            ? SWAP_TYPE.SUSHISWAP
-            : SWAP_TYPE.INVALID
-        );
-        setSwapAmount(
-          ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
-        );
-        setIsLoadingSwapAmount(false);
-      }
-    }, 200);
-  };
+  // const getTokenRate = async () => {
+  //   clearTimeout(getTokenRateTimeout.current!);
+  //   getTokenRateTimeout.current = setTimeout(async () => {
+  //     if (!tokenFrom || !tokenTo) return;
+  //     else {
+  //       setIsLoadingSwapAmount(true);
+  //       const exchangeRate = await axios.post("/api/exchange", {
+  //         amount: receiveAmount.toString(),
+  //         from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+  //         to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+  //         type: "OUT",
+  //       });
+  //       setDexType(
+  //         exchangeRate?.data?.dex === "space-fi"
+  //           ? SWAP_TYPE.SPACEFI
+  //           : exchangeRate?.data?.dex === "skydrome"
+  //           ? SWAP_TYPE.SKYDROME
+  //           : exchangeRate?.data?.dex === "iziswap"
+  //           ? SWAP_TYPE.IZUMI
+  //           : exchangeRate?.data?.dex === "syncswap"
+  //           ? SWAP_TYPE.SYNCSWAP
+  //           : exchangeRate?.data?.dex === "punkswap"
+  //           ? SWAP_TYPE.PUNKSWAP
+  //           : exchangeRate?.data?.dex === "kyberswap"
+  //           ? SWAP_TYPE.KYBERSWAP
+  //           : exchangeRate?.data?.dex === "coffeswap"
+  //           ? SWAP_TYPE.COFFEESWAP
+  //           : exchangeRate?.data?.dex === "papyrusswap"
+  //           ? SWAP_TYPE.PAPYRUSSWAP
+  //           : exchangeRate?.data?.dex === "sushiswap"
+  //           ? SWAP_TYPE.SUSHISWAP
+  //           : SWAP_TYPE.INVALID
+  //       );
+  //       setSwapAmount(
+  //         ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
+  //       );
+  //       setIsLoadingSwapAmount(false);
+  //     }
+  //   }, 200);
+  // };
 
   const native = useNativeCurrency();
 
@@ -567,9 +444,16 @@ const SwapCard: React.FC<Props> = () => {
     let tokenToA = tokenTo;
     setTokenTo(tokenFrom);
     setTokenFrom(tokenToA);
+    // fetch
   };
 
   const handleClickInputPercent = (percent: number) => {
+    if(percent == percentage) {
+      setPercentage(0);
+      setChangeFrom(false);
+      return;
+    }
+
     if (
       (tokenTo?.symbol == "WETH" && tokenFrom?.symbol == "ETH") ||
       (tokenTo?.symbol == "ETH" && tokenFrom?.symbol == "WETH")
@@ -589,25 +473,26 @@ const SwapCard: React.FC<Props> = () => {
     }
   };
 
-  const onKeyDownSwapAmount = () => {
-    setChangeFrom(true);
-  };
+  // const onKeyDownSwapAmount = () => {
+  //   setChangeFrom(true);
+  // };
 
-  const onKeyDownReceiveAmount = () => {
-    setChangeFrom(false);
-  };
+  // const onKeyDownReceiveAmount = () => {
+  //   setChangeFrom(false);
+  // };
 
-  function calculatePercentageDifference(value1: number, value2: number): number {
-    const difference = value2 - value1;
-    const percentageDifference = (difference / value1) * 100;
-    return percentageDifference;
-  }
+  // function calculatePercentageDifference(value1: number, value2: number): number {
+  //   const difference = value2 - value1;
+  //   const percentageDifference = (difference / value1) * 100;
+  //   return percentageDifference;
+  // }
 
-  function getPercentageDifference(value1: number, value2: number): number {
-    const percentageDiff = calculatePercentageDifference(value1, value2);
-    if (percentageDiff) return percentageDiff;
-    else return 0;
-  }
+  // function getPercentageDifference(value1: number, value2: number): number {
+  //   const percentageDiff = calculatePercentageDifference(value1, value2);
+  //   if (percentageDiff) return percentageDiff;
+  //   else return 0;
+  // }
+
   const tokens: Currency[] = useMemo(() => {
     if (chain && Tokens[chain.id]) {
       const tokens = _.values(Tokens[chain.id]);
@@ -617,271 +502,174 @@ const SwapCard: React.FC<Props> = () => {
       return [native, ...tokens];
     }
     return [];
+    console.log(tokens);
   }, [chain, native]);
 
-  console.log("dexType", dexType);
-
   return (
-    <div className="w-full max-w-[640px] p-2 lg:p-8 gap-2 z-10 flex flex-col relative mx-auto pt-3">
+    <div className="xl:w-[520px] lg:w-[480px] md:w-[400px] sm:w-[360px] w-full xs:max-w-full max-w-[320px] lg:px-6 xs:px-2 px-2 py-2 gap-2 flex flex-col relative mx-auto">
       <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
-        <div className="relative w-full flex flex-col">
-          <div className="w-full flex flex-col z-[2] bg-[rgba(26,29,36,0.80)] mb-[2px] backdrop-blur-[52px] rounded-[48px] p-8">
-            <div className="flex lg:hidden w-full justify-end">
-              <RefreshButton />
-              <SlippageButton />
-            </div>
-            <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
-              <span className="text-[#FFF0DD]">You Sell</span>
+        <div className="relative w-full flex flex-col mb-2">
+          <div className="w-full z-[1] flex flex-col bg-[rgba(26,29,36,0.80)] mb-1 backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 !pb-12">
+            <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
+              <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">From</span>
               {balanceFrom && (
-                <div
-                  className="text-right text-lg text-[#FFF] cursor-pointer"
-                  onClick={() => setSwapAmount(toFixedValue(balanceFrom.formatted, 4))}
-                >
+                <div className="text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm text-[#FFF]">
                   {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
                 </div>
               )}
             </div>
-            <div className="rounded-lg flex relative w-full flex-col gap-4 mb-4 ">
-              <div className="flex flex-col z-[10]">
+            <div className="rounded-lg flex justify-center items-center relative w-full flex-col xs:gap-4 gap-2">
+              <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
                 <div
-                  className="flex justify-between lg:z-50 items-center relative lg:gap-8"
+                  className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full"
                   style={{ position: "relative", zIndex: 4 }}
                 >
-                  <TokenSelect onClick={() => setShowFrom(true)} token={tokenFrom} />
+                  <div className="flex justify-center items-center w-full">
+                    <TokenSelect onClick={() => setShowFrom(true)} token={tokenFrom} />
+                  </div>
                   <Input
                     onChange={(e) => {
-                      let val = parseInt(e.target.value, 10);
-                      if (isNaN(val)) {
-                        setSwapAmount("");
-                      } else {
-                        // is A Number
-                        val = val >= 0 ? val : 0;
-                        handleINChange(e);
-                      }
+                      // setPercentage(0);
+                      // setChangeFrom(false);
+                      // let val = parseInt(e.target.value, 10);
+                      // if (isNaN(val)) {
+                      //   setSwapAmount("");
+                      // } else {
+                      //   // is A Number
+                      //   val = val >= 0 ? val : 0;
+                      //   // handleINChange(e);
+                      // }
                     }}
-                    onKeyDown={onKeyDownSwapAmount}
+                    onKeyDown={() => {}}
+                    // onKeyDown={onKeyDownSwapAmount}
                     value={swapAmount}
                     type="number"
-                    loading={isLoadingSwapAmount}
                     placeholder="Enter Amount"
-                    className="w-full crosschainswap-input text-end" // Increase the height here
+                    className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
                   />
                 </div>
-                <div className="w-full justify-between pl-6 flex mt-0 lg:-mt-3">
-                  {/*  <span
-                    className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
-                  >
-                    {tokenFrom?.name}
-                  </span>
-
-                TODO: USD value of swap amount   
-                  <span
-                    className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E]  font-semibold `}
-                  >
-                    ~${tokenFrom?.symbol === "ETH" ? ethUSD * +swapAmount : swapAmount}
-                  </span>
-*/}
-                </div>
               </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 place-content-center place-items-center gap-2">
+              <div className="flex flex-row flex-wrap justify-center items-center xl:gap-6 gap-2"> 
                 {percentageButtons.map((val, index) => (
                   <div
                     className={`${
-                      percentage === val ? "scale-125" : "scale-100"
-                    }  font-monteserrat  w-full px-3 cursor-pointer flex flex-col text-center text-sm  transition-all`}
+                      percentage === val ? "scale-[1.15] bg-white bg-opacity-5" : "scale-100"
+                    } ${ balanceFrom && balanceTo && Number(toFixedValue(balanceFrom!.formatted, 4)) > 0 ? "" : "pointer-events-none opacity-50" } group cursor-pointer bg-black select-none xl:px-2 xl:py-2 px-1 py-2 lg:w-[5rem] sm:w-[4.5rem] w-[3.25rem] rounded-full bg-opacity-[0.15] flex flex-col text-center sm:text-sm text-xs transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5`}
                     key={"perc-button-" + index}
                     onClick={() => handleClickInputPercent(val)}
                   >
                     <span
-                      className={` ${
+                      className={`-mb-1 group-hover:text-white ${
                         percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
                       } transition-all`}
                     >
                       {val}%
                     </span>
-                    <div
-                      className={`${
-                        percentage === val ? "w-full" : "w-0"
-                      } transition-all bg-[#FF7C5C]  h-1`}
-                    ></div>
                   </div>
                 ))}
               </div>
-              <button
-                onClick={handleSwitchToken}
-                className="w-16 absolute self-center -bottom-20 lg:-bottom-24 h-16 lg:w-20 lg:h-20 p-4  lg:-mt-10  cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#29303D] hover:bg-opacity-40 transition-all"
-              >
-                <Image
-                  src={"/change-icon.svg"}
-                  width={24}
-                  height={24}
-                  className="h-6 w-6"
-                  alt="change-icon"
-                />
-              </button>
+              <AnimatePresence>
+                <motion.button
+                  whileHover={{ rotate: 135, scale: 1.125, transition: { duration: 0.15 }}}
+                  whileTap={{ rotate: 360, scale: 0.925, transition: { duration: 0.15 }}}
+                  onClick={handleSwitchToken}
+                  className="absolute self-center select-none bottom-0 md:-mb-20 xs:-mb-[4.75rem] -mb-[4.75rem] md:w-16 md:h-16 xs:w-14 xs:h-14 w-12 h-12 cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#1e252e] hover:bg-[#252d38]"
+                >
+                  <Image
+                    src={"/change-icon.svg"}
+                    width={24}
+                    height={24}
+                    className="h-6 w-6"
+                    alt="change-icon"
+                  />
+                </motion.button>
+              </AnimatePresence>
             </div>
           </div>
-
-          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] rounded-[48px] p-8">
-            <div className="flex justify-between items-center space-x-2 mt-4 pl-5 pr-4">
-              <span className="text-[#FFF0DD]">You Buy</span>
+          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 xs:pb-12 !pb-6">
+            <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
+              <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">To</span>
               {balanceTo && (
-                <div className="text-right text-lg text-[#FFF]">
+                <div className="text-white text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">
                   {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
                 </div>
               )}
             </div>
-
-            <div className="flex flex-col z-[6] ">
-              <div className="flex justify-between items-center lg:gap-8">
-                <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} />
-
+            <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
+              <div className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full">
+                <div className="flex justify-center items-center w-full">
+                  <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} />
+                </div>                
                 <Input
-                  onChange={(e) => handleOUTChange(e)}
-                  onKeyDown={onKeyDownReceiveAmount}
                   value={receiveAmount}
                   type="number"
                   loading={isLoadingReceiveAmount}
                   placeholder="Receive Amount"
-                  className="crosschainswap-input w-full text-end cursor-not-allowed"
+                  className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
                   disabled={true}
                 />
               </div>
-              <div className="w-full justify-between pl-6  flex mt-0 lg:-mt-3">
-                {/* 
-                <span
-                  className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] opacity-50 font-semibold `}
-                >
-                  {tokenTo?.name}
-                </span>
-
-               TODO: USD value of swap amount 
-                <span
-                  className={`block truncate text-[10px] mt-[4px] lg:text-base text-[#EBC28E] font-semibold `}
-                >
-                  ~${tokenTo?.symbol === "ETH" ? ethUSD * +receiveAmount : receiveAmount}
-                </span>*/}
-              </div>
-
               <div
-                className={`flex flex-col justify-between p-5 bg-[#121419] bg-opacity-30 rounded-xl my-4 ml-3 ${
+                className={`flex flex-col justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 ${''}`}
+              >
+                <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                  <span className="text-white xs:text-base text-sm">Minimum Received:</span>
+                  <span className="text-white xs:text-base text-sm">{Number(minimumReceived) > 0 ?(minimumReceived + " " + tokenTo?.symbol) : "- " + tokenTo?.symbol}</span>
+                </div>
+                <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                  <span className="text-white xs:text-base text-sm">Slippage Tolerance:</span>
+                  <span className="text-white xs:text-base text-sm">{slippage + "%"}</span>
+                </div>
+                <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                  <span className="text-white xs:text-base text-sm">Est. Gas Fee:</span>
+                  <span className="text-white xs:text-base text-sm">{Number(estGasFee) > 0 ?(estGasFee + " ETH") : "- ETH"}</span>
+                </div>
+                <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                  <span className="text-white xs:text-base text-sm">Price Impact:</span>
+                  <span className={"xs:text-base text-sm " + (Number(priceImpact) > 0 ? "text-green-500" : (Number(priceImpact) < 0 ? "text-red-500" : "text-white")) }>{Number(priceImpact) > 0 ?(priceImpact + "%") : "- %"}</span>
+                </div>
+              </div>
+              <div
+                className={`flex flex-col justify-between md:p-5 sm:p-4 p-3 bg-[#121419] bg-opacity-30 rounded-xl xs:mx-0 mx-2 mt-4 xs:mb-4 mb-2 ${
                   isLoadingReceiveAmount && "animate-pulse items-center"
                 }`}
               >
-                {isLoadingReceiveAmount ? (
-                  <span className="text-[#EBC28E] animate-pulse self-center">
-                    Getting best price...
+                {/* {Number(swapAmount) == 0 || swapAmount == undefined ? ( */}
+                {false ? (
+                  <span className="text-white self-center text-center xs:text-base text-sm">
+                    Enter your desired swap amount
                   </span>
-                ) : (
-                  <>
-                    <div className="flex items-center text-[#EBC28E] text-xs lg:text-base font-semibold font-leagueSpartan justify-between">
-                      <div className="flex items-center w-1/3 justify-center">
-                        <img
-                          src={`${tokenFrom?.logo}`}
-                          className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
-                        />
-                        <span className="ml-2">{(+swapAmount).toFixed(4) || 0}</span>
+                ):(
+                  isLoadingReceiveAmount ? (
+                    <span className="text-[#EBC28E] animate-pulse self-center xs:text-base text-sm">
+                      Finding best route...
+                    </span>
+                  ) : (
+                    <>
+                      <div className="flex flex-row md:justify-evenly items-center w-full gap-4 md:overflow-x-hidden overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                        {routes.map((route, index) => (
+                          <div key={"route-" + index} className="flex flex-row md:justify-evenly items-center w-full gap-4">
+                            <div onClick={() => window.open("https://scrollscan.com/token/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
+                              <div className="flex flex-row justify-center items-center w-full">
+                                <Image src={""} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem]"/> 
+                              </div>
+                              <span className="md:mt-3 mt-2 text-white text-xs">USDC</span>
+                            </div>
+                            {index != (routes.length - 1) && (
+                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full"/>
+                            )}
+                          </div>
+                        ))}
                       </div>
-                      <div className="flex items-center w-1/3 justify-center">
-                        <svg
-                          width="30"
-                          height="30"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M22 12C22 17.5228 17.5228 22 12 22M2 12C2 6.47715 6.47715 2 12 2"
-                            stroke="#EBC28E"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M12 12V17M12 7V8"
-                            stroke="#FFF0DD"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
+                      <div onClick={() => setShowRouteModal(!showRouteModal)} className="flex justify-center items-center py-2 w-full xs:mt-4 mt-2 bg-black bg-opacity-[0.15] hover:bg-white hover:bg-opacity-10 hover:cursor-pointer transition duration-150 rounded-lg">
+                        <span className="text-white xs:text-base text-sm">View detailed routing</span> 
                       </div>
-                      <div className="flex items-center w-1/3 justify-center">
-                        <img
-                          src={`${tokenTo?.logo}`}
-                          className="w-6 h-6 lg:w-8 lg:h-8 mb-2"
-                        />
-                        {isLoadingReceiveAmount ? (
-                          <div className="w-1/3 rounded-lg ml-2 bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                        ) : (
-                          <span className="ml-2">{(+receiveAmount).toFixed(4) || 0}</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex  text-white  justify-center text-xs gap-2 lg:text-base mt-2">
-                      {isLoadingReceiveAmount ? (
-                        <div className="w-1/3 rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                      ) : tokenFrom?.symbol === "PUNK" ||
-                        tokenFrom?.symbol === "WBTC" ||
-                        tokenFrom?.symbol === "Script" ? (
-                        <span className="  w-1/3 text-center"> ~$0.0000</span>
-                      ) : (
-                        <span className="  w-1/3 text-center">
-                          ~$
-                          {tokenFrom?.symbol === "ETH" || tokenFrom?.symbol === "WETH"
-                            ? (ethUSD * +swapAmount).toFixed(4)
-                            : (+swapAmount).toFixed(4)}
-                        </span>
-                      )}
-
-                      {isLoadingReceiveAmount ? (
-                        <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                      ) : (
-                        <span className="text-sm lg:text-xl w-1/3 text-center">
-                          {!swapAmount ||
-                          !receiveAmount ||
-                          Number(swapAmount) === 0 ||
-                          tokenFrom?.symbol === "PUNK" ||
-                          tokenFrom?.symbol === "WBTC" ||
-                          tokenFrom?.symbol === "Script" ||
-                          tokenTo?.symbol === "PUNK" ||
-                          tokenTo?.symbol === "WBTC" ||
-                          tokenTo?.symbol === "Script"
-                            ? 0
-                            : getPercentageDifference(
-                                tokenFrom?.symbol === "ETH" ||
-                                  tokenFrom?.symbol === "WETH"
-                                  ? ethUSD * +swapAmount
-                                  : +swapAmount,
-                                tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                                  ? ethUSD * +receiveAmount
-                                  : +receiveAmount
-                              ).toFixed(2)}
-                          %
-                        </span>
-                      )}
-
-                      {isLoadingReceiveAmount ? (
-                        <div className="w-1/3 text-white rounded-lg bg-slate-200 animate-pulse bg-opacity-25 h-[30px]"></div>
-                      ) : tokenTo?.symbol === "PUNK" ||
-                        tokenTo?.symbol === "WBTC" ||
-                        tokenTo?.symbol === "Script" ? (
-                        <span className="  w-1/3 text-center"> ~$0.0000</span>
-                      ) : (
-                        <span className="w-1/3 text-center">
-                          ~$
-                          {tokenTo?.symbol === "ETH" || tokenTo?.symbol === "WETH"
-                            ? (ethUSD * +receiveAmount).toFixed(4)
-                            : (+receiveAmount).toFixed(4)}
-                        </span>
-                      )}
-                    </div>
-                  </>
+                    </>
+                  )
                 )}
               </div>
             </div>
-            <div className="pl-3">
+            <div className="flex justify-center items-center w-full">
               <Button
                 variant="bordered"
                 disabled={
@@ -889,7 +677,7 @@ const SwapCard: React.FC<Props> = () => {
                   (!tokenFrom || !tokenTo || !swapAmount) &&
                   chain?.id === 534352
                 }
-                className="w-full p-4 rounded-lg text-xl font-semibold mt-8 lg:mt-4"
+                className={"w-full xs:mx-0 mx-2 md:p-4 sm:p-3 p-2 rounded-xl xl:text-xl sm:text-lg text-md font-semibold " + (isConnected && (!tokenFrom || !tokenTo || !swapAmount) && chain?.id === 534352 ? "opacity-50 pointer-events-none" : "")}
                 onClick={() => (isConnected ? setIsSwapModalOpen(true) : open())}
               >
                 {isConnected ? "SWAP" : "Connect Wallet"}
@@ -898,32 +686,43 @@ const SwapCard: React.FC<Props> = () => {
           </div>
         </div>
       </div>
-      {showFrom && (
-        <TokenModal
-          onSelectToken={(token: any) => {
-            setTokenFrom(token);
-            fetchBalanceFrom();
-          }}
-          onCloseModal={() => setShowFrom(false)}
-          tokenList={tokens}
-        />
-      )}
-      {showTo && (
-        <TokenModal
-          onSelectToken={(token: any) => setTokenTo(token)}
-          onCloseModal={() => setShowTo(false)}
-          tokenList={tokens}
-        />
-      )}
-      {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534352 ? (
+      <AnimatePresence>
+        {showFrom && (
+          <TokenModal
+            onSelectToken={(token: any) => {
+              setTokenFrom(token);
+              fetchBalanceFrom();
+            }}
+            onCloseModal={() => setShowFrom(false)}
+            tokenList={tokens}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showTo && (
+          <TokenModal
+            onSelectToken={(token: any) => setTokenTo(token)}
+            onCloseModal={() => setShowTo(false)}
+            tokenList={tokens}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showRouteModal && (
+          <RouteModal
+            onCloseModal={() => setShowRouteModal(false)}
+            routeList={[]}
+          />
+        )}
+      </AnimatePresence>
+      {/* {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === 534352 ? ( */}
+      {/* {tokenFrom && tokenTo && true ? (
         <SwapModal
-          pool={pairAddress as string}
           tokenA={tokenFrom}
           tokenB={tokenTo}
           amountA={+swapAmount}
           amountB={receiveAmount}
-          swapType={dexType}
-          offers={offers}
+          swapParams={[]}
           swapSuccess={() => {
             setSwapAmount("0");
             setReceiveAmount("0");
@@ -937,7 +736,7 @@ const SwapCard: React.FC<Props> = () => {
           fetchBalanceFrom={fetchBalanceFrom}
           fetchBalanceTo={fetchBalanceTo}
         />
-      ) : null}
+      ) : null} */}
     </div>
   );
 };
