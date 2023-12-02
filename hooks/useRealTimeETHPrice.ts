@@ -5,7 +5,6 @@ export const useRealTimeETHPrice = () => {
 
   useEffect(() => {
     const socket = new WebSocket('wss://stream.binance.com:9443/ws/ethusdt@trade');
-
     socket.onmessage = (event) => {
       const tradeData = JSON.parse(event.data);
       const newEthPrice = parseFloat(tradeData.p);
