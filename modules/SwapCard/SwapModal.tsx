@@ -10,7 +10,7 @@ import { Currency, SWAP_TYPE, swapTypeMapping } from "@/types";
 import useContract from "@/hooks/useContract";
 import SwapButton, { SwapParam } from "./SwapButton";
 import AllowButton from "./AllowButton";
-import { UNISWAP_DEFAULT_FEE } from "@/constants/contracts";
+import { DEFAULT_FEE } from "@/constants/contracts";
 import { fetchFeeData } from "@wagmi/core";
 import { useNetwork } from "wagmi";
 import { generatePath } from "@/utils/path";
@@ -106,7 +106,7 @@ function SwapModal({
           </div>
         </div>
         <div className="flex justify-between mb-10 mt-5 items-center">
-          <SwapToken value={amountA.toFixed(5)} currency={tokenA} />
+          <SwapToken value={amountA.toFixed(4)} currency={tokenA} />
           <FontAwesomeIcon
             icon={faArrowRight}
             className="text-[#AAA]"
@@ -195,7 +195,7 @@ function SwapModal({
                   300
                 ).toString() || "0x0000000000000000000000000000000000000000",
               fee: 0
-                // swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || UNISWAP_DEFAULT_FEE || 0,
+                // swapType === SWAP_TYPE.KYBERSWAP ? 250 : 3000 || DEFAULT_FEE || 0,
             }}
             swapSuccess={() => swapSuccess()}
             tokenIn={tokenA}

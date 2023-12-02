@@ -1,55 +1,38 @@
 [
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "initialWethAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "initialFeeAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "initialRevenueAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "initialFeePercentage",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "initialRevenueFeePercentage",
+                "type": "uint256"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
     {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "finalTokenAmount",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "minTotalAmountOut",
-                "type": "uint256"
-            }
-        ],
-        "name": "AmountLessThanMinRequiredError",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            }
-        ],
-        "name": "ApprovalFailedError",
-        "type": "error"
-    },
-    {
         "inputs": [],
-        "name": "NotOwnerError",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            }
-        ],
-        "name": "OwnableInvalidOwner",
+        "name": "AccessControlBadConfirmation",
         "type": "error"
     },
     {
@@ -58,30 +41,29 @@
                 "internalType": "address",
                 "name": "account",
                 "type": "address"
+            },
+            {
+                "internalType": "bytes32",
+                "name": "neededRole",
+                "type": "bytes32"
             }
         ],
-        "name": "OwnableUnauthorizedAccount",
+        "name": "AccessControlUnauthorizedAccount",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidAddressError",
+        "type": "error"
+    },
+    {
+        "inputs": [],
+        "name": "InvalidFeePercentageError",
         "type": "error"
     },
     {
         "inputs": [],
         "name": "ReentrancyGuardReentrantCall",
-        "type": "error"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "address",
-                "name": "token",
-                "type": "address"
-            },
-            {
-                "internalType": "address",
-                "name": "spender",
-                "type": "address"
-            }
-        ],
-        "name": "RevokeApprovalFailedError",
         "type": "error"
     },
     {
@@ -132,25 +114,6 @@
             {
                 "indexed": true,
                 "internalType": "address",
-                "name": "previousOwner",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "newOwner",
-                "type": "address"
-            }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "address",
                 "name": "user",
                 "type": "address"
             },
@@ -193,6 +156,21 @@
                     },
                     {
                         "internalType": "uint256",
+                        "name": "deadline",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isStable",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "convertToNative",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
                         "name": "swapType",
                         "type": "uint256"
                     }
@@ -205,17 +183,86 @@
             {
                 "indexed": false,
                 "internalType": "uint256",
-                "name": "minTotalAmountOut",
-                "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "finalTokenAmount",
+                "name": "amountToTransfer",
                 "type": "uint256"
             }
         ],
         "name": "PathsExecuted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "previousAdminRole",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "newAdminRole",
+                "type": "bytes32"
+            }
+        ],
+        "name": "RoleAdminChanged",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            }
+        ],
+        "name": "RoleGranted",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+            }
+        ],
+        "name": "RoleRevoked",
         "type": "event"
     },
     {
@@ -263,12 +310,51 @@
     },
     {
         "inputs": [],
-        "name": "coffeeRouterAddress",
+        "name": "ADMIN_ROLE",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "bytes32",
                 "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "DEFAULT_ADMIN_ROLE",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "childAddress",
                 "type": "address"
+            }
+        ],
+        "name": "addChild",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "childIndex",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -315,6 +401,21 @@
                     },
                     {
                         "internalType": "uint256",
+                        "name": "deadline",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "isStable",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "convertToNative",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "uint256",
                         "name": "swapType",
                         "type": "uint256"
                     }
@@ -322,16 +423,6 @@
                 "internalType": "struct Params.SwapParam[]",
                 "name": "swapParams",
                 "type": "tuple[]"
-            },
-            {
-                "internalType": "uint256",
-                "name": "minTotalAmountOut",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "conveth",
-                "type": "bool"
             }
         ],
         "name": "executeSwaps",
@@ -343,6 +434,19 @@
             }
         ],
         "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "feeAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
         "type": "function"
     },
     {
@@ -359,34 +463,14 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "fee_address",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "iziSwapRouterAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "kyberSwapRouterAddress",
+        "name": "getChildContractAddress",
         "outputs": [
             {
                 "internalType": "address",
@@ -400,19 +484,85 @@
     {
         "inputs": [
             {
-                "internalType": "address[]",
-                "name": "tokens",
-                "type": "address[]"
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
             }
         ],
-        "name": "maxApprovals",
+        "name": "getRoleAdmin",
+        "outputs": [
+            {
+                "internalType": "bytes32",
+                "name": "",
+                "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "grantRole",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+            }
+        ],
+        "name": "hasRole",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "callerConfirmation",
+                "type": "address"
+            }
+        ],
+        "name": "renounceRole",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
     },
     {
         "inputs": [],
-        "name": "owner",
+        "name": "revenueAddress",
         "outputs": [
             {
                 "internalType": "address",
@@ -425,53 +575,7 @@
     },
     {
         "inputs": [],
-        "name": "papyrusRouterAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "punkSwapRouterAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "renounceOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "revenue_address",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "revenuewFeePercentage",
+        "name": "revenueFeePercentage",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -485,12 +589,17 @@
     {
         "inputs": [
             {
-                "internalType": "address[]",
-                "name": "tokens",
-                "type": "address[]"
+                "internalType": "bytes32",
+                "name": "role",
+                "type": "bytes32"
+            },
+            {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
             }
         ],
-        "name": "revokeApprovals",
+        "name": "revokeRole",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -499,7 +608,7 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "_newFeeAddress",
+                "name": "newFeeAddress",
                 "type": "address"
             }
         ],
@@ -512,7 +621,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_feePercentage",
+                "name": "newfeePercentage",
                 "type": "uint256"
             }
         ],
@@ -525,7 +634,7 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "_newRevenueAddress",
+                "name": "newRevenueAddress",
                 "type": "address"
             }
         ],
@@ -538,7 +647,7 @@
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "_revenuePercentage",
+                "name": "newRevenuePercentage",
                 "type": "uint256"
             }
         ],
@@ -548,52 +657,32 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "skydromeRouterAddress",
-        "outputs": [
+        "inputs": [
             {
                 "internalType": "address",
-                "name": "",
+                "name": "newWethAddress",
                 "type": "address"
             }
         ],
-        "stateMutability": "view",
+        "name": "setWethAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "spacefiRouterAddress",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                "internalType": "bytes4",
+                "name": "interfaceId",
+                "type": "bytes4"
             }
         ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "sushiRouterAddress",
+        "name": "supportsInterface",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "bool",
                 "name": "",
-                "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "syncRouterAddress",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -602,12 +691,17 @@
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "index",
+                "type": "uint256"
+            },
+            {
                 "internalType": "address",
-                "name": "newOwner",
+                "name": "childAddress",
                 "type": "address"
             }
         ],
-        "name": "transferOwnership",
+        "name": "updateChildContractAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -642,7 +736,7 @@
         "inputs": [
             {
                 "internalType": "address payable",
-                "name": "_to",
+                "name": "receiver",
                 "type": "address"
             }
         ],
@@ -655,12 +749,12 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "_token",
+                "name": "withdrawToken",
                 "type": "address"
             },
             {
                 "internalType": "address",
-                "name": "_to",
+                "name": "receiver",
                 "type": "address"
             }
         ],

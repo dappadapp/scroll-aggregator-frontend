@@ -12,11 +12,12 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 type Props = {
   token?: Currency;
   onClick: () => void;
+  loading?: boolean;
 };
 
-const TokenSelect = ({ token, onClick }: Props) => {
+const TokenSelect = ({ token, onClick, loading }: Props) => {
   return (
-    <div onClick={onClick} className="relative flex justify-center items-center xs:w-full w-[92.5%] lg:py-6 md:py-5 sm:py-4 xs:py-3 py-2 lg:px-4 sm:px-3 xs:px-2 px-2 bg-black bg-opacity-[0.15] rounded-2xl transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5">
+    <div onClick={loading ? () => {} : onClick} className={"relative flex justify-center items-center xs:w-full w-[92.5%] lg:py-6 md:py-5 sm:py-4 xs:py-3 py-2 lg:px-4 sm:px-3 xs:px-2 px-2 bg-black bg-opacity-[0.15] rounded-2xl transition-all duration-150 hover:bg-white hover:bg-opacity-5 " + (loading ? " pointer-events-none animate-pulse" : "hover:cursor-pointer")}>
       <div
         className="pl-2 flex items-center lg:w-[10rem] md:w-[8.75rem] xs:w-[7.5rem] w-full h-[1.75rem] gap-2 cursor-pointer z-[9999] select-none "
       >

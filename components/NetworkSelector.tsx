@@ -87,9 +87,9 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
           Switch Network
         </span>
       : 
-        <div className="text-white flex flex-row justify-center items-center cursor-pointer duration-150 transition gap-2 px-6 py-3 md:min-w-[10rem] md:w-auto xs:w-[9.25rem] w-[8.25rem] xl:max-h-[3rem] md:max-h-[2.75rem] xs:max-h-[2.5rem] max-h-[2rem] xl:text-base text-sm bg-[#0A0A0A] rounded-lg border border-white/10 hover:bg-[#151515]">
+        <div className="text-white flex flex-row justify-center items-center cursor-pointer duration-150 transition md:min-w-[10rem] md:w-auto xs:w-[9.25rem] w-[8.25rem] xl:max-h-[3rem] md:max-h-[2.75rem] xs:max-h-[2.5rem] max-h-[2rem] xl:text-base text-sm bg-[#0A0A0A] rounded-lg border border-white/10 hover:bg-[#151515]">
           {chain?.id !== 534352 ? (
-            <button onClick={() => handleChangeNetworkChain(534352)} className="select-none md:whitespace-normal whitespace-nowrap">
+            <button onClick={() => handleChangeNetworkChain(534352)} className="flex flex-row justify-center items-center cursor-pointer w-full h-full px-6 py-3 select-none md:whitespace-normal whitespace-nowrap">
               {isLoading ? 
                 <div className="flex justify-center items-center xl:w-[1.75rem] w-[1.5rem]">
                   <Loading />
@@ -100,7 +100,10 @@ const NetworkSelector: FC<NetworkSelectorProps> = () => {
             </button>
           ) : (
             <Fragment>
-              <NetworkItem chain={currentNetwork} className="select-none" />
+              <NetworkItem
+                chain={currentNetwork}
+                className="group text-[#CACACA] select-none p-3"
+              />
             </Fragment>
           )}
         </div>

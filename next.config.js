@@ -4,6 +4,15 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   transpilePackages: ["@lifi/widget", "@lifi/wallet-management"],
+  images: {
+    dangerouslyAllowSVG: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,

@@ -196,3 +196,10 @@ input[type="number"] {
 .grecaptcha-badge {
   display: none !important;
 }
+
+.routeModalBg {
+  background-image: radial-gradient(circle at 50% 50%, transparent 8%, #00000032 12%);
+  background-repeat: repeat;
+  background-position: 0 0, 24px 24px;
+  background-size: 24px 24px;
+}

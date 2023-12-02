@@ -7,7 +7,7 @@ export const formatAddress = (address: string) => {
 export function validateAndParseAddress(address: string): Address {
   const checksummedAddress = getAddress(address)
   if (address !== checksummedAddress) {
-    console.log('Address is not checksummed')
+    // console.log('Address is not checksummed')
   }
   return checksummedAddress
 }

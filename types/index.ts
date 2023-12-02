@@ -3,7 +3,7 @@ import { mainnet, goerli, bsc, bscTestnet, scrollSepolia, scrollTestnet, zkSync,
 export * from './token'
 
 import Skydrome from '@/assets/images/skydrome.png';
-import { Token } from "./token";
+import { ERC20Token, Token } from "./token";
 
 export enum ChainId {
   ETHEREUM = mainnet.id,
@@ -108,13 +108,20 @@ export interface SwapParams {
 }
 
 export interface Route {
-  tokenIn: string;
-  tokenOut: string;
+  tokenIn: ERC20Token;
+  tokenOut: ERC20Token;
   amountIn: string;
   childIndex: number;
   amountOut: BigInt;
   minAmountOut: BigInt;
-  tokenOutLiquidity: BigInt;
-  routePercentage: number;
   fee: number;
+}
+
+export interface BestRouteData {
+  swapParams: SwapParams[];
+  routePercentages: number[];
+  amountOuts: BigInt[];
+  priceImpact: number; 
+  amountOut: number; 
+  minAmountOut: number;
 }
