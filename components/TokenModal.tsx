@@ -9,6 +9,7 @@ import Loading from "@/assets/images/loading.svg";
 import { useAccount, useBalance } from "wagmi";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { ethers } from "ethers";
 
 type Props = {
   onCloseModal: () => void;
@@ -40,7 +41,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
   }, [onCloseModal]);
 
   const { data } = useBalance({
-    address: address,
+    address: address!,
     chainId: 534352,
   });
 
@@ -65,10 +66,10 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
   }, []);
 
   useEffect(() => {
-    if (!tokenList) return;
+    if (!tokens || !address) return;
     setLoading(true);
     getScrollTokenBalances().finally(() => setLoading(false));
-  }, [address, tokenList]);
+  }, [address, tokens]);
 
   const handleFavToken = (token: string) => {
     if (favTokens.some((tokenX) => tokenX === token)) {
@@ -88,13 +89,19 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
     }
   };
   const getScrollTokenBalances = async () => {
+    const ethBalanceJson = await axios(
+      `https://blockscout.scroll.io/api?module=account&action=eth_get_balance&address=${address}`
+    )
+      .then((response) => response)
+      .catch((error) => error.response);
+
     const json = await axios(
       `https://blockscout.scroll.io/api?module=account&action=tokenlist&address=${address}`
     )
       .then((response) => response)
       .catch((error) => error.response);
 
-    if (json.status === 200) {
+    if (ethBalanceJson.status === 200 && json.status === 200) {
       if (json.data.message === "OK" && json.data.status === "1") {
         const formatted = json.data.result.map((x: any) => ({
           balance: Number(x.balance) / 10 ** Number(x.decimals),
@@ -104,23 +111,42 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
           contractAddress: x.contractAddress,
           type: x.type,
         }));
-        let listWithBalance = tokens?.map((tokenA) => {
-          return {
-            ...tokenA,
-            balance: formatted.some(
-              (formatedToken: any) => formatedToken.symbol === tokenA.symbol
-            )
-              ? formatted.find(
-                  (formatedToken: any) => formatedToken.symbol === tokenA.symbol
-                )?.balance
-              : 0,
-          };
-        });
-        console.log(listWithBalance);
+
+        let listWithBalance = tokens;
+
+        for(let i = 0; i < tokens.length; i++) {
+          if(tokens[i].symbol == "ETH") {
+            listWithBalance[i].balance = Number(ethers.utils.formatEther(ethBalanceJson.data.result)).toFixed(4);
+          }
+
+          for(let j = 0; j < formatted.length; j++) {
+            if(formatted[j].symbol === tokens[i].symbol) {
+              if(Number(formatted[j].balance) > 0) {
+                listWithBalance[i].wrapped.balance = Number(formatted[j].balance).toFixed(4);
+              } else {
+                listWithBalance[i].wrapped.balance = 0;
+              }
+            }
+          }
+        }
+
+        // let listWithBalance = tokens?.map((tokenA) => {
+        //   return {
+        //     ...tokenA,
+        //     balance: formatted.some(
+        //       (formatedToken: any) => formatedToken.symbol === tokenA.symbol
+        //     )
+        //       ? formatted.find(
+        //           (formatedToken: any) => formatedToken.symbol === tokenA.symbol
+        //         )?.balance
+        //       : 0,
+        //   };
+        // });
+
         setTokens(listWithBalance);
       }
     } else {
-      console.log("errorr");
+      // console.log("errorr");
     }
   };
   return (
@@ -205,10 +231,10 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
         <div className="border-t-2 border-t-[#FFF0DD]/20"></div>
         <div className={(favTokens.length > 0 ? (favTokens.length > 2 ? "xs:max-h-[60%] max-h-[42.5%]" : "xs:max-h-[60%] max-h-[55%]") : "max-h-[72.5%]") + "  py-4 overflow-y-scroll gap-4 no-scrollbar flex flex-col mb-4"}>
           {(search.length ? filteredToken : tokens)
-            ?.sort((a: any, b: any) => {
-              if (a?.balance > b?.balance) return -1;
-              else return 1;
-            })
+            // ?.sort((a: any, b: any) => {
+            //   if (a?.wrapped?.balance > b?.wrapped?.balance) return -1;
+            //   else return 1;
+            // })
             .map((tokenX, tokenXIndex) => (
               <div
                 key={tokenX.name}
@@ -233,10 +259,9 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
                   ) : (
                     <div className="flex-1 -mt-1 justify-end mr-3 truncate text-sm lg:text-lg font-bold xs:flex hidden ">
                       {tokenX.symbol === "ETH"
-                        ? Number(data?.formatted).toFixed(4) === "NaN"
-                          ? 0
-                          : Number(data?.formatted).toFixed(4)
-                        : tokenX?.balance?.toFixed(4) || 0}
+                        ? Number(tokenX.balance).toFixed(4) === "NaN" ? "0.0000" : Number(tokenX.balance).toFixed(4)
+                        : Number(tokenX.wrapped?.balance).toFixed(4) === "NaN" ? "0.0000" : Number(tokenX.wrapped?.balance).toFixed(4)
+                      } 
                     </div>
                   )}
 

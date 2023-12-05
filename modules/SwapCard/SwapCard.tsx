@@ -64,10 +64,10 @@ export function walletClientToSigner(walletClient: WalletClient) {
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: walletClient } = useWalletClient({ chainId });
-  return React.useMemo(
-    () => (walletClient ? walletClientToSigner(walletClient) : undefined),
-    [walletClient]
-  );
+  // return React.useMemo(
+  //   () => (walletClient ? walletClientToSigner(walletClient) : undefined),
+  //   [walletClient]
+  // );
 }
 
 const SwapCard: React.FC<Props> = () => {
@@ -172,15 +172,15 @@ const SwapCard: React.FC<Props> = () => {
   }, [tokens]);
 
   useEffect(() => {
-    if(!!contracts?.contract && !!signer) {
-      const aggregatorContract = new ethers.Contract(
-        contracts!.contract,
-        AggregatorAbi,
-        signer!
-      );
+    if(!contracts || !signer) return;
+    
+    const aggregatorContract = new ethers.Contract(
+      contracts.contract,
+      AggregatorAbi,
+      signer
+    );
 
-      setAggreContract(aggregatorContract);
-    }
+    setAggreContract(aggregatorContract);
   }, [contracts, signer])
 
   useEffect(() => {
@@ -197,10 +197,10 @@ const SwapCard: React.FC<Props> = () => {
   } = useBalance({
     address: address,
     ...(!tokenFrom?.isNative && {
-      token: tokenFrom?.wrapped?.address || tokenFrom?.address,
+      token: tokenFrom?.wrapped?.address,
     }),
     chainId: tokenFrom?.chainId,
-    enabled: !!tokenFrom,
+    enabled: !!address && !!tokenFrom,
   });
 
   const {
@@ -210,10 +210,10 @@ const SwapCard: React.FC<Props> = () => {
   } = useBalance({
     address: address,
     ...(!tokenTo?.isNative && {
-      token: tokenTo?.wrapped?.address || tokenTo?.address,
+      token: tokenTo?.wrapped?.address,
     }),
     chainId: tokenTo?.chainId,
-    enabled: !!tokenTo,
+    enabled: !!address && !!tokenTo,
   });
 
   // // Send a call to the getPair function using ethers.js
@@ -315,7 +315,7 @@ const SwapCard: React.FC<Props> = () => {
   // }, [executeSwapsConfig])
 
   const { data: allowance, refetch: fetchAllowance } = useContractRead({
-    address: tokenFrom?.wrapped.address,
+    address: tokenFrom?.wrapped?.address,
     abi: ERC20TokenAbi,
     functionName: 'allowance',
     args: [account?.address, contracts?.contract],
@@ -325,7 +325,7 @@ const SwapCard: React.FC<Props> = () => {
   useEffect(() => {
     if(!allowance || !tokenFrom) return;
 
-    if(Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped.decimals)) >= Number(swapAmount)) {
+    if(Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
       setApproved(true);
     } else {
       setApproved(false);
@@ -333,15 +333,15 @@ const SwapCard: React.FC<Props> = () => {
   }, [allowance]);
 
   const generateBestRouteData = async (tokenIn: Currency, tokenOut: Currency, amountIn: string) => {
-    if(tokenIn?.wrapped.address === tokenOut?.wrapped.address || Number(amountIn) <= 0) return;
+    if(!!tokens && tokenIn?.wrapped?.address === tokenOut?.wrapped?.address || Number(amountIn) <= 0) return;
 
     setIsLoadingReceiveAmount(true);
 
     const data = {
       chainId: ChainId.SCROLL_MAINNET, 
       single: false, 
-      tokenInAddress: tokenIn?.wrapped.address, 
-      tokenOutAddress: tokenOut?.wrapped.address, 
+      tokenInAddress: tokenIn?.wrapped?.address, 
+      tokenOutAddress: tokenOut?.wrapped?.address, 
       amountIn: String(ethers.utils.parseUnits(amountIn, tokenIn?.decimals)), 
       fee: DEFAULT_FEE, 
       slippage: slippage, 
@@ -367,7 +367,7 @@ const SwapCard: React.FC<Props> = () => {
       setMinimumReceived(Number(ethers.utils.formatUnits(responseParsed.minAmountOut, tokenOut?.decimals)).toFixed(5));
       setPriceImpact(String(responseParsed.priceImpact < 0.01 ? 0.01 : responseParsed.priceImpact.toFixed(2)));
       
-      const swapValue = tokenIn?.isNative || responseParsed.swapParams[0].tokenIn === tokens![1].wrapped.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
+      const swapValue = tokenIn?.isNative || responseParsed.swapParams[0].tokenIn === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
       setSwapValue(String(swapValue));
   
       let swapParamsConvertedToRoutes: any[] = [];
@@ -482,7 +482,7 @@ const SwapCard: React.FC<Props> = () => {
 
   //       const exchangeRate = await axios.post("/api/exchange", {
   //         amount: swapAmount.toString(),
-  //         from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
+  //         from: tokenFrom?.isNative ? tokenFrom.wrapped?.address : tokenFrom?.address,
   //         fromDecimals: tokenFrom?.wrapped?.decimals || tokenFrom?.decimals,
   //         to: tokenTo?.isNative ? tokenTo?.wrapped?.address : tokenTo?.address,
   //         toDecimals: tokenTo?.wrapped?.decimals || tokenTo?.decimals,
@@ -527,14 +527,14 @@ const SwapCard: React.FC<Props> = () => {
   //         ethers.utils
   //           .formatUnits(
   //             exchangeRate?.data[0]?.amount,
-  //             tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
+  //             tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped?.decimals
   //           )
   //           .toString()
   //       );
   //       setRate(
   //         ethers.utils.formatUnits(
   //           exchangeRate?.data[0]?.amount,
-  //           tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped.decimals
+  //           tokenTo?.isToken ? tokenTo?.decimals : tokenTo.wrapped?.decimals
   //         )
   //       );
   //       setIsLoadingReceiveAmount(false);
@@ -597,8 +597,8 @@ const SwapCard: React.FC<Props> = () => {
   //       setIsLoadingSwapAmount(true);
   //       const exchangeRate = await axios.post("/api/exchange", {
   //         amount: receiveAmount.toString(),
-  //         from: tokenFrom?.isNative ? tokenFrom.wrapped.address : tokenFrom?.address,
-  //         to: tokenTo?.isNative ? tokenTo.wrapped.address : tokenTo?.address,
+  //         from: tokenFrom?.isNative ? tokenFrom.wrapped?.address : tokenFrom?.address,
+  //         to: tokenTo?.isNative ? tokenTo.wrapped?.address : tokenTo?.address,
   //         type: "OUT",
   //       });
   //       setDexType(
@@ -623,7 +623,7 @@ const SwapCard: React.FC<Props> = () => {
   //           : SWAP_TYPE.INVALID
   //       );
   //       setSwapAmount(
-  //         ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped.decimals)
+  //         ethers.utils.formatUnits(exchangeRate?.data.amount, tokenFrom.wrapped?.decimals)
   //       );
   //       setIsLoadingSwapAmount(false);
   //     }
@@ -631,7 +631,7 @@ const SwapCard: React.FC<Props> = () => {
   // };
 
   useEffect(() => {
-    if(!tokenFrom) return;
+    if(!tokenFrom || !address) return;
 
     if(tokenFrom!.symbol == "ETH") { 
       setApproved(true);
@@ -640,7 +640,7 @@ const SwapCard: React.FC<Props> = () => {
       fetchAllowance?.();
     }
 
-    if(!swapAmount || !tokenTo || tokenFrom?.wrapped.symbol === tokenTo?.wrapped.symbol) return;
+    if(!swapAmount || !tokenTo || tokenFrom?.wrapped?.symbol === tokenTo?.wrapped?.symbol) return;
 
     const generateBestRouteDataFunc = async () => {
       await generateBestRouteData(tokenFrom, tokenTo, swapAmount);
@@ -713,10 +713,10 @@ const SwapCard: React.FC<Props> = () => {
   // }, [chain, native]);
 
   const { config: configApprove } = usePrepareContractWrite({
-    address: tokenFrom?.wrapped.address,
+    address: tokenFrom?.wrapped?.address,
     abi: ERC20TokenAbi,
     functionName: "approve",
-    args: [contracts?.contract, ethers.utils.parseUnits(Number(swapAmount ? swapAmount : "0").toFixed(tokenFrom?.wrapped.decimals), tokenFrom?.wrapped.decimals)],
+    args: [contracts?.contract, ethers.utils.parseUnits(Number(swapAmount ? swapAmount : "0").toFixed(tokenFrom?.wrapped?.decimals), tokenFrom?.wrapped?.decimals)],
     enabled: !!contracts && !!tokenFrom && !!tokenTo && !!swapAmount && !!receiveAmount && Number(receiveAmount) > 0 && !!bestRouteData && !approved
   });
 
@@ -742,6 +742,7 @@ const SwapCard: React.FC<Props> = () => {
   const { writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
 
   useEffect(() => {
+    if(!address || !tokenFrom || !tokenTo) return;
     fetchBalanceFrom?.();
     fetchBalanceTo?.();
   }, [isSuccessSwap])
@@ -923,7 +924,7 @@ const SwapCard: React.FC<Props> = () => {
                             <div>
                               <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
                                 <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.wrapped.address == tokenFrom?.wrapped.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
+                                  <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenFrom?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
                                 </div>
                                 <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
                               </div>
@@ -938,9 +939,9 @@ const SwapCard: React.FC<Props> = () => {
                             <div key={"route-" + index}>
                               <div onClick={() => window.open("https://scrollscan.com/token/" + route[0].tokenIn)} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
                                 <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.symbol != "ETH") && (token?.wrapped.address == route[0].tokenIn))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
+                                  <Image src={String(tokens?.find(token => (token?.symbol != "ETH") && (token?.wrapped?.address == route[0].tokenIn))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
                                 </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">{tokens?.find(token => (token?.symbol != "ETH") && token?.wrapped.address == route[0].tokenIn)?.symbol!}</span>
+                                <span className="md:mt-3 mt-2 text-white text-xs">{tokens?.find(token => (token?.symbol != "ETH") && token?.wrapped?.address == route[0].tokenIn)?.symbol!}</span>
                               </div>
                             </div>
                           ):(
@@ -982,7 +983,7 @@ const SwapCard: React.FC<Props> = () => {
           <TokenModal
             onSelectToken={(token: any) => {
               setTokenFrom(token);
-              fetchBalanceFrom();
+              if(!!address && !!tokenFrom) fetchBalanceFrom?.();
             }}
             onCloseModal={() => setShowFrom(false)}
             tokenList={tokens!}
@@ -1006,8 +1007,8 @@ const SwapCard: React.FC<Props> = () => {
             routesAndSpaces={routesAndSpaces!}
             childlist={childlist!}
             tokens={tokens!}
-            routePercentages={bestRouteData!.routePercentages!}
-            amountOuts={bestRouteData!.amountOuts!}
+            routePercentages={bestRouteData!.routePercentages}
+            amountOuts={bestRouteData!.amountOuts}
             tokenFrom={tokenFrom!}
           />
         )}
