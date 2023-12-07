@@ -83,7 +83,7 @@ function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, r
         transition={{ duration: 0.15, delay: 0.3 }}
         ref={modalRef}
         className={
-          "md:p-6 p-4 xl:w-[44rem] lg:w-[28rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[95%] lg:max-w-[55%] max-h-[32rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] rounded-[48px] !m-0"}
+          "md:p-6 p-4 xl:w-[52rem] lg:w-[30rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[95%] lg:max-w-[55%] max-h-[32rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] rounded-[48px] !m-0"}
       >
         <div className="flex justify-between items-center px-4 pt-2 mb-1 text-white">
           <h1 className="text-white text-base sm:text-lg md:text-xl -mb-1">Routing</h1>
