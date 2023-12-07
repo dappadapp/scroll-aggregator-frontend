@@ -44,7 +44,7 @@ export default function SlippageButton() {
               leaveTo="opacity-0 translate-y-1/3"
             >
               <Popover.Panel className="absolute z-[2] -left-[120%] lg:left-1/2 xl:w-[26.25rem] sm:w-[24.25rem] w-[16.75rem] xs:mt-20 mt-16 translate-y-1/2 -translate-x-[calc(50%+2rem)] bg-transparent transform sm:px-4 px-2">
-                <div className="overflow-hidden  shadow-lg shadow-black/25 ring-1  bg-[rgb(26,29,36)] backdrop-blur-[52px] rounded-3xl ring-black ring-opacity-5">
+                <div className="overflow-hidden  shadow-lg shadow-black/25 ring-1  bg-[rgb(26,29,36,0.5)] backdrop-blur-[52px] rounded-3xl ring-black ring-opacity-5">
                   <div className="relative p-4 sm:p-6 flex max-h-[150px] xs:gap-4 gap-2 flex-col">
                     <span className="sm:text-lg xs:text-base text-sm text-[#FFE7DD]">Slippage Tolerance</span>
                     <div className="flex flex-row justify-between items-center gap-3">

@@ -14,16 +14,21 @@
   }
 }
 
-::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 
-::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: rgba(255, 231, 221, 0.1);
 }
 
-::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background: rgba(255, 231, 221, 0.3);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 body {

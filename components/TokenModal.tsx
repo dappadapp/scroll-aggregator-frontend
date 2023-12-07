@@ -166,7 +166,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
         transition={{ duration: 0.15 }}
         ref={modalRef}
         className={ 
-          "z-[9999] xs:mt-0 mt-[2.5rem] lg:p-10 sm:p-8 p-6 xl:w-[28rem] lg:w-[26rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[75%] max-h-screen min-h-[17.5rem] xl:h-[36rem] lg:h-[34rem] sm:h-[28rem] xs:h-[28rem] h-[26rem] bg-[rgba(26,29,36,1)] backdrop-blur-[52px] sm:rounded-[48px] rounded-[32px]"}
+          "z-[9999] xs:mt-0 mt-[2.5rem] lg:p-10 sm:p-8 p-6 xl:w-[28rem] lg:w-[26rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[75%] max-h-screen min-h-[17.5rem] xl:h-[36rem] lg:h-[34rem] sm:h-[28rem] xs:h-[28rem] h-[26rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] sm:rounded-[48px] rounded-[32px]"}
       >
         <div className="flex justify-between items-center mb-1 text-white">
           <h1 className="text-white lg:text-2xl md:text-xl sm:text-lg xs:text-base text-sm -mb-1">Select Token</h1>

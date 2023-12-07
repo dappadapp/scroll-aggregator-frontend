@@ -105,7 +105,7 @@ function RouteModal({ onCloseModal, routes, routesAndSpaces, childlist, tokens, 
         transition={{ duration: 0.15 }}
         ref={modalRef}
         className={
-          "z-[9999] p-6 min-w-[32rem] max-h-[32rem] bg-[rgba(26,29,36,1)] backdrop-blur-[52px] rounded-[48px]"}
+          "z-[9999] p-6 min-w-[32rem] max-h-[32rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] rounded-[48px]"}
       >
         <div className="flex justify-between items-center px-4 pt-2 mb-1 text-white">
           <h1 className="text-white text-lg sm:text-xl md:text-2xl -mb-1">Routing</h1>

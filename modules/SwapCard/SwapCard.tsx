@@ -44,6 +44,7 @@ import { estimateContractGas } from "viem/_types/actions/public/estimateContract
 import Loading from "@/assets/images/loading.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import RouteCard from "@/components/RouteCard";
 
 type Props = {};
 
@@ -115,6 +116,9 @@ const SwapCard: React.FC<Props> = () => {
   const { refresh, setRefresh } = useGlobalContext();
   const tokensFetched = useRef(false);
   const childlistFetched = useRef(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [translateRouteCard, setTranslateRouteCard] = useState({ x: 0, y: 0 , xie: 0, yie: 0 });
+  const initialWindowSizeSet = useRef(false);
   // const [offers, setOffers] = useState<DexOffer[]>([]);
 
   const native = useNativeCurrency();
@@ -769,239 +773,311 @@ const SwapCard: React.FC<Props> = () => {
     }
   }
 
+  useEffect(() => {
+    if(!window || typeof window === "undefined") return;
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    if(!initialWindowSizeSet.current) {
+      handleResize();
+    } else {
+      window.addEventListener("resize", handleResize);
+    }
+    
+    return () => {
+      if (initialWindowSizeSet.current) window.removeEventListener("resize", handleResize); 
+      if (!initialWindowSizeSet.current) initialWindowSizeSet.current = true;
+    };
+  }, []); 
+
+  useEffect(() => {
+    if(windowSize.width < 1280) {
+      if(windowSize.width > 1024 && windowSize.width <= 1280) {
+        setTranslateRouteCard({ x: 50, y: 50, xie: 40, yie: 50 });
+      } else {
+        setTranslateRouteCard({ x: 0, y: 0, xie: 0, yie: -10 });
+
+        // if(windowSize.width > 768 && windowSize.width <= 1024) {
+        // } else {
+        //   if(windowSize.width > 640 && windowSize.width <= 768) {
+        //   } else {
+        //     if(windowSize.width > 425 && windowSize.width <= 640) {
+        //     } else {
+        //     }
+        //   }
+        // }
+      }
+    } else {
+      setTranslateRouteCard({ x: 40, y: 50, xie: 30, yie: 50 });
+    }
+  }, [windowSize]);
+
   return (
-    <div className="xl:w-[520px] lg:w-[480px] md:w-[400px] sm:w-[360px] w-full xs:max-w-full max-w-[320px] lg:px-6 xs:px-2 px-2 py-2 gap-2 flex flex-col relative mx-auto">
-      <div className={`w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
-        <div className="relative w-full flex flex-col mb-2">
-          <div className="w-full z-[1] flex flex-col bg-[rgba(26,29,36,0.80)] mb-1 backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 !pb-12">
-            <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
-              <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">From</span>
-              {balanceFrom && (
-                <div className="text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm text-[#FFF]">
-                  {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
-                </div>
-              )}
-            </div>
-            <div className="rounded-lg flex justify-center items-center relative w-full flex-col xs:gap-4 gap-2">
-              <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
-                <div
-                  className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full"
-                  style={{ position: "relative", zIndex: 4 }}
-                >
-                  <div className="flex justify-center items-center w-full">
-                    <TokenSelect onClick={() => setShowFrom(true)} token={tokenFrom} loading={!tokens} />
+    <div className="relative w-full md:min-h-[60rem] xs:min-h-[50rem] min-h-[40rem] flex lg:flex-row flex-col lg:justify-center justify-start lg:items-start items-center gap-0">
+      <motion.div 
+        initial={{
+          left: "auto",
+        }}
+        animate={{
+          left: showRouteModal ? "0" : "auto",
+        }}
+        transition={{
+          delay: !showRouteModal ? 0.3 : 0,
+          duration: 0.3,
+        }}
+        className={"lg:absolute relative h-fit xl:w-[520px] lg:w-[480px] md:w-[400px] sm:w-[360px] w-full xs:max-w-full max-w-[320px] py-2 gap-2 flex flex-col mx-auto " + (!showRouteModal ? "lg:px-6 px-2" : "lg:px-6 px-2")}
+      >
+        <div className={`relative w-full h-full gap-4 flex-1 flex justify-between flex-col`}>
+          <div className="relative w-full flex flex-col mb-2">
+            <div className="w-full z-[1] flex flex-col bg-[rgba(26,29,36,0.80)] mb-1 backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 !pb-12">
+              <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
+                <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">From</span>
+                {balanceFrom && (
+                  <div className="text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm text-[#FFF]">
+                    {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
                   </div>
-                  <Input
-                    onChange={(e) => {
-                      setPercentage(0);
-                      let val = parseInt(e.target.value, 10);
-                      if (isNaN(val)) {
-                        setSwapAmount("");
-                      } else {  
-                        val = val >= 0 ? val : 0;
-                        handleINChange(e);
-                      }
-                    }}
-                    onKeyDown={() => {}}
-                    value={swapAmount ? swapAmount :  ""}
-                    type="number"
-                    placeholder="Enter Amount"
-                    className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row flex-wrap justify-center items-center xl:gap-6 gap-2"> 
-                {percentageButtons.map((val, index) => (
-                  <div
-                    className={`${
-                      percentage === val ? "scale-[1.1] bg-white bg-opacity-5" : "scale-100"
-                    } ${ balanceFrom && balanceTo && Number(toFixedValue(balanceFrom!.formatted, 4)) > 0 ? "" : "pointer-events-none opacity-50" } group cursor-pointer bg-black select-none xl:px-2 xl:py-2 px-1 py-2 lg:w-[5rem] sm:w-[4.5rem] w-[3.25rem] rounded-full bg-opacity-[0.15] flex flex-col text-center sm:text-sm text-xs transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5`}
-                    key={"perc-button-" + index}
-                    onClick={() => handleClickInputPercent(val)}
-                  >
-                    <span
-                      className={`-mb-1 group-hover:text-white ${
-                        percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
-                      } transition-all`}
-                    >
-                      {val}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <AnimatePresence>
-                <motion.button
-                  whileHover={{ rotate: 135, scale: 1.125, transition: { duration: 0.15 }}}
-                  whileTap={{ rotate: 360, scale: 0.925, transition: { duration: 0.15 }}}
-                  onClick={handleSwitchToken}
-                  className="absolute self-center select-none bottom-0 md:-mb-20 xs:-mb-[4.75rem] -mb-[4.75rem] md:w-16 md:h-16 xs:w-14 xs:h-14 w-12 h-12 cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#1e252e] hover:bg-[#252d38]"
-                >
-                  <Image
-                    src={"/change-icon.svg"}
-                    width={24}
-                    height={24}
-                    className="h-6 w-6"
-                    alt="change-icon"
-                  />
-                </motion.button>
-              </AnimatePresence>
-            </div>
-          </div>
-          <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 xs:pb-12 !pb-6">
-            <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
-              <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">To</span>
-              {balanceTo && (
-                <div className="text-white text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">
-                  {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
-                </div>
-              )}
-            </div>
-            <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
-              <div className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full">
-                <div className="flex justify-center items-center w-full">
-                  <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} loading={!tokens} />
-                </div>                
-                <Input
-                  value={toFixedValue(receiveAmount, 5)}
-                  type="number"
-                  loading={isLoadingReceiveAmount}
-                  placeholder="Receive Amount"
-                  className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
-                  disabled={true}
-                />
-              </div>
-              <div
-                className={`flex flex-col justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 ${''}`}
-              >
-                <div className="flex flex-row flex-wrap justify-between items-center w-full">
-                  <span className="text-white xs:text-base text-sm">Minimum Received:</span>
-                  {isLoadingReceiveAmount ? (
-                    <div className="animate-pulse w-[35%] h-4 bg-white bg-opacity-5 rounded-full"></div>
-                  ):(
-                    <span className="text-white xs:text-base text-sm">{Number(minimumReceived) > 0 ?(minimumReceived + " " + (tokenTo?.symbol ? tokenTo?.symbol : "TOKEN")) : "- " + (tokenTo?.symbol ? tokenTo?.symbol : "TOKEN")}</span>
-                  )}
-                </div>
-                <div className="flex flex-row flex-wrap justify-between items-center w-full">
-                  <span className="text-white xs:text-base text-sm">Slippage Tolerance:</span>
-                  {isLoadingReceiveAmount ? (
-                    <div className="animate-pulse w-[30%] h-4 bg-white bg-opacity-10 rounded-full"></div>
-                  ):(
-                    <span className="text-white xs:text-base text-sm">{slippage + "%"}</span>
-                  )}
-                </div>
-                {/* <div className="flex flex-row flex-wrap justify-between items-center w-full">
-                  <span className="text-white xs:text-base text-sm">Est. Gas Fee:</span>
-                  {isLoadingReceiveAmount ? (
-                    <div className="animate-pulse w-[32.5%] h-4 bg-white bg-opacity-5 rounded-full"></div>
-                  ):(
-                    <span className="text-white xs:text-base text-sm">{Number(estGasFee) > 0 ?(estGasFee + " " + (native?.symbol ? native?.symbol : "TOKEN")) : "- " + (native?.symbol ? native?.symbol : "TOKEN")}</span>
-                  )}
-                </div> */}
-                <div className="flex flex-row flex-wrap justify-between items-center w-full">
-                  <span className="text-white xs:text-base text-sm">Price Impact:</span>
-                  {isLoadingReceiveAmount ? (
-                    <div className="animate-pulse w-[27.5%] h-4 bg-white bg-opacity-10 rounded-full"></div>
-                  ):(
-                    <span className={"xs:text-base text-sm " + (Number(priceImpact) > 0 ? "text-white" : (Number(priceImpact) < 0 ? "text-green-500" : "text-white")) }>{Number(priceImpact) > 0 ? ("<" + priceImpact + "%") : "- %"}</span>
-                  )}
-                </div>
-              </div>
-              <div
-                className={"justify-between items-center md:p-5 sm:p-4 p-3 bg-[#121419] bg-opacity-30 w-full rounded-xl xs:mx-0 mx-2 mt-4 xs:mb-4 mb-2 " + 
-                  (isLoadingReceiveAmount ? "animate-pulse items-center " : "") + 
-                  (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "hidden" : "flex flex-col")
-                }
-              >
-                {isLoadingReceiveAmount ? (
-                    <span className="text-[#EBC28E] animate-pulse self-center xs:text-base text-sm">
-                      Finding best route...
-                    </span>
-                  ) : (
-                    <>
-                      <div className={"flex flex-row md:justify-evenly items-center gap-4 md:overflow-x-hidden overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] " + (routes?.length == 2 && tokenFrom?.symbol != "ETH" ? "w-[60%]" : "w-full")}>
-                        {tokenFrom?.symbol === "ETH" && (
-                          <>
-                            <div>
-                              <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
-                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenFrom?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
-                                </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
-                              </div>
-                            </div>
-                            <div>
-                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full"/>
-                            </div>
-                          </>
-                        )}
-                        {routesAndSpaces?.map((route, index) => (
-                          route.length > 0 ? (
-                            <div key={"route-" + index}>
-                              <div onClick={() => window.open("https://scrollscan.com/token/" + route[0].tokenIn)} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
-                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.symbol != "ETH") && (token?.wrapped?.address == route[0].tokenIn))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
-                                </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">{tokens?.find(token => (token?.symbol != "ETH") && token?.wrapped?.address == route[0].tokenIn)?.symbol!}</span>
-                              </div>
-                            </div>
-                          ):(
-                            <div key={"route-right-icon-" + index}>
-                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full"/>
-                            </div>
-                          )
-                        ))}
-                      </div>
-                      <div onClick={() => setShowRouteModal(!showRouteModal)} className="flex justify-center items-center py-2 w-full xs:mt-4 mt-2 bg-black bg-opacity-[0.15] hover:bg-white hover:bg-opacity-10 hover:cursor-pointer transition duration-150 rounded-lg">
-                        <span className="text-white xs:text-base text-sm">View detailed routing</span> 
-                      </div>
-                    </>
-                  )
-                }
-              </div>
-            </div>
-            <div className={"flex justify-center items-center w-full " + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "xs:mt-4 mt-2" : "")}>
-              <Button
-                variant="bordered"
-                disabled={swapButtonDisableHandler()}
-                className={"select-none uppercase w-full xs:mx-0 mx-2 md:p-4 sm:p-3 p-2 rounded-xl xl:text-xl sm:text-lg text-md font-semibold " + (swapButtonDisableHandler() ? "opacity-50 pointer-events-none" : "")}
-                onClick={swapButtonOnClickHandler}
-              >
-                {isLoadingSwap ? (
-                  <div className="flex justify-center text-white items-center">
-                    <Loading className="animate-spin h-[1.25rem] w-[1.25rem]"/>
-                  </div>
-                ):( 
-                  isConnected ? (chain?.id !== ChainId.SCROLL_MAINNET ? "Switch Network" : (approved ? "Swap" : "Approve")) : "Connect Wallet"
                 )}
-              </Button>
+              </div>
+              <div className="rounded-lg flex justify-center items-center relative w-full flex-col xs:gap-4 gap-2">
+                <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
+                  <div
+                    className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full"
+                    style={{ position: "relative", zIndex: 4 }}
+                  >
+                    <div className="flex justify-center items-center w-full">
+                      <TokenSelect onClick={() => setShowFrom(true)} token={tokenFrom} loading={!tokens} />
+                    </div>
+                    <Input
+                      onChange={(e) => {
+                        setPercentage(0);
+                        let val = parseInt(e.target.value, 10);
+                        if (isNaN(val)) {
+                          setSwapAmount("");
+                        } else {  
+                          val = val >= 0 ? val : 0;
+                          handleINChange(e);
+                        }
+                      }}
+                      onKeyDown={() => {}}
+                      value={swapAmount ? swapAmount :  ""}
+                      type="number"
+                      placeholder="Enter Amount"
+                      className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row flex-wrap justify-center items-center xl:gap-6 gap-2"> 
+                  {percentageButtons.map((val, index) => (
+                    <div
+                      className={`${
+                        percentage === val ? "scale-[1.1] bg-white bg-opacity-5" : "scale-100"
+                      } ${ balanceFrom && balanceTo && Number(toFixedValue(balanceFrom!.formatted, 4)) > 0 ? "" : "pointer-events-none opacity-50" } group cursor-pointer bg-black select-none xl:px-2 xl:py-2 px-1 py-2 lg:w-[5rem] sm:w-[4.5rem] w-[3.25rem] rounded-full bg-opacity-[0.15] flex flex-col text-center sm:text-sm text-xs transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5`}
+                      key={"perc-button-" + index}
+                      onClick={() => handleClickInputPercent(val)}
+                    >
+                      <span
+                        className={`-mb-1 group-hover:text-white ${
+                          percentage === val ? "text-[#EBC28E]" : "text-[white]/60"
+                        } transition-all`}
+                      >
+                        {val}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <AnimatePresence>
+                  <motion.button
+                    whileHover={{ rotate: 135, scale: 1.125, transition: { duration: 0.15 }}}
+                    whileTap={{ rotate: 360, scale: 0.925, transition: { duration: 0.15 }}}
+                    onClick={handleSwitchToken}
+                    className="absolute self-center select-none bottom-0 md:-mb-20 xs:-mb-[4.75rem] -mb-[4.75rem] md:w-16 md:h-16 xs:w-14 xs:h-14 w-12 h-12 cursor-pointer mx-auto rounded-full text-white flex items-center justify-center bg-[#1e252e] hover:bg-[#252d38]"
+                  >
+                    <Image
+                      src={"/change-icon.svg"}
+                      width={24}
+                      height={24}
+                      className="h-6 w-6"
+                      alt="change-icon"
+                    />
+                  </motion.button>
+                </AnimatePresence>
+              </div>
+            </div>
+            <div className="w-full flex flex-col bg-[rgba(26,29,36,0.80)] backdrop-blur-[52px] xs:rounded-[48px] rounded-[32px] lg:px-8 md:px-6 xs:px-4 px-2 xs:py-4 py-2 xs:pb-12 !pb-6">
+              <div className="flex justify-between items-center mt-4 sm:px-4 px-6">
+                <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">To</span>
+                {balanceTo && (
+                  <div className="text-white text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">
+                    {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-2">
+                <div className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full">
+                  <div className="flex justify-center items-center w-full">
+                    <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} loading={!tokens} />
+                  </div>                
+                  <Input
+                    value={toFixedValue(receiveAmount, 5)}
+                    type="number"
+                    loading={isLoadingReceiveAmount}
+                    placeholder="Receive Amount"
+                    className="xs:!w-full !w-[75%] crosschainswap-input text-end xs:mr-0 mr-2" // Increase the height here
+                    disabled={true}
+                  />
+                </div>
+                <div
+                  className={`flex flex-col justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 ${''}`}
+                >
+                  <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                    <span className="text-white xs:text-base text-sm">Minimum Received:</span>
+                    {isLoadingReceiveAmount ? (
+                      <div className="animate-pulse w-[35%] h-4 bg-white bg-opacity-5 rounded-full"></div>
+                    ):(
+                      <span className="text-white xs:text-base text-sm">{Number(minimumReceived) > 0 ?(minimumReceived + " " + (tokenTo?.symbol ? tokenTo?.symbol : "TOKEN")) : "- " + (tokenTo?.symbol ? tokenTo?.symbol : "TOKEN")}</span>
+                    )}
+                  </div>
+                  <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                    <span className="text-white xs:text-base text-sm">Slippage Tolerance:</span>
+                    {isLoadingReceiveAmount ? (
+                      <div className="animate-pulse w-[30%] h-4 bg-white bg-opacity-10 rounded-full"></div>
+                    ):(
+                      <span className="text-white xs:text-base text-sm">{slippage + "%"}</span>
+                    )}
+                  </div>
+                  {/* <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                    <span className="text-white xs:text-base text-sm">Est. Gas Fee:</span>
+                    {isLoadingReceiveAmount ? (
+                      <div className="animate-pulse w-[32.5%] h-4 bg-white bg-opacity-5 rounded-full"></div>
+                    ):(
+                      <span className="text-white xs:text-base text-sm">{Number(estGasFee) > 0 ?(estGasFee + " " + (native?.symbol ? native?.symbol : "TOKEN")) : "- " + (native?.symbol ? native?.symbol : "TOKEN")}</span>
+                    )}
+                  </div> */}
+                  <div className="flex flex-row flex-wrap justify-between items-center w-full">
+                    <span className="text-white xs:text-base text-sm">Price Impact:</span>
+                    {isLoadingReceiveAmount ? (
+                      <div className="animate-pulse w-[27.5%] h-4 bg-white bg-opacity-10 rounded-full"></div>
+                    ):(
+                      <span className={"xs:text-base text-sm " + (Number(priceImpact) > 0 ? "text-white" : (Number(priceImpact) < 0 ? "text-green-500" : "text-white")) }>{Number(priceImpact) > 0 ? ("<" + priceImpact + "%") : "- %"}</span>
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={"justify-between items-center md:p-5 sm:p-4 p-3 bg-[#121419] bg-opacity-30 w-full rounded-xl xs:mx-0 mx-2 mt-4 xs:mb-4 mb-2 " + 
+                    (isLoadingReceiveAmount ? "animate-pulse items-center " : "") + 
+                    (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "hidden" : "flex flex-col")
+                  }
+                >
+                  {isLoadingReceiveAmount ? (
+                      <span className="text-[#EBC28E] animate-pulse self-center xs:text-base text-sm">
+                        Finding best route...
+                      </span>
+                    ) : (
+                      <>
+                        <div className={"flex flex-row items-center md:gap-4 gap-6 md:overflow-x-hidden overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] " + (!!routes ? (routes.length < 3 ? "xs:justify-evenly justify-start xs:max-w-[100%] max-w-[95%] " : "sm:justify-evenly justify-start sm:max-w-[100%] max-w-[95%] ") : "sm:justify-evenly justify-start sm:max-w-[100%] max-w-[95%] ")  + (routes?.length == 2 && tokenFrom?.symbol != "ETH" ? "w-[60%]" : "w-full")}>
+                          {tokenFrom?.symbol === "ETH" && (
+                            <>
+                              <div>
+                                <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
+                                  <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
+                                    <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenFrom?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
+                                  </div>
+                                  <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
+                                </div>
+                              </div>
+                              <div>
+                                <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full"/>
+                              </div>
+                            </>
+                          )}
+                          {routesAndSpaces?.map((route, index) => (
+                            route.length > 0 ? (
+                              <div key={"route-" + index}>
+                                <div onClick={() => window.open("https://scrollscan.com/token/" + route[0].tokenIn)} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
+                                  <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
+                                    <Image src={String(tokens?.find(token => (token?.symbol != "ETH") && (token?.wrapped?.address == route[0].tokenIn))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full"/> 
+                                  </div>
+                                  <span className="md:mt-3 mt-2 text-white text-xs">{tokens?.find(token => (token?.symbol != "ETH") && token?.wrapped?.address == route[0].tokenIn)?.symbol!}</span>
+                                </div>
+                              </div>
+                            ):(
+                              <div key={"route-right-icon-" + index}>
+                                <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full"/>
+                              </div>
+                            )
+                          ))}
+                        </div>
+                        <div onClick={() => setShowRouteModal(!showRouteModal)} className="flex justify-center items-center py-2 w-full xs:mt-4 mt-2 bg-black bg-opacity-[0.15] hover:bg-white hover:bg-opacity-10 hover:cursor-pointer transition duration-150 rounded-lg">
+                          <span className="text-white xs:text-base text-sm">{!showRouteModal ? 'View detailed routing' : 'Hide detailed routing'}</span> 
+                        </div>
+                      </>
+                    )
+                  }
+                </div>
+              </div>
+              <div className={"flex justify-center items-center w-full " + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "xs:mt-4 mt-2" : "")}>
+                <Button
+                  variant="bordered"
+                  disabled={swapButtonDisableHandler()}
+                  className={"select-none uppercase w-full xs:mx-0 mx-2 md:p-4 sm:p-3 p-2 rounded-xl xl:text-xl sm:text-lg text-md font-semibold " + (swapButtonDisableHandler() ? "opacity-50 pointer-events-none" : "")}
+                  onClick={swapButtonOnClickHandler}
+                >
+                  {isLoadingSwap ? (
+                    <div className="flex justify-center text-white items-center">
+                      <Loading className="animate-spin h-[1.25rem] w-[1.25rem]"/>
+                    </div>
+                  ):( 
+                    isConnected ? (chain?.id !== ChainId.SCROLL_MAINNET ? "Switch Network" : (approved ? "Swap" : "Approve")) : "Connect Wallet"
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <AnimatePresence>
-        {showFrom && (
-          <TokenModal
-            onSelectToken={(token: any) => {
-              setTokenFrom(token);
-              if(!!address && !!tokenFrom) fetchBalanceFrom?.();
-            }}
-            onCloseModal={() => setShowFrom(false)}
-            tokenList={tokens!}
-          />
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showTo && (
-          <TokenModal
-            onSelectToken={(token: any) => setTokenTo(token)}
-            onCloseModal={() => setShowTo(false)}
-            tokenList={tokens!}
-          />
-        )}
-      </AnimatePresence>
+        <AnimatePresence>
+          {showFrom && (
+            <TokenModal
+              onSelectToken={(token: any) => {
+                setTokenFrom(token);
+                if(!!address && !!tokenFrom) fetchBalanceFrom?.();
+              }}
+              onCloseModal={() => setShowFrom(false)}
+              tokenList={tokens!}
+            />
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {showTo && (
+            <TokenModal
+              onSelectToken={(token: any) => setTokenTo(token)}
+              onCloseModal={() => setShowTo(false)}
+              tokenList={tokens!}
+            />
+          )}
+        </AnimatePresence>
+        {/* <AnimatePresence>
+          {showRouteModal && (
+            <RouteModal
+              onCloseModal={() => setShowRouteModal(false)}
+              routes={routes!}
+              routesAndSpaces={routesAndSpaces!}
+              childlist={childlist!}
+              tokens={tokens!}
+              routePercentages={bestRouteData!.routePercentages}
+              amountOuts={bestRouteData!.amountOuts}
+              tokenFrom={tokenFrom!}
+            />
+          )}
+        </AnimatePresence> */}
+      </motion.div>
       <AnimatePresence>
         {showRouteModal && (
-          <RouteModal
+          <RouteCard
             onCloseModal={() => setShowRouteModal(false)}
             routes={routes!}
             routesAndSpaces={routesAndSpaces!}
@@ -1010,31 +1086,10 @@ const SwapCard: React.FC<Props> = () => {
             routePercentages={bestRouteData!.routePercentages}
             amountOuts={bestRouteData!.amountOuts}
             tokenFrom={tokenFrom!}
+            translateRouteCard={translateRouteCard}
           />
         )}
       </AnimatePresence>
-      {/* {tokenFrom && tokenTo && isSwapModalOpen && chain?.id === ChainId.SCROLL_MAINNET ? ( */}
-      {/* {tokenFrom && tokenTo && true ? (
-        <SwapModal
-          tokenA={tokenFrom}
-          tokenB={tokenTo}
-          amountA={+swapAmount}
-          amountB={receiveAmount}
-          swapParams={[]}
-          swapSuccess={() => {
-            setSwapAmount("0");
-            setReceiveAmount("0");
-            setIsSwapModalOpen(false);
-            fetchBalanceFrom();
-            fetchBalanceTo();
-          }}
-          rate={Number(rate).toFixed(4)}
-          onCloseModal={() => setIsSwapModalOpen(false)}
-          slippage={slippage}
-          fetchBalanceFrom={fetchBalanceFrom}
-          fetchBalanceTo={fetchBalanceTo}
-        />
-      ) : null} */}
     </div>
   );
 };
