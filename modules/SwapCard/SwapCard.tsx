@@ -159,7 +159,7 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     const getChildlist = async () => {
-      const response = await axios.get("/api/getChildlist");
+      const response = await axios.post("/api/getChildlist", { chainId: ChainId.SCROLL_MAINNET });
 
       if (response) {
           setChildlist(response.data);
