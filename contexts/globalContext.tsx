@@ -16,7 +16,7 @@ interface IGlobalContextProps {
 }
 
 export const GlobalContext = React.createContext<IGlobalContextProps>({
-  slippage: 0.5,
+  slippage: 0.1,
   setSlippage: (slippage: number) => {},
   refresh: false,
   setRefresh: (refresh: boolean) => {},
@@ -27,7 +27,7 @@ export const GlobalContext = React.createContext<IGlobalContextProps>({
 });
 
 export const GlobalContextProvider = (props: any) => {
-  const [slippage, setSlippage] = useState(0.5);
+  const [slippage, setSlippage] = useState(0.1);
   const [refresh, setRefresh] = useState(false);
   const [tokens, setTokens] = useState<Currency[] | undefined>(undefined);
   const [childlist, setChildlist] = useState<any[] | undefined>(undefined);

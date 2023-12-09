@@ -7,7 +7,7 @@ import Input from "@/components/Input";
 import { useGlobalContext } from "@/contexts";
 import { AnimatePresence, motion } from "framer-motion";
 
-const percentageButtons = [0.5, 1.0, 3.0];
+const percentageButtons = [0.1, 0.5, 1];
 
 export default function SlippageButton() {
   const { slippage, setSlippage } = useGlobalContext();
@@ -59,7 +59,7 @@ export default function SlippageButton() {
                           onClick={() => {
                             if(slippage == val) {
                               setCustomSlippage(null);
-                              setSlippage(0.5);
+                              setSlippage(0.1);
                               return;
                             }
 
