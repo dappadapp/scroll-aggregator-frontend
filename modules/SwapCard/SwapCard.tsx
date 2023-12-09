@@ -161,7 +161,7 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     const getChildlist = async () => {
-      const response = await axios.get("/api/getChildlist");
+      const response = await axios.post("/api/getChildlist", { chainId: ChainId.SCROLL_MAINNET });
 
       if (response) {
         setChildlist(response.data);
@@ -505,8 +505,8 @@ const SwapCard: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
-    if (windowSize.width < 1280) {
-      if (windowSize.width > 1024 && windowSize.width <= 1280) {
+    if(windowSize.width <= 1280) {
+      if(windowSize.width > 1024 && windowSize.width <= 1280) {
         setTranslateRouteCard({ x: 50, y: 50, xie: 40, yie: 50 });
       } else {
         setTranslateRouteCard({ x: 0, y: 0, xie: 0, yie: -10 });
@@ -522,7 +522,12 @@ const SwapCard: React.FC<Props> = () => {
         // }
       }
     } else {
-      setTranslateRouteCard({ x: 40, y: 50, xie: 30, yie: 50 });
+      if(windowSize.width > 1280 && windowSize.width <= 1535) {
+        setTranslateRouteCard({ x: 40, y: 50, xie: 30, yie: 50 });
+      } else {
+        // setTranslateRouteCard({ x: 25, y: 50, xie: 15, yie: 50 });
+        setTranslateRouteCard({ x: 37.5, y: 50, xie: 27.5, yie: 50 });
+      }
     }
   }, [windowSize]);
 
@@ -533,7 +538,7 @@ const SwapCard: React.FC<Props> = () => {
           left: "auto",
         }}
         animate={{
-          left: showRouteModal ? "0" : "auto",
+          left: showRouteModal ? (windowSize.width < 1536 ? "0" : "6rem") : "auto",
         }}
         transition={{
           delay: !showRouteModal ? 0.3 : 0,
