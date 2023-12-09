@@ -489,7 +489,7 @@ const SwapCard: React.FC<Props> = () => {
     if (!address || !tokenFrom || !tokenTo) return;
     fetchBalanceFrom?.();
     fetchBalanceTo?.();
-  }, [isSuccessSwap])
+  }, [isSuccessSwap, address, tokenFrom, tokenTo, swapAmount]);
 
   const swapButtonDisableHandler = () => {
     return isConnected && (isLoadingSwap || !tokens || !tokenFrom || !tokenTo || !swapAmount || !bestRouteData) && approved && chain?.id == ChainId.SCROLL_MAINNET;
