@@ -196,6 +196,27 @@ const SwapCard: React.FC<Props> = () => {
     setTokenTo(tokens.find((token: any) => token.symbol === "USDC"));
   }, [native, tokens]);
 
+  useEffect(() => {
+    if (!swapAmount || !tokenTo || !tokenFrom) return;
+  
+    console.log("Setting up interval...");
+  
+    const generateBestRouteDataFunc = async () => {
+      console.log("Calling generateBestRouteData...");
+      await generateBestRouteData(tokenFrom, tokenTo, swapAmount);
+    };
+  
+    const intervalId = setInterval(() => {
+      generateBestRouteDataFunc();
+    }, 15000);
+  
+    // Cleanup the interval when the component unmounts
+    return () => {
+      console.log("Clearing interval...");
+      clearInterval(intervalId);
+    };
+  }, [swapAmount, tokenTo, tokenFrom]);
+
   const {
     data: balanceFrom,
     isLoading: isLoadingBalanceFrom,
@@ -238,7 +259,7 @@ const SwapCard: React.FC<Props> = () => {
     } else {
       setApproved(false);
     }
-  }, [allowance]);
+  }, [allowance, tokenFrom, swapAmount, refresh, tokenTo]);
 
   const generateBestRouteData = async (tokenIn: Currency, tokenOut: Currency, amountIn: string) => {
     if (!!tokens && tokenIn?.wrapped?.address === tokenOut?.wrapped?.address || Number(amountIn) <= 0) return;
@@ -363,6 +384,8 @@ const SwapCard: React.FC<Props> = () => {
     await generateBestRouteData(tokenFrom!, tokenTo!, e.target.value);
   };
 
+
+
   useEffect(() => {
     if (!tokenFrom || !address) return;
 
@@ -407,16 +430,24 @@ const SwapCard: React.FC<Props> = () => {
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) * percent) / 100).toFixed(5).toString());
+      setSwapAmount(((parseFloat(balance) *  percent) / 100).toFixed(5).toString());
       await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * percent) / 100).toFixed(5).toString());
       setReceiveAmount(((parseFloat(balance) * percent) / 100).toFixed(tokenTo?.decimals).toString());
       setChangeFrom(true);
-    } else {
+    } else if (tokenFrom?.symbol == "ETH") {
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) * percent) / 100).toFixed(5).toString());
-      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * percent) / 100).toFixed(5).toString());
+      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(5).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(5).toString());
+      setChangeFrom(true);
+    }
+    else{
+      if (!balanceFrom || !tokenFrom) return;
+      const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
+      setPercentage(percent);
+      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(5).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(5).toString());
       setChangeFrom(true);
     }
   };
@@ -629,7 +660,7 @@ const SwapCard: React.FC<Props> = () => {
                   </div>
                 )}
               </div>
-              <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-4">
+              <div className="flex flex-col w-full lg:mt-6 md:mt-5 sm:mt-4 mt-3 sm:mb-2 xs:mb-0 mb-5">
                 <div className="flex flex-row justify-between items-center relative sm:gap-8 xs:gap-6 gap-4 w-full">
                   <div className="flex justify-center items-center w-full">
                     <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} loading={!tokens} />
