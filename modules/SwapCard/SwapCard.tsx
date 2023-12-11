@@ -562,6 +562,11 @@ const SwapCard: React.FC<Props> = () => {
     }
   }, [windowSize]);
 
+  useEffect(() => {
+    if(!routes) return;
+    setShowRouteModal(true);
+  }, [routes])
+
   return (
     <div className="relative w-full md:min-h-[60rem] xs:min-h-[50rem] min-h-[40rem] flex lg:flex-row flex-col lg:justify-center justify-start lg:items-start items-center gap-0">
       <motion.div
@@ -675,7 +680,7 @@ const SwapCard: React.FC<Props> = () => {
                   />
                 </div>
 
-                <div className={"flex justify-center items-center w-full mt-5" + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "xs:mt-4 mt-2" : "")}>
+                <div className={"flex justify-center items-center w-full md:mt-6 mt-4 " + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "" : "")}>
                 <Button
                   variant="bordered"
                   disabled={swapButtonDisableHandler()}
@@ -691,10 +696,10 @@ const SwapCard: React.FC<Props> = () => {
                   )}
                 </Button>
               </div>
-                <div className={`flex flex-col justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 ${''}`}>
-                  <div className="flex flex-row flex-wrap justify-between items-center w-full" onClick={toggleMoreInformation}>
+                <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
+                  <div className="flex flex-row flex-wrap justify-between items-center w-full">
                     <span className="text-white xs:text-base text-sm">More Information</span>
-                    {isMoreInformationVisible ? <FaChevronUp className="text-white" /> : <FaChevronDown className="text-white" />}
+                    <FaChevronDown className={"text-white transition-all duration-200 " + (isMoreInformationVisible ? "rotate-180" : "")} />
                   </div>
                   {isMoreInformationVisible && (
                     <div
