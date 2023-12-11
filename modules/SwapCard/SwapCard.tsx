@@ -841,7 +841,7 @@ const SwapCard: React.FC<Props> = () => {
             routesAndSpaces={routesAndSpaces!}
             childlist={childlist!}
             tokens={tokens!}
-            routePercentages={bestRouteData!.routePercentages}
+            routePercentages={bestRouteData!.routePercentages!}
             amountOuts={bestRouteData!.amountOuts}
             tokenFrom={tokenFrom!}
             translateRouteCard={translateRouteCard}
