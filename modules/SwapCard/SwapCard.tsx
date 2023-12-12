@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import axios from "axios";
 import Image from "next/image";
 import AggregatorAbi from "@/constants/abis/aggregator.json";
+import WethAbi from "@/constants/abis/weth.json";
 import ERC20TokenAbi from "@/constants/abis/erc20Abi.json";
 import SkydromePoolFactory from "@/constants/abis/skydrome.pool-factory.json";
 import IziSwapPoolFactory from "@/constants/abis/iziSwapFactory.json";
@@ -46,6 +47,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import RouteCard from "@/components/RouteCard";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import Tokens from "@/constants/tokens";
 
 type Props = {};
 
@@ -122,6 +124,7 @@ const SwapCard: React.FC<Props> = () => {
   const initialWindowSizeSet = useRef(false);
   // const [offers, setOffers] = useState<DexOffer[]>([]);
   const [isMoreInformationVisible, setIsMoreInformationVisible] = useState(false);
+  const [isMoreInformationVisibleAll, setIsMoreInformationVisibleAll] = useState(true);
 
   const native = useNativeCurrency();
 
@@ -199,22 +202,24 @@ const SwapCard: React.FC<Props> = () => {
   useEffect(() => {
     if (!swapAmount || !tokenTo || !tokenFrom) return;
   
-    console.log("Setting up interval...");
+    // console.log("Setting up interval...");
   
     const generateBestRouteDataFunc = async () => {
-      console.log("Calling generateBestRouteData...");
+      // console.log("Calling generateBestRouteData...");
       await generateBestRouteData(tokenFrom, tokenTo, swapAmount);
     };
   
-    const intervalId = setInterval(() => {
-      generateBestRouteDataFunc();
-    }, 15000);
+    generateBestRouteDataFunc();
+
+    // const intervalId = setInterval(() => {
+    //   generateBestRouteDataFunc();
+    // }, 30000);
   
     // Cleanup the interval when the component unmounts
-    return () => {
-      console.log("Clearing interval...");
-      clearInterval(intervalId);
-    };
+    // return () => {
+    //   console.log("Clearing interval...");
+    //   clearInterval(intervalId);
+    // };
   }, [swapAmount, tokenTo, tokenFrom]);
 
   const {
@@ -262,26 +267,210 @@ const SwapCard: React.FC<Props> = () => {
   }, [allowance, tokenFrom, swapAmount, refresh, tokenTo]);
 
   const generateBestRouteData = async (tokenIn: Currency, tokenOut: Currency, amountIn: string) => {
-    if (!!tokens && tokenIn?.wrapped?.address === tokenOut?.wrapped?.address || Number(amountIn) <= 0) return;
+    if (!tokens || !tokenIn || !tokenOut || Number(amountIn) <= 0) return;
 
-    setIsLoadingReceiveAmount(true);
+    const amountInParsed = BigInt(String(ethers.utils.parseUnits(amountIn, tokenIn?.wrapped?.decimals)));
 
-    const data = {
-      chainId: ChainId.SCROLL_MAINNET,
-      single: false,
-      tokenInAddress: tokenIn?.wrapped?.address,
-      tokenOutAddress: tokenOut?.wrapped?.address,
-      amountIn: String(ethers.utils.parseUnits(amountIn, tokenIn?.decimals)),
-      fee: DEFAULT_FEE,
-      slippage: slippage,
-      deadline: Math.floor(new Date().setMinutes(new Date().getMinutes() + 20) / 1000)
-    };
+    if(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") {
+      setIsLoadingReceiveAmount(true);
 
-    try {
-      const response = await axios.post("/api/generateBestRouteData", data);
-      const responseParsed = JSON.parse(response.data);
+      setTimeout(() => {
+        let swapParamsConvertedToRoutes: SwapParams[][] = [];
+        
+        let route: SwapParams = {
+          poolAddress: ethers.constants.AddressZero,
+          tokenIn: tokenFrom?.wrapped?.address,
+          tokenOut: tokenFrom?.wrapped?.address,
+          amountIn: String(amountInParsed),
+          amountOutMin: String(amountInParsed),
+          fee: "300",
+          path: ethers.constants.AddressZero,
+          deadline: 0,
+          isStable: false,
+          convertToNative: true,
+          swapType: -1
+        };
 
-      if (responseParsed.swapParams.length == 0) {
+        swapParamsConvertedToRoutes.push([]);
+        swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(route);
+
+        setRoutes(swapParamsConvertedToRoutes);
+
+        let routesAndSpacesTemp = [];
+
+        for (let i = 0; i < swapParamsConvertedToRoutes.length; i++) {
+          routesAndSpacesTemp.push(swapParamsConvertedToRoutes[i]);
+
+          if (i + 1 <= swapParamsConvertedToRoutes.length - 1) {
+            routesAndSpacesTemp.push([]);
+          }
+        }
+
+        setRoutesAndSpaces(routesAndSpacesTemp);
+
+        setBestRouteData({
+          swapParams: [],
+          routePercentages: [],
+          amountOuts: [BigInt(String(amountInParsed))],
+          priceImpact: 0.01, 
+          amountOut: Number(amountInParsed), 
+          minAmountOut: Number(amountInParsed),
+        });
+
+        const swapAmountTemp = String(Number(amountIn).toFixed(5));
+        setReceiveAmount(swapAmountTemp);
+
+        setIsLoadingReceiveAmount(false);
+      }, 800);
+    } else if(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") { 
+      setIsLoadingReceiveAmount(true);
+
+      setTimeout(() => {
+        let swapParamsConvertedToRoutes: SwapParams[][] = [];
+        
+        let route: SwapParams = {
+          poolAddress: ethers.constants.AddressZero,
+          tokenIn: tokenFrom?.wrapped?.address,
+          tokenOut: tokenFrom?.wrapped?.address,
+          amountIn: String(amountInParsed),
+          amountOutMin: String(amountInParsed),
+          fee: "300",
+          path: ethers.constants.AddressZero,
+          deadline: 0,
+          isStable: false,
+          convertToNative: false,
+          swapType: -1
+        };
+
+        swapParamsConvertedToRoutes.push([]);
+        swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(route);
+
+        setRoutes(swapParamsConvertedToRoutes);
+
+        let routesAndSpacesTemp = [];
+
+        for (let i = 0; i < swapParamsConvertedToRoutes.length; i++) {
+          routesAndSpacesTemp.push(swapParamsConvertedToRoutes[i]);
+
+          if (i + 1 <= swapParamsConvertedToRoutes.length - 1) {
+            routesAndSpacesTemp.push([]);
+          }
+        }
+
+        setRoutesAndSpaces(routesAndSpacesTemp);
+        
+        setBestRouteData({
+          swapParams: [],
+          routePercentages: [],
+          amountOuts: [BigInt(String(amountInParsed))],
+          priceImpact: 0.01, 
+          amountOut: Number(amountInParsed), 
+          minAmountOut: Number(amountInParsed),
+        });
+
+        const swapAmountTemp = String(Number(amountIn).toFixed(5));
+        setReceiveAmount(swapAmountTemp);
+
+        setIsLoadingReceiveAmount(false);
+      }, 800);
+    } else {
+      if(tokenIn?.wrapped?.address === tokenOut?.wrapped?.address) return;
+
+      setIsLoadingReceiveAmount(true);
+      
+      const data = {
+        chainId: ChainId.SCROLL_MAINNET,
+        single: false,
+        tokenInAddress: tokenIn?.wrapped?.address,
+        tokenOutAddress: tokenOut?.wrapped?.address,
+        amountIn: String(ethers.utils.parseUnits(amountIn, tokenIn?.decimals)),
+        fee: DEFAULT_FEE,
+        convertToNative: tokenOut.isNative,
+        slippage: slippage,
+        deadline: Math.floor(new Date().setMinutes(new Date().getMinutes() + 20) / 1000)
+      };
+
+      try {
+        const response = await axios.post("/api/generateBestRouteData", data);
+        const responseParsed = JSON.parse(response.data);
+
+        if (responseParsed.swapParams.length == 0) {
+          setMinimumReceived("0");
+          setEstGasFee("0");
+          setPriceImpact("0");
+          setReceiveAmount("");
+          setBestRouteData(undefined);
+          setIsLoadingReceiveAmount(false);
+          toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
+          return;
+        }
+
+        setReceiveAmount(Number(ethers.utils.formatUnits(responseParsed.amountOut, tokenOut?.decimals)).toFixed(5));
+        setMinimumReceived(Number(ethers.utils.formatUnits(responseParsed.minAmountOut, tokenOut?.decimals)).toFixed(5));
+        setPriceImpact(String(responseParsed.priceImpact < 0.01 ? 0.01 : responseParsed.priceImpact.toFixed(2)));
+
+        const swapValue = tokenIn?.isNative || responseParsed.swapParams[0].tokenIn === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
+        setSwapValue(String(swapValue));
+
+        let swapParamsConvertedToRoutes: any[] = [];
+        let currentSwapParamsTokenIn = responseParsed.swapParams[0].tokenIn;
+
+        for (let i = 0; i < responseParsed.swapParams.length; i++) {
+          if (i == 0) {
+            swapParamsConvertedToRoutes.push([]);
+            swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(responseParsed.swapParams[i]);
+          } else {
+            if (responseParsed.swapParams[i].tokenIn !== currentSwapParamsTokenIn) {
+              swapParamsConvertedToRoutes.push([]);
+              swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(responseParsed.swapParams[i]);
+              currentSwapParamsTokenIn = responseParsed.swapParams[i].tokenIn;
+            }
+          }
+        }
+
+        for (let i = 0; i < responseParsed.swapParams.length; i++) {
+          for (let j = 0; j < swapParamsConvertedToRoutes.length; j++) {
+            for (let k = 0; k < swapParamsConvertedToRoutes[j].length; k++) {
+              if (responseParsed.swapParams[i] !== swapParamsConvertedToRoutes[j][k + 1] && responseParsed.swapParams[i].tokenIn === swapParamsConvertedToRoutes[j][k].tokenIn && responseParsed.swapParams[i].tokenOut === swapParamsConvertedToRoutes[j][k].tokenOut && responseParsed.swapParams[i].swapType !== swapParamsConvertedToRoutes[j][k].swapType) {
+                swapParamsConvertedToRoutes[j].push(responseParsed.swapParams[i]);
+              }
+            }
+          }
+        }
+
+        let finalRoute: SwapParams = {
+          poolAddress: responseParsed.swapParams[responseParsed.swapParams.length - 1].poolAddress,
+          tokenIn: responseParsed.swapParams[responseParsed.swapParams.length - 1].tokenOut,
+          tokenOut: responseParsed.swapParams[responseParsed.swapParams.length - 1].tokenOut,
+          amountIn: responseParsed.swapParams[responseParsed.swapParams.length - 1].amountIn,
+          amountOutMin: responseParsed.swapParams[responseParsed.swapParams.length - 1].amountOutMin,
+          fee: responseParsed.swapParams[responseParsed.swapParams.length - 1].fee,
+          path: responseParsed.swapParams[responseParsed.swapParams.length - 1].path,
+          deadline: responseParsed.swapParams[responseParsed.swapParams.length - 1].deadline,
+          isStable: responseParsed.swapParams[responseParsed.swapParams.length - 1].isStable,
+          convertToNative: responseParsed.swapParams[responseParsed.swapParams.length - 1].convertToNative,
+          swapType: responseParsed.swapParams[responseParsed.swapParams.length - 1].swapType
+        };
+
+        swapParamsConvertedToRoutes.push([]);
+        swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(finalRoute);
+
+        setRoutes(swapParamsConvertedToRoutes);
+
+        let routesAndSpacesTemp = [];
+
+        for (let i = 0; i < swapParamsConvertedToRoutes.length; i++) {
+          routesAndSpacesTemp.push(swapParamsConvertedToRoutes[i]);
+
+          if (i + 1 <= swapParamsConvertedToRoutes.length - 1) {
+            routesAndSpacesTemp.push([]);
+          }
+        }
+
+        setRoutesAndSpaces(routesAndSpacesTemp);
+        setBestRouteData(responseParsed);
+        setIsLoadingReceiveAmount(false);
+      } catch (error) {
         setMinimumReceived("0");
         setEstGasFee("0");
         setPriceImpact("0");
@@ -291,82 +480,8 @@ const SwapCard: React.FC<Props> = () => {
         toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
         return;
       }
-
-      setReceiveAmount(Number(ethers.utils.formatUnits(responseParsed.amountOut, tokenOut?.decimals)).toFixed(5));
-      setMinimumReceived(Number(ethers.utils.formatUnits(responseParsed.minAmountOut, tokenOut?.decimals)).toFixed(5));
-      setPriceImpact(String(responseParsed.priceImpact < 0.01 ? 0.01 : responseParsed.priceImpact.toFixed(2)));
-
-      const swapValue = tokenIn?.isNative || responseParsed.swapParams[0].tokenIn === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
-      setSwapValue(String(swapValue));
-
-      let swapParamsConvertedToRoutes: any[] = [];
-      let currentSwapParamsTokenIn = responseParsed.swapParams[0].tokenIn;
-
-      for (let i = 0; i < responseParsed.swapParams.length; i++) {
-        if (i == 0) {
-          swapParamsConvertedToRoutes.push([]);
-          swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(responseParsed.swapParams[i]);
-        } else {
-          if (responseParsed.swapParams[i].tokenIn !== currentSwapParamsTokenIn) {
-            swapParamsConvertedToRoutes.push([]);
-            swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(responseParsed.swapParams[i]);
-            currentSwapParamsTokenIn = responseParsed.swapParams[i].tokenIn;
-          }
-        }
-      }
-
-      for (let i = 0; i < responseParsed.swapParams.length; i++) {
-        for (let j = 0; j < swapParamsConvertedToRoutes.length; j++) {
-          for (let k = 0; k < swapParamsConvertedToRoutes[j].length; k++) {
-            if (responseParsed.swapParams[i] !== swapParamsConvertedToRoutes[j][k + 1] && responseParsed.swapParams[i].tokenIn === swapParamsConvertedToRoutes[j][k].tokenIn && responseParsed.swapParams[i].tokenOut === swapParamsConvertedToRoutes[j][k].tokenOut && responseParsed.swapParams[i].swapType !== swapParamsConvertedToRoutes[j][k].swapType) {
-              swapParamsConvertedToRoutes[j].push(responseParsed.swapParams[i]);
-            }
-          }
-        }
-      }
-
-      let finalRoute: SwapParams = {
-        poolAddress: responseParsed.swapParams[responseParsed.swapParams.length - 1].poolAddress,
-        tokenIn: responseParsed.swapParams[responseParsed.swapParams.length - 1].tokenOut,
-        tokenOut: responseParsed.swapParams[responseParsed.swapParams.length - 1].tokenOut,
-        amountIn: responseParsed.swapParams[responseParsed.swapParams.length - 1].amountIn,
-        amountOutMin: responseParsed.swapParams[responseParsed.swapParams.length - 1].amountOutMin,
-        fee: responseParsed.swapParams[responseParsed.swapParams.length - 1].fee,
-        path: responseParsed.swapParams[responseParsed.swapParams.length - 1].path,
-        deadline: responseParsed.swapParams[responseParsed.swapParams.length - 1].deadline,
-        isStable: responseParsed.swapParams[responseParsed.swapParams.length - 1].isStable,
-        convertToNative: responseParsed.swapParams[responseParsed.swapParams.length - 1].convertToNative,
-        swapType: responseParsed.swapParams[responseParsed.swapParams.length - 1].swapType
-      };
-
-      swapParamsConvertedToRoutes.push([]);
-      swapParamsConvertedToRoutes[swapParamsConvertedToRoutes.length - 1].push(finalRoute);
-
-      setRoutes(swapParamsConvertedToRoutes);
-
-      let routesAndSpacesTemp = [];
-
-      for (let i = 0; i < swapParamsConvertedToRoutes.length; i++) {
-        routesAndSpacesTemp.push(swapParamsConvertedToRoutes[i]);
-
-        if (i + 1 <= swapParamsConvertedToRoutes.length - 1) {
-          routesAndSpacesTemp.push([]);
-        }
-      }
-
-      setRoutesAndSpaces(routesAndSpacesTemp);
-      setBestRouteData(responseParsed);
-      setIsLoadingReceiveAmount(false);
-    } catch (error) {
-      setMinimumReceived("0");
-      setEstGasFee("0");
-      setPriceImpact("0");
-      setReceiveAmount("");
-      setBestRouteData(undefined);
-      setIsLoadingReceiveAmount(false);
-      toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
-      return;
     }
+
   }
 
   const handleINChange = async (e: any) => {
@@ -384,19 +499,27 @@ const SwapCard: React.FC<Props> = () => {
     await generateBestRouteData(tokenFrom!, tokenTo!, e.target.value);
   };
 
-
-
   useEffect(() => {
-    if (!tokenFrom || !address) return;
+    if (!tokenFrom || !address || !tokenTo) return;
 
     if (tokenFrom!.symbol == "ETH") {
       setApproved(true);
-    } else {
+      if (tokenTo!.symbol == "WETH") setIsMoreInformationVisibleAll(false);
+    } else if(tokenFrom!.symbol == "WETH") {
+      if (tokenTo!.symbol == "ETH") setIsMoreInformationVisibleAll(false);
+
+      setIsMoreInformationVisibleAll(true);
       setApproved(false);
       fetchAllowance?.();
+    } else {
+      setIsMoreInformationVisibleAll(true);
+      setApproved(false);
+      fetchAllowance?.();
+
+      if (tokenFrom?.wrapped?.symbol === tokenTo?.wrapped?.symbol) return;
     }
 
-    if (!swapAmount || !tokenTo || tokenFrom?.wrapped?.symbol === tokenTo?.wrapped?.symbol) return;
+    if (!swapAmount) return;
 
     const generateBestRouteDataFunc = async () => {
       await generateBestRouteData(tokenFrom, tokenTo, swapAmount);
@@ -470,13 +593,34 @@ const SwapCard: React.FC<Props> = () => {
     }
   });
 
+  const { config: configEthDeposit } = usePrepareContractWrite({
+    address: !!tokens ? tokens[0].wrapped?.address : ethers.constants.AddressZero,
+    abi: WethAbi,
+    functionName: "deposit",
+    args: [],
+    value: BigInt(swapValue) | BigInt(0),
+    enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH",
+  });
+
+  const { writeAsync: onEthDeposit, isLoading: isLoadingEthDeposit, isSuccess: isSuccessEthDeposit } = useContractWrite(configEthDeposit);
+
+  const { config: configWethWithdraw } = usePrepareContractWrite({
+    address: !!tokens ? tokens[0].wrapped?.address : ethers.constants.AddressZero,
+    abi: WethAbi,
+    functionName: "withdraw",
+    args: [BigInt(swapValue)],
+    enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH",
+  });
+  
+  const { writeAsync: onWethWithdraw, isLoading: isLoadingWethWithdraw, isSuccess: isSuccessWethWithdraw } = useContractWrite(configWethWithdraw);
+
   const { config: configSwap } = usePrepareContractWrite({
     address: contracts?.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
     args: [bestRouteData?.swapParams],
-    value: BigInt(swapValue),
-    enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved,
+    value: BigInt(swapValue) | BigInt(0),
+    enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && !(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") && !(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") && BigInt(swapValue) >= BigInt(String(balanceFrom?.value)),
   });
 
   const { writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
@@ -489,10 +633,26 @@ const SwapCard: React.FC<Props> = () => {
     if (!address || !tokenFrom || !tokenTo) return;
     fetchBalanceFrom?.();
     fetchBalanceTo?.();
-  }, [isSuccessSwap, address, tokenFrom, tokenTo, swapAmount]);
+  }, [isSuccessSwap, isSuccessWethWithdraw, isSuccessEthDeposit, address, tokenFrom, tokenTo, swapAmount]);
 
   const swapButtonDisableHandler = () => {
-    return isConnected && (isLoadingSwap || !tokens || !tokenFrom || !tokenTo || !swapAmount || !bestRouteData) && approved && chain?.id == ChainId.SCROLL_MAINNET;
+    if(isConnected && approved && chain?.id == ChainId.SCROLL_MAINNET) {
+      if(isLoadingSwap || isLoadingEthDeposit || isLoadingWethWithdraw || !tokens || !tokenFrom || !tokenTo || !swapAmount) {
+        if((tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") || (tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH")) {
+          return true;
+        } else {
+          if(!bestRouteData) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   const swapButtonOnClickHandler = () => {
@@ -502,7 +662,13 @@ const SwapCard: React.FC<Props> = () => {
       } else {
         if (tokens && tokenFrom && tokenTo && swapAmount) {
           if (approved) {
-            onSwap?.();
+            if(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") {
+              onEthDeposit?.();
+            } else if(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") {
+              onWethWithdraw?.();
+            } else {
+              onSwap?.();
+            } 
           } else {
             onApprove?.();
           }
@@ -566,6 +732,11 @@ const SwapCard: React.FC<Props> = () => {
     if(!routes) return;
     setShowRouteModal(true);
   }, [routes])
+
+  useEffect(() => {
+    if(!isLoadingReceiveAmount) return;
+    setShowRouteModal(false);
+  }, [isLoadingReceiveAmount])
 
   return (
     <div className="relative w-full md:min-h-[60rem] xs:min-h-[50rem] min-h-[40rem] flex lg:flex-row flex-col lg:justify-center justify-start lg:items-start items-center gap-0">
@@ -687,7 +858,7 @@ const SwapCard: React.FC<Props> = () => {
                   className={"select-none uppercase w-full xs:mx-0 mx-2 md:p-4 sm:p-3 p-2 rounded-xl xl:text-xl sm:text-lg text-md font-semibold " + (swapButtonDisableHandler() ? "opacity-50 pointer-events-none" : "")}
                   onClick={swapButtonOnClickHandler}
                 >
-                  {isLoadingSwap ? (
+                  {isLoadingSwap || isLoadingEthDeposit || isLoadingWethWithdraw ? (
                     <div className="flex justify-center text-white items-center">
                       <Loading className="animate-spin h-[1.25rem] w-[1.25rem]" />
                     </div>
@@ -696,6 +867,7 @@ const SwapCard: React.FC<Props> = () => {
                   )}
                 </Button>
               </div>
+              {isMoreInformationVisibleAll && (
                 <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
                   <div className="flex flex-row flex-wrap justify-between items-center w-full">
                     <span className="text-white xs:text-base text-sm">More Information</span>
@@ -740,6 +912,7 @@ const SwapCard: React.FC<Props> = () => {
                     </div>
                   )}
                 </div>
+              )}
                 <div
                   className={"justify-between items-center md:p-5 sm:p-4 p-3 bg-[#121419] bg-opacity-30 w-full rounded-xl xs:mx-0 mx-2 mt-4 xs:mb-4 mb-2 " +
                     (isLoadingReceiveAmount ? "animate-pulse items-center " : "") +
@@ -784,6 +957,21 @@ const SwapCard: React.FC<Props> = () => {
                             </div>
                           )
                         ))}
+                        {tokenTo?.symbol === "ETH" && (
+                          <>
+                            <div>
+                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full" />
+                            </div>
+                            <div>
+                              <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
+                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
+                                  <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenTo?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full" />
+                                </div>
+                                <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                       <div onClick={() => setShowRouteModal(!showRouteModal)} className="flex justify-center items-center py-2 w-full xs:mt-4 mt-2 bg-black bg-opacity-[0.15] hover:bg-white hover:bg-opacity-10 hover:cursor-pointer transition duration-150 rounded-lg">
                         <span className="text-white xs:text-base text-sm">{!showRouteModal ? 'View detailed routing' : 'Hide detailed routing'}</span>
@@ -800,9 +988,16 @@ const SwapCard: React.FC<Props> = () => {
         <AnimatePresence>
           {showFrom && (
             <TokenModal
-              onSelectToken={(token: any) => {
-                setTokenFrom(token);
-                if (!!address && !!tokenFrom) fetchBalanceFrom?.();
+              onSelectToken={async (token: any) => {
+                if(token == tokenTo!) {
+                  handleSwitchToken();
+                } else {
+                  setTokenFrom(token);
+                }
+
+                if (!!swapAmount && !!tokenTo) await generateBestRouteData(token, tokenTo!, swapAmount!);
+                if (!!address) fetchBalanceFrom?.();
+                if (!tokenTo) fetchAllowance?.();
               }}
               onCloseModal={() => setShowFrom(false)}
               tokenList={tokens!}
@@ -812,7 +1007,17 @@ const SwapCard: React.FC<Props> = () => {
         <AnimatePresence>
           {showTo && (
             <TokenModal
-              onSelectToken={(token: any) => setTokenTo(token)}
+              onSelectToken={async (token: any) => {
+                if(token == tokenFrom!) {
+                  handleSwitchToken();
+                } else {
+                  setTokenTo(token);
+                }
+
+                if (!!swapAmount && !!tokenFrom) await generateBestRouteData(tokenFrom!, token, swapAmount!);
+                if (!!address) fetchBalanceTo?.();
+                if (!!tokenFrom) fetchAllowance?.();
+              }}
               onCloseModal={() => setShowTo(false)}
               tokenList={tokens!}
             />
@@ -834,7 +1039,7 @@ const SwapCard: React.FC<Props> = () => {
         </AnimatePresence> */}
       </motion.div>
       <AnimatePresence>
-        {showRouteModal && routes && (
+        {showRouteModal && routes && bestRouteData && childlist && tokens && tokenFrom && translateRouteCard && tokenTo && (
           <RouteCard
             onCloseModal={() => setShowRouteModal(false)}
             routes={routes!}
@@ -844,6 +1049,7 @@ const SwapCard: React.FC<Props> = () => {
             routePercentages={bestRouteData!.routePercentages!}
             amountOuts={bestRouteData!.amountOuts}
             tokenFrom={tokenFrom!}
+            tokenTo={tokenTo!}
             translateRouteCard={translateRouteCard}
           />
         )}

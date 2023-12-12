@@ -24,10 +24,11 @@ type Props = {
   routePercentages: any[];
   amountOuts: any[];
   tokenFrom: Currency;
+  tokenTo: Currency;
   translateRouteCard: { x: number, y: number, xie: number, yie: number };
 };
 
-function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, routePercentages, amountOuts, tokenFrom, translateRouteCard }: Props) {
+function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, routePercentages, amountOuts, tokenFrom, tokenTo, translateRouteCard }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [totalAmountIn, setTotalAmountIn] = useState<number>(0);
   const [totalAmountOuts, setTotalAmountOuts] = useState<any[]>([]);
@@ -134,18 +135,19 @@ function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, r
                     )}
                     {index > 0 && (
                       <div className="flex flex-col justify-start items-center mt-3 p-4 bg-black bg-opacity-[0.15] rounded-2xl w-[13.75rem]">
-                        {Array.from({length: routes[index - 2].length}, (_, i) => i + 1).map((child, childIndex) => (
+                        {Array.from({length: routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1].length}, (_, i) => i + 1).map((child, childIndex) => (
                           <div key={"route-child-" + childIndex} className="flex flex-col justify-between items-center min-w-[11.75rem]">
                             <div className="flex flex-row justify-between items-center text-white text-base w-full">
                               <div className="flex flex-row justify-start items-center gap-2 text-white text-base p-1 w-full">
-                                <Image src={String(childlist[routes[index - 2][childIndex].swapType - 1].logo!) === "" ? "/logo.png" : String(childlist[routes[index - 2][childIndex].swapType - 1].logo!)} width={48} height={48} alt="" className="bg-black bg-opacity-[0.15] rounded-full w-[1.25rem] h-[1.25rem]"/> 
-                                <Link href={String(childlist[routes[index - 2][childIndex].swapType - 1].projectLink!)} target="_blank" className="-mb-1">{childlist[routes[index - 2][childIndex].swapType - 1].name + ":"}</Link>
+                                <Image src={String(childlist[routes[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex].swapType - 1].logo!) === "" ? "/logo.png" : String(childlist[routes[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex].swapType - 1].logo!)} width={48} height={48} alt="" className="bg-black bg-opacity-[0.15] rounded-full w-[1.25rem] h-[1.25rem]"/> 
+                                <Link href={String(childlist[routes[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex].swapType - 1].projectLink!)} target="_blank" className="-mb-1">{childlist[routes[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex].swapType - 1].name + ":"}</Link>
                               </div>
-                              <div className={"flex justify-center items-center text-sm min-w-[3rem] h-[1.625rem] border-2 border-opacity-[0.35] bg-opacity-25 rounded-full " + (routePercentages[index - 2][childIndex] > 15 ? (routePercentages[index - 2][childIndex] > 35 ? "border-[#61c56f] bg-[#61c56f]" : "border-[#bec561] bg-[#bec561]") : "border-[#c57861] bg-[#c57861]")}>
-                                <span className={"-mb-1 font-medium " + (routePercentages[index - 2][childIndex] > 15 ? (routePercentages[index - 2][childIndex] > 35 ? "text-[#61c56f]" : "text-[#bec561]") : "text-[#c57861]")}>{routePercentages[index - 2][childIndex] + "%"}</span>
+                              <span></span>
+                              <div className={"flex justify-center items-center text-sm min-w-[3rem] h-[1.625rem] border-2 border-opacity-[0.35] bg-opacity-25 rounded-full " + (routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex] > 15 ? (routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex] > 35 ? "border-[#61c56f] bg-[#61c56f]" : "border-[#bec561] bg-[#bec561]") : "border-[#c57861] bg-[#c57861]")}>
+                                <span className={"-mb-1 font-medium " + (routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex] > 15 ? (routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex] > 35 ? "text-[#61c56f]" : "text-[#bec561]") : "text-[#c57861]")}>{routePercentages[routes.findIndex((currentRoute) => currentRoute == route) - 1][childIndex] + "%"}</span>
                               </div>
                             </div>
-                            {route.length > 0 && childIndex >= 0 && childIndex < routes[index - 2].length - 1 && (
+                            {route.length > 0 && childIndex >= 0 && childIndex < routes[routes.findIndex((currentRoute) => currentRoute == route) - 1].length - 1 && (
                               <div className="bg-white bg-opacity-5 w-full my-3 h-[0.125rem] rounded-full"></div>
                             )}
                           </div>
@@ -155,10 +157,34 @@ function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, r
                   </div>
                 ):(
                   <div key={"route-right-icon-" + index}>
-                    <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[2.5rem] min-w-[2.5rem] xl:min-h-[2rem] lg:min-h-[2.5rem] min-h-[2.5rem] xl:w-[2rem] lg:w-[2.5rem] w-[2.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.35rem] bg-white mt-8 bg-opacity-5 mx-2 rounded-full"/>
+                    <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[2.5rem] min-w-[2.5rem] xl:min-h-[2rem] lg:min-h-[2.5rem] min-h-[2.5rem] xl:w-[2rem] lg:w-[2.5rem] w-[2.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.425rem] bg-white mt-8 bg-opacity-5 mx-2 rounded-full"/>
                   </div>
                 )
               ))}
+              {tokenTo!.symbol === "ETH" && (
+                <>
+                  <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[2.5rem] min-w-[2.5rem] xl:min-h-[2rem] lg:min-h-[2.5rem] min-h-[2.5rem] xl:w-[2rem] lg:w-[2.5rem] w-[2.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.425rem] bg-white mt-8 bg-opacity-5 mx-2 rounded-full"/>
+                  <div className="flex flex-col justify-center items-center min-w-[6.25rem] max-w-[13.75rem]">
+                    <div className="flex flex-col justify-center items-center w-full">
+                      <div className="flex flex-row justify-center items-center rounded-full w-[3.25rem] h-[3.25rem] overflow-clip">
+                        <Image onClick={() => window.open("https://scrollscan.com/")} src={String(tokens?.find(token => (token?.wrapped.address == tokenTo?.wrapped.address))?.logo!)} width={48} height={48} alt="" className="bg-black bg-opacity-[0.15] p-2 hover:cursor-pointer w-full h-full"/> 
+                      </div>
+                      <span className="mt-3 text-white text-base">{tokenFrom!.symbol == "WETH" ? totalAmountIn : totalAmountOuts[totalAmountOuts.length - 1]} ETH</span>
+                    </div>
+                    <div className="flex flex-col justify-start items-center mt-3 p-4 bg-black bg-opacity-[0.15] rounded-2xl">
+                      <div className="flex flex-row justify-between items-center min-w-[10.75rem]">
+                        <div className="flex flex-row justify-start items-center gap-2 text-white text-base p-1 w-full">
+                          <Image src={"/logo.png"} width={48} height={48} alt="" className="bg-black bg-opacity-[0.15] rounded-full w-[1.25rem] h-[1.25rem]"/> 
+                          <Link href={"/"} target="_blank" className="-mb-1">Aggre.io:</Link>
+                        </div>
+                        <div className={"flex justify-center items-center text-sm min-w-[3rem] h-[1.625rem] border-2 border-opacity-[0.35] bg-opacity-25 rounded-full border-[#61c56f] bg-[#61c56f]"}>
+                          <span className={"-mb-1 font-medium text-[#61c56f]"}>100%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

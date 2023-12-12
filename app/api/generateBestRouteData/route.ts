@@ -16,6 +16,7 @@ export async function POST(request: Request) {
       tokenOutAddress: data.tokenOutAddress, 
       amountIn: data.amountIn, 
       fee: data.fee, 
+      convertToNative: data.convertToNative,
       slippage: data.slippage, 
       deadline: data.deadline
     },
