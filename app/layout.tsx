@@ -29,10 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${spartan.variable} ${spartan.className} lg:body-lg body-sm tracking-wider`}>
         <Providers>
           <GlobalContextProvider>
-            <div className="container sm:w-auto xs:w-[425px] w-full relative min-h-screen flex flex-col xs:p-8 p-4 mx-auto items-center">
+            <div className="container sm:w-auto xs:w-[425px] w-full relative min-h-screen flex flex-col xs:p-4 p-4 mx-auto items-center">
               <Navbar />
               <div id="container-div" className={"container mx-auto md:pt-0 justify-center gap-2 flex-1 flex my-auto overflow-hidden flex-col"}>
-                <div className="w-full flex-col flex items-center xs:mt-6 mt-3 xs:mb-6 mb-3">
+                <div className="w-full flex-col flex items-center xs:mt-6 mt-1 xs:mb-6 mb-3">
                   {children}
                 </div>
               </div>

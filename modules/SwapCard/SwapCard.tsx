@@ -200,26 +200,14 @@ const SwapCard: React.FC<Props> = () => {
   }, [native, tokens]);
 
   useEffect(() => {
-    if (!swapAmount || !tokenTo || !tokenFrom) return;
-  
-    // console.log("Setting up interval...");
-  
+    if (!swapAmount || !tokenTo || !tokenFrom) return;  
     const generateBestRouteDataFunc = async () => {
-      // console.log("Calling generateBestRouteData...");
       await generateBestRouteData(tokenFrom, tokenTo, swapAmount);
     };
-  
     generateBestRouteDataFunc();
 
-    // const intervalId = setInterval(() => {
-    //   generateBestRouteDataFunc();
-    // }, 30000);
-  
-    // Cleanup the interval when the component unmounts
-    // return () => {
-    //   console.log("Clearing interval...");
-    //   clearInterval(intervalId);
-    // };
+    setShowRouteModal(true);
+    setIsMoreInformationVisible(true);
   }, [swapAmount, tokenTo, tokenFrom]);
 
   const {
@@ -704,7 +692,7 @@ const SwapCard: React.FC<Props> = () => {
   useEffect(() => {
     if(windowSize.width <= 1280) {
       if(windowSize.width > 1024 && windowSize.width <= 1280) {
-        setTranslateRouteCard({ x: 50, y: 50, xie: 40, yie: 50 });
+        setTranslateRouteCard({ x: 50, y: 10, xie: 40, yie: 50 });
       } else {
         setTranslateRouteCard({ x: 0, y: 0, xie: 0, yie: -10 });
 
@@ -720,10 +708,10 @@ const SwapCard: React.FC<Props> = () => {
       }
     } else {
       if(windowSize.width > 1280 && windowSize.width <= 1535) {
-        setTranslateRouteCard({ x: 40, y: 50, xie: 30, yie: 50 });
+        setTranslateRouteCard({ x: 40, y: 10, xie: 30, yie: 10 });
       } else {
         // setTranslateRouteCard({ x: 25, y: 50, xie: 15, yie: 50 });
-        setTranslateRouteCard({ x: 37.5, y: 50, xie: 27.5, yie: 50 });
+        setTranslateRouteCard({ x: 37.5, y: 10, xie: 27.5, yie: 10 });
       }
     }
   }, [windowSize]);
@@ -868,14 +856,14 @@ const SwapCard: React.FC<Props> = () => {
                 </Button>
               </div>
               {isMoreInformationVisibleAll && (
-                <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
+                <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-3 mt-4 gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
                   <div className="flex flex-row flex-wrap justify-between items-center w-full">
                     <span className="text-white xs:text-base text-sm">More Information</span>
                     <FaChevronDown className={"text-white transition-all duration-200 " + (isMoreInformationVisible ? "rotate-180" : "")} />
                   </div>
                   {isMoreInformationVisible && (
                     <div
-                      className={`flex flex-col justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-6 mt-4 gap-1 ${''}`}
+                      className={`flex flex-col justify-between xs:p-4 p-2 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-3 mt-2 gap-1 ${''}`}
                     >
                       <div className="flex flex-row flex-wrap justify-between items-center w-full">
                         <span className="text-white xs:text-base text-sm">Minimum Received:</span>
@@ -913,73 +901,7 @@ const SwapCard: React.FC<Props> = () => {
                   )}
                 </div>
               )}
-                <div
-                  className={"justify-between items-center md:p-5 sm:p-4 p-3 bg-[#121419] bg-opacity-30 w-full rounded-xl xs:mx-0 mx-2 mt-4 xs:mb-4 mb-2 " +
-                    (isLoadingReceiveAmount ? "animate-pulse items-center " : "") +
-                    (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "hidden" : "flex flex-col")
-                  }
-                >
-                  {isLoadingReceiveAmount ? (
-                    <span className="text-[#EBC28E] animate-pulse self-center xs:text-base text-sm">
-                      Finding best route...
-                    </span>
-                  ) : (
-                    <>
-                      <div className={"flex flex-row items-center md:gap-4 gap-6 md:overflow-x-hidden overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] " + (!!routes ? (routes.length < 3 ? "xs:justify-evenly justify-start xs:max-w-[100%] max-w-[95%] " : "sm:justify-evenly justify-start sm:max-w-[100%] max-w-[95%] ") : "sm:justify-evenly justify-start sm:max-w-[100%] max-w-[95%] ") + (routes?.length == 2 && tokenFrom?.symbol != "ETH" ? "w-[60%]" : "w-full")}>
-                        {tokenFrom?.symbol === "ETH" && (
-                          <>
-                            <div>
-                              <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
-                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenFrom?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full" />
-                                </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
-                              </div>
-                            </div>
-                            <div>
-                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full" />
-                            </div>
-                          </>
-                        )}
-                        {routesAndSpaces?.map((route, index) => (
-                          route.length > 0 ? (
-                            <div key={"route-" + index}>
-                              <div onClick={() => window.open("https://scrollscan.com/token/" + route[0].tokenIn)} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
-                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.symbol != "ETH") && (token?.wrapped?.address == route[0].tokenIn))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full" />
-                                </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">{tokens?.find(token => (token?.symbol != "ETH") && token?.wrapped?.address == route[0].tokenIn)?.symbol!}</span>
-                              </div>
-                            </div>
-                          ) : (
-                            <div key={"route-right-icon-" + index}>
-                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full" />
-                            </div>
-                          )
-                        ))}
-                        {tokenTo?.symbol === "ETH" && (
-                          <>
-                            <div>
-                              <RightArrowIcon className="xl:min-w-[2rem] lg:min-w-[1.75rem] min-w-[1.5rem] xl:min-h-[2rem] lg:min-h-[1.75rem] min-h-[1.5rem] xl:w-[2rem] lg:w-[1.75rem] w-[1.5rem] xl:h-[2rem] lg:h-[1.75rem] h-[1.5rem] p-[0.25rem] bg-white bg-opacity-5 rounded-full" />
-                            </div>
-                            <div>
-                              <div onClick={() => window.open("https://scrollscan.com/")} className="flex flex-col justify-center items-center xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] hover:cursor-pointer">
-                                <div className="flex flex-row justify-center items-center rounded-full xl:w-[2.5rem] lg:w-[2.25rem] w-[2rem] xl:h-[2.5rem] lg:h-[2.25rem] h-[2rem] overflow-clip">
-                                  <Image src={String(tokens?.find(token => (token?.wrapped?.address == tokenTo?.wrapped?.address))?.logo!)} width={24} height={24} alt="" className="bg-black bg-opacity-[0.15] p-[0.35rem] w-full h-full" />
-                                </div>
-                                <span className="md:mt-3 mt-2 text-white text-xs">ETH</span>
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <div onClick={() => setShowRouteModal(!showRouteModal)} className="flex justify-center items-center py-2 w-full xs:mt-4 mt-2 bg-black bg-opacity-[0.15] hover:bg-white hover:bg-opacity-10 hover:cursor-pointer transition duration-150 rounded-lg">
-                        <span className="text-white xs:text-base text-sm">{!showRouteModal ? 'View detailed routing' : 'Hide detailed routing'}</span>
-                      </div>
-                    </>
-                  )
-                  }
-                </div>
+    
               </div>
     
             </div>
