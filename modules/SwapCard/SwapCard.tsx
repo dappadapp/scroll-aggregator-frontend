@@ -602,13 +602,13 @@ const SwapCard: React.FC<Props> = () => {
   
   const { writeAsync: onWethWithdraw, isLoading: isLoadingWethWithdraw, isSuccess: isSuccessWethWithdraw } = useContractWrite(configWethWithdraw);
 
-  const { config: configSwap } = usePrepareContractWrite({
+  const { config: configSwap, error } = usePrepareContractWrite({
     address: contracts?.contract,
     abi: AggregatorAbi,
     functionName: "executeSwaps",
     args: [bestRouteData?.swapParams],
     value: BigInt(swapValue) | BigInt(0),
-    enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && !(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") && !(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") && BigInt(swapValue) >= BigInt(String(balanceFrom?.value)),
+    //enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && !(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") && !(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") && BigInt(swapValue) >= BigInt(String(balanceFrom?.value)),
   });
 
   const { writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
@@ -643,11 +643,14 @@ const SwapCard: React.FC<Props> = () => {
     }
   }
 
-  const swapButtonOnClickHandler = () => {
+  const swapButtonOnClickHandler = async () => {
+    console.log("swapButtonOnClickHandler");
+    console.log("error", error);
     if (isConnected) {
       if (chain?.id != ChainId.SCROLL_MAINNET) {
         switchNetwork?.(ChainId.SCROLL_MAINNET);
       } else {
+        try{
         if (tokens && tokenFrom && tokenTo && swapAmount) {
           if (approved) {
             if(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") {
@@ -655,12 +658,39 @@ const SwapCard: React.FC<Props> = () => {
             } else if(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") {
               onWethWithdraw?.();
             } else {
-              onSwap?.();
+
+              if (!onSwap) {
+                console.log("error", error?.message);
+                if (error?.message.includes("insufficient funds for gas * price + value")) {
+                  return toast(
+                    "You don't have enough balance for this transaction."
+                  );
+                }
+                if (
+                  error?.message.includes("Execution reverted for an unknown reason.")
+                ) {
+                  return toast(
+                    "Execution reverted for an unknown reason."
+                  );
+                }          
+                if(error?.message.includes("RPC Request failed")){
+          
+                return toast(
+                  `Please connect your wallet to correct network and try again.`
+                );
+                }
+                return toast("Insufficient funds for gas");
+              }
+              await onSwap?.();
             } 
           } else {
             onApprove?.();
           }
         }
+      }
+      catch(error) {
+        console.log(error);
+      }
       }
     } else {
       open();
