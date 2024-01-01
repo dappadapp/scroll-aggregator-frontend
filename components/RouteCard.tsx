@@ -46,7 +46,7 @@ function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, r
           totalAmountOut += BigInt(amountOuts[i][j]);
         }
 
-        totalAmountOutsTemp.push(Number(ethers.utils.formatUnits(totalAmountOut, tokens?.find(token => token?.wrapped.address == routes[i][0].tokenOut)?.decimals!)).toFixed(4));
+        totalAmountOutsTemp.push(Number(ethers.utils.formatUnits(totalAmountOut, tokens?.find(token => token?.wrapped.address == routes[i][0].tokenOut)?.decimals!)).toFixed(6));
       }
 
       let totalAmountOutsTempSecond = [];
@@ -97,7 +97,7 @@ function RouteCard({ onCloseModal, routes, routesAndSpaces, childlist, tokens, r
         </div>
         <div className="relative sm:mt-6 mt-2 md:py-8 py-2 bg-black bg-opacity-[0.15] routeModalBg rounded-3xl h-[calc(100%-4.5rem)] overflow-auto">
           <div className="md:px-8 px-0 md:min-w-fit md:scale-100 scale-75">
-            <div className="flex flex-row justify-between items-start w-full gap-6">
+            <div className={"flex flex-row items-start w-full gap-6 " + (routesAndSpaces.length > 1 ? "justify-between" : "justify-evenly")}>
               {tokenFrom!.symbol === "ETH" && (
                 <>
                   <div className="flex flex-col justify-center items-center min-w-[6.25rem] max-w-[13.75rem]">

@@ -1,5 +1,5 @@
 import React, { use, useEffect, useMemo, useRef, useState } from "react";
-import { useAccount, useBalance, useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, usePublicClient, useSwitchNetwork } from "wagmi";
+import { useAccount, useBalance, useContractRead, useContractWrite, useNetwork, usePrepareContractWrite, usePublicClient, useSwitchNetwork, useWaitForTransaction } from "wagmi";
 import { readContract } from "@wagmi/core";
 import { useWeb3Modal } from "@web3modal/react";
 import { Abi, formatUnits, zeroAddress } from "viem";
@@ -32,7 +32,7 @@ import { providers } from "ethers";
 import { useGlobalContext } from "@/contexts";
 import SlippageButton from "./SlippageButton";
 import { toast } from "react-toastify";
-import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
+// import { useRealTimeETHPrice } from "@/hooks/useRealTimeETHPrice";
 import TokenModal from "@/components/TokenModal";
 import RouteModal from "@/components/RouteModal";
 import RefreshButton from "./RefreshButton";
@@ -101,7 +101,7 @@ const SwapCard: React.FC<Props> = () => {
   const [pairAddress, setPairAddress] = useState<string>();
   const { chain, chains } = useNetwork();
   const signer: any = useEthersSigner({ chainId: ChainId.SCROLL_MAINNET });
-  const ethPrice = useRealTimeETHPrice();
+  // const ethPrice = useRealTimeETHPrice();
   const [ethUSD, setEthPrice] = useState<number>(0);
   const [fee, setFee] = useState<string>("0");
   const [swapValue, setSwapValue] = useState<string>("0");
@@ -206,7 +206,15 @@ const SwapCard: React.FC<Props> = () => {
     };
     generateBestRouteDataFunc();
 
-    setShowRouteModal(true);
+    if(Number(swapAmount) > 0 && String(swapAmount) != "") {
+      setShowRouteModal(true);
+    } else {
+      setBestRouteData(undefined);
+      setRoutes([]);
+      setRoutesAndSpaces([]);
+      setShowRouteModal(false);
+    }
+
     setIsMoreInformationVisible(true);
   }, [swapAmount, tokenTo, tokenFrom]);
 
@@ -243,16 +251,6 @@ const SwapCard: React.FC<Props> = () => {
     args: [account?.address, contracts?.contract],
     enabled: !!tokenFrom && !!account && !!contracts,
   });
-
-  useEffect(() => {
-    if (!allowance || !tokenFrom) return;
-
-    if (Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
-      setApproved(true);
-    } else {
-      setApproved(false);
-    }
-  }, [allowance, tokenFrom, swapAmount, refresh, tokenTo]);
 
   const generateBestRouteData = async (tokenIn: Currency, tokenOut: Currency, amountIn: string) => {
     if (!tokens || !tokenIn || !tokenOut || Number(amountIn) <= 0) return;
@@ -305,8 +303,11 @@ const SwapCard: React.FC<Props> = () => {
           minAmountOut: Number(amountInParsed),
         });
 
-        const swapAmountTemp = String(Number(amountIn).toFixed(5));
+        const swapAmountTemp = String(Number(amountIn).toFixed(6));
         setReceiveAmount(swapAmountTemp);
+
+        const swapValue = tokenIn?.isNative || tokenFrom?.wrapped?.address === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
+        setSwapValue(String(swapValue));
 
         setIsLoadingReceiveAmount(false);
       }, 800);
@@ -356,8 +357,11 @@ const SwapCard: React.FC<Props> = () => {
           minAmountOut: Number(amountInParsed),
         });
 
-        const swapAmountTemp = String(Number(amountIn).toFixed(5));
+        const swapAmountTemp = String(Number(amountIn).toFixed(6));
         setReceiveAmount(swapAmountTemp);
+
+        const swapValue = tokenIn?.isNative || tokenFrom?.wrapped?.address === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
+        setSwapValue(String(swapValue));
 
         setIsLoadingReceiveAmount(false);
       }, 800);
@@ -393,8 +397,8 @@ const SwapCard: React.FC<Props> = () => {
           return;
         }
 
-        setReceiveAmount(Number(ethers.utils.formatUnits(responseParsed.amountOut, tokenOut?.decimals)).toFixed(5));
-        setMinimumReceived(Number(ethers.utils.formatUnits(responseParsed.minAmountOut, tokenOut?.decimals)).toFixed(5));
+        setReceiveAmount(Number(ethers.utils.formatUnits(responseParsed.amountOut, tokenOut?.decimals)).toFixed(6));
+        setMinimumReceived(Number(ethers.utils.formatUnits(responseParsed.minAmountOut, tokenOut?.decimals)).toFixed(6));
         setPriceImpact(String(responseParsed.priceImpact < 0.01 ? 0.01 : responseParsed.priceImpact.toFixed(2)));
 
         const swapValue = tokenIn?.isNative || responseParsed.swapParams[0].tokenIn === tokens![1].wrapped?.address ? ethers.utils.parseEther(amountIn) : BigInt(0);
@@ -492,16 +496,39 @@ const SwapCard: React.FC<Props> = () => {
 
     if (tokenFrom!.symbol == "ETH") {
       setApproved(true);
+
       if (tokenTo!.symbol == "WETH") setIsMoreInformationVisibleAll(false);
     } else if(tokenFrom!.symbol == "WETH") {
-      if (tokenTo!.symbol == "ETH") setIsMoreInformationVisibleAll(false);
+      if (tokenTo!.symbol == "ETH") {
+        setIsMoreInformationVisibleAll(false);
+      } else {
+        setIsMoreInformationVisibleAll(true);
+      } 
 
-      setIsMoreInformationVisibleAll(true);
-      setApproved(false);
+      if(!!allowance && !!swapAmount) {
+        if (Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
+          setApproved(true);
+        } else {
+          setApproved(false);
+        }
+      } else {
+        setApproved(false);
+      }
+
       fetchAllowance?.();
     } else {
       setIsMoreInformationVisibleAll(true);
-      setApproved(false);
+
+      if(!!allowance && !!swapAmount) {
+        if (Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
+          setApproved(true);
+        } else {
+          setApproved(false);
+        }
+      } else {
+        setApproved(false);
+      }
+
       fetchAllowance?.();
 
       if (tokenFrom?.wrapped?.symbol === tokenTo?.wrapped?.symbol) return;
@@ -514,7 +541,7 @@ const SwapCard: React.FC<Props> = () => {
     }
 
     generateBestRouteDataFunc();
-  }, [slippage, refresh, tokenFrom, tokenTo]);
+  }, [allowance, swapAmount, slippage, refresh, tokenFrom, tokenTo]);
 
   const handleSwitchToken = async () => {
     if (!tokenTo || !tokenFrom) return;
@@ -522,7 +549,7 @@ const SwapCard: React.FC<Props> = () => {
     setTokenTo(tokenFrom);
     setTokenFrom(tokenToA);
     if (!swapAmount) return;
-    const swapAmountTemp = String(Number(swapAmount).toFixed(5));
+    const swapAmountTemp = String(Number(swapAmount).toFixed(6));
     setSwapAmount(swapAmountTemp);
     await generateBestRouteData(tokenToA!, tokenFrom!, swapAmountTemp);
   };
@@ -541,24 +568,24 @@ const SwapCard: React.FC<Props> = () => {
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) *  percent) / 100).toFixed(5).toString());
-      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * percent) / 100).toFixed(5).toString());
+      setSwapAmount(((parseFloat(balance) *  percent) / 100).toFixed(6).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * percent) / 100).toFixed(6).toString());
       setReceiveAmount(((parseFloat(balance) * percent) / 100).toFixed(tokenTo?.decimals).toString());
       setChangeFrom(true);
     } else if (tokenFrom?.symbol == "ETH") {
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(5).toString());
-      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(5).toString());
+      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(6).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(6).toString());
       setChangeFrom(true);
     }
     else{
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(5).toString());
-      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(5).toString());
+      setSwapAmount(((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(6).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 0.00001 : percent)) / 100).toFixed(6).toString());
       setChangeFrom(true);
     }
   };
@@ -571,26 +598,37 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!contracts && !!tokenFrom && !!tokenTo && !!swapAmount && !!receiveAmount && Number(receiveAmount) > 0 && !!bestRouteData && !approved
   });
 
-  const { writeAsync: onApprove } = useContractWrite({
-    ...configApprove,
+  const { data: dataApprove, writeAsync: onApprove } = useContractWrite(configApprove);
+
+  useWaitForTransaction({
+    hash: dataApprove?.hash,
     onSuccess: () => {
       setApproved(true);
+      fetchAllowance?.();
     },
     onError: () => {
       setApproved(false);
     }
-  });
+  })
 
   const { config: configEthDeposit } = usePrepareContractWrite({
     address: !!tokens ? tokens[0].wrapped?.address : ethers.constants.AddressZero,
     abi: WethAbi,
     functionName: "deposit",
     args: [],
-    value: BigInt(swapValue) | BigInt(0),
+    value: BigInt(swapValue),
     enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH",
   });
 
-  const { writeAsync: onEthDeposit, isLoading: isLoadingEthDeposit, isSuccess: isSuccessEthDeposit } = useContractWrite(configEthDeposit);
+  const { data: dataEthDeposit, writeAsync: onEthDeposit, isLoading: isLoadingEthDeposit, isSuccess: isSuccessEthDeposit } = useContractWrite(configEthDeposit);
+
+  useWaitForTransaction({
+    hash: dataEthDeposit?.hash,
+    onSuccess: () => {
+      fetchBalanceFrom?.();
+      fetchBalanceTo?.();
+    }
+  })
 
   const { config: configWethWithdraw } = usePrepareContractWrite({
     address: !!tokens ? tokens[0].wrapped?.address : ethers.constants.AddressZero,
@@ -600,7 +638,15 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH",
   });
   
-  const { writeAsync: onWethWithdraw, isLoading: isLoadingWethWithdraw, isSuccess: isSuccessWethWithdraw } = useContractWrite(configWethWithdraw);
+  const { data: dataWethWithdraw, writeAsync: onWethWithdraw, isLoading: isLoadingWethWithdraw, isSuccess: isSuccessWethWithdraw } = useContractWrite(configWethWithdraw);
+
+  useWaitForTransaction({
+    hash: dataWethWithdraw?.hash,
+    onSuccess: () => {
+      fetchBalanceFrom?.();
+      fetchBalanceTo?.();
+    }
+  })
 
   const { config: configSwap, error } = usePrepareContractWrite({
     address: contracts?.contract,
@@ -611,7 +657,16 @@ const SwapCard: React.FC<Props> = () => {
     //enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && !(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") && !(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") && BigInt(swapValue) >= BigInt(String(balanceFrom?.value)),
   });
 
-  const { writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
+  const { data: dataSwap, writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
+
+  useWaitForTransaction({
+    hash: dataSwap?.hash,
+    
+    onSuccess: () => {
+      fetchBalanceFrom?.();
+      fetchBalanceTo?.();
+    }
+  })
 
   const toggleMoreInformation = () => {
     setIsMoreInformationVisible(!isMoreInformationVisible);
@@ -621,20 +676,20 @@ const SwapCard: React.FC<Props> = () => {
     if (!address || !tokenFrom || !tokenTo) return;
     fetchBalanceFrom?.();
     fetchBalanceTo?.();
-  }, [isSuccessSwap, isSuccessWethWithdraw, isSuccessEthDeposit, address, tokenFrom, tokenTo, swapAmount]);
+  }, [address, tokenFrom, tokenTo, swapAmount]);
 
   const swapButtonDisableHandler = () => {
     if(isConnected && approved && chain?.id == ChainId.SCROLL_MAINNET) {
-      if(isLoadingSwap || isLoadingEthDeposit || isLoadingWethWithdraw || !tokens || !tokenFrom || !tokenTo || !swapAmount) {
-        if((tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") || (tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH")) {
-          return true;
-        } else {
-          if(!bestRouteData) {
-            return true;
-          } else {
-            return false;
-          }
-        }
+      if(isLoadingSwap || 
+        isLoadingReceiveAmount || 
+        isLoadingEthDeposit || 
+        isLoadingWethWithdraw || 
+        !tokens || 
+        !tokenFrom || 
+        !tokenTo || 
+        !swapAmount
+      ) {
+        return true;
       } else {
         return false;
       }
@@ -644,8 +699,6 @@ const SwapCard: React.FC<Props> = () => {
   }
 
   const swapButtonOnClickHandler = async () => {
-    console.log("swapButtonOnClickHandler");
-    console.log("error", error);
     if (isConnected) {
       if (chain?.id != ChainId.SCROLL_MAINNET) {
         switchNetwork?.(ChainId.SCROLL_MAINNET);
@@ -753,6 +806,9 @@ const SwapCard: React.FC<Props> = () => {
 
   useEffect(() => {
     if(!isLoadingReceiveAmount) return;
+    setBestRouteData(undefined);
+    setRoutes([]);
+    setRoutesAndSpaces([]);
     setShowRouteModal(false);
   }, [isLoadingReceiveAmount])
 
@@ -869,7 +925,7 @@ const SwapCard: React.FC<Props> = () => {
                   />
                 </div>
 
-                <div className={"flex justify-center items-center w-full md:mt-6 mt-4 " + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "" : "")}>
+                <div className={"flex justify-center items-center w-full md:mt-6 mt-4 md:mb-3 mb-0 " + (Number(swapAmount) == 0 || swapAmount == undefined || bestRouteData == undefined ? "" : "")}>
                 <Button
                   variant="bordered"
                   disabled={swapButtonDisableHandler()}
@@ -886,7 +942,7 @@ const SwapCard: React.FC<Props> = () => {
                 </Button>
               </div>
               {isMoreInformationVisibleAll && (
-                <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between xs:p-5 p-3 md:mx-0 xs:mx-1 mx-2 bg-[#121419] bg-opacity-30 rounded-xl md:mt-3 mt-4 gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
+                <div onClick={toggleMoreInformation} className={`flex flex-col select-none justify-between md:p-5 p-3 md:mx-0 xs:mx-1 mx-2 md:mt-3 mt-4 bg-[#121419] bg-opacity-30 rounded-xl gap-1 hover:bg-white hover:bg-opacity-5 hover:cursor-pointer ${''}`}>
                   <div className="flex flex-row flex-wrap justify-between items-center w-full">
                     <span className="text-white xs:text-base text-sm">More Information</span>
                     <FaChevronDown className={"text-white transition-all duration-200 " + (isMoreInformationVisible ? "rotate-180" : "")} />
