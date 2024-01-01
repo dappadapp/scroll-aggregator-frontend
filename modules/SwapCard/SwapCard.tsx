@@ -834,7 +834,7 @@ const SwapCard: React.FC<Props> = () => {
                 <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">From</span>
                 {balanceFrom && (
                   <div className="text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm text-[#FFF]">
-                    {toFixedValue(balanceFrom.formatted, 4)} {balanceFrom.symbol}
+                    {toFixedValue(balanceFrom.formatted, 6)} {balanceFrom.symbol}
                   </div>
                 )}
               </div>
@@ -870,7 +870,7 @@ const SwapCard: React.FC<Props> = () => {
                   {percentageButtons.map((val, index) => (
                     <div
                       className={`${percentage === val ? "scale-[1.1] bg-white bg-opacity-5" : "scale-100"
-                        } ${balanceFrom && balanceTo && Number(toFixedValue(balanceFrom!.formatted, 4)) > 0 ? "" : "pointer-events-none opacity-50"} group cursor-pointer bg-black select-none xl:px-2 xl:py-2 px-1 py-2 lg:w-[5rem] sm:w-[4.5rem] w-[3.25rem] rounded-full bg-opacity-[0.15] flex flex-col text-center sm:text-sm text-xs transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5`}
+                        } ${balanceFrom && balanceTo && Number(toFixedValue(balanceFrom!.formatted, 6)) > 0 ? "" : "pointer-events-none opacity-50"} group cursor-pointer bg-black select-none xl:px-2 xl:py-2 px-1 py-2 lg:w-[5rem] sm:w-[4.5rem] w-[3.25rem] rounded-full bg-opacity-[0.15] flex flex-col text-center sm:text-sm text-xs transition-all duration-150 hover:cursor-pointer hover:bg-white hover:bg-opacity-5`}
                       key={"perc-button-" + index}
                       onClick={() => handleClickInputPercent(val)}
                     >
@@ -906,7 +906,7 @@ const SwapCard: React.FC<Props> = () => {
                 <span className="text-white xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">To</span>
                 {balanceTo && (
                   <div className="text-white text-right xl:text-xl lg:text-lg md:text-md xs:text-base text-sm">
-                    {toFixedValue(balanceTo.formatted, 4)} {balanceTo.symbol}
+                    {toFixedValue(balanceTo.formatted, 6)} {balanceTo.symbol}
                   </div>
                 )}
               </div>
@@ -916,7 +916,7 @@ const SwapCard: React.FC<Props> = () => {
                     <TokenSelect onClick={() => setShowTo(true)} token={tokenTo} loading={!tokens} />
                   </div>
                   <Input
-                    value={toFixedValue(receiveAmount, 5)}
+                    value={toFixedValue(receiveAmount, 6)}
                     type="number"
                     loading={isLoadingReceiveAmount}
                     placeholder="Receive Amount"
