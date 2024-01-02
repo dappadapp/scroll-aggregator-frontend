@@ -598,7 +598,7 @@ const SwapCard: React.FC<Props> = () => {
 
   const { data: dataApprove, writeAsync: onApprove } = useContractWrite(configApprove);
 
-  useWaitForTransaction({
+  const { isLoading: isLoadingApprove } = useWaitForTransaction({
     hash: dataApprove?.hash,
     onSuccess: () => {
       setApproved(true);
@@ -618,9 +618,9 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH",
   });
 
-  const { data: dataEthDeposit, writeAsync: onEthDeposit, isLoading: isLoadingEthDeposit, isSuccess: isSuccessEthDeposit } = useContractWrite(configEthDeposit);
+  const { data: dataEthDeposit, writeAsync: onEthDeposit } = useContractWrite(configEthDeposit);
 
-  useWaitForTransaction({
+  const { isLoading: isLoadingEthDeposit } = useWaitForTransaction({
     hash: dataEthDeposit?.hash,
     onSuccess: () => {
       fetchBalanceFrom?.();
@@ -636,9 +636,9 @@ const SwapCard: React.FC<Props> = () => {
     enabled: !!tokens && !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH",
   });
   
-  const { data: dataWethWithdraw, writeAsync: onWethWithdraw, isLoading: isLoadingWethWithdraw, isSuccess: isSuccessWethWithdraw } = useContractWrite(configWethWithdraw);
+  const { data: dataWethWithdraw, writeAsync: onWethWithdraw } = useContractWrite(configWethWithdraw);
 
-  useWaitForTransaction({
+  const { isLoading: isLoadingWethWithdraw } = useWaitForTransaction({
     hash: dataWethWithdraw?.hash,
     onSuccess: () => {
       fetchBalanceFrom?.();
@@ -655,9 +655,9 @@ const SwapCard: React.FC<Props> = () => {
     //enabled: !!contracts && !!tokenFrom && !!swapAmount && !!swapValue && !!bestRouteData && approved && !(tokenFrom?.symbol == "WETH" && tokenTo?.symbol == "ETH") && !(tokenFrom?.symbol == "ETH" && tokenTo?.symbol == "WETH") && BigInt(swapValue) >= BigInt(String(balanceFrom?.value)),
   });
 
-  const { data: dataSwap, writeAsync: onSwap, isLoading: isLoadingSwap, isSuccess: isSuccessSwap } = useContractWrite(configSwap);
+  const { data: dataSwap, writeAsync: onSwap } = useContractWrite(configSwap);
 
-  useWaitForTransaction({
+  const { isLoading: isLoadingSwap } = useWaitForTransaction({
     hash: dataSwap?.hash,
     
     onSuccess: () => {
@@ -930,7 +930,7 @@ const SwapCard: React.FC<Props> = () => {
                   className={"select-none uppercase w-full xs:mx-0 mx-2 md:p-4 sm:p-3 p-2 rounded-xl xl:text-xl sm:text-lg text-md font-semibold " + (swapButtonDisableHandler() ? "opacity-50 pointer-events-none" : "")}
                   onClick={swapButtonOnClickHandler}
                 >
-                  {isLoadingSwap || isLoadingEthDeposit || isLoadingWethWithdraw ? (
+                  {(!approved && isLoadingApprove) || isLoadingSwap || isLoadingEthDeposit || isLoadingWethWithdraw ? (
                     <div className="flex justify-center text-white items-center">
                       <Loading className="animate-spin h-[1.25rem] w-[1.25rem]" />
                     </div>
