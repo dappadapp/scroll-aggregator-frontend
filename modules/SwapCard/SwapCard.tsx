@@ -124,7 +124,7 @@ const SwapCard: React.FC<Props> = () => {
   const initialWindowSizeSet = useRef(false);
   // const [offers, setOffers] = useState<DexOffer[]>([]);
   const [isMoreInformationVisible, setIsMoreInformationVisible] = useState(false);
-  const [isMoreInformationVisibleAll, setIsMoreInformationVisibleAll] = useState(true);
+  const [isMoreInformationVisibleAll, setIsMoreInformationVisibleAll] = useState(false);
 
   const native = useNativeCurrency();
 
@@ -492,19 +492,19 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    if (!tokenFrom || !address || !tokenTo) return;
+    if (!tokenFrom || !tokenTo) return;
+
+    if(tokenFrom!.symbol == "ETH" && tokenTo!.symbol == "WETH" || tokenFrom!.symbol == "WETH" && tokenTo!.symbol == "ETH") {
+      setIsMoreInformationVisibleAll(false);
+    } else {
+      setIsMoreInformationVisibleAll(true);
+    }
+
+    if(!address) return;
 
     if (tokenFrom!.symbol == "ETH") {
       setApproved(true);
-
-      if (tokenTo!.symbol == "WETH") setIsMoreInformationVisibleAll(false);
     } else if(tokenFrom!.symbol == "WETH") {
-      if (tokenTo!.symbol == "ETH") {
-        setIsMoreInformationVisibleAll(false);
-      } else {
-        setIsMoreInformationVisibleAll(true);
-      } 
-
       if(!!allowance && !!swapAmount) {
         if (Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
           setApproved(true);
@@ -517,8 +517,6 @@ const SwapCard: React.FC<Props> = () => {
 
       fetchAllowance?.();
     } else {
-      setIsMoreInformationVisibleAll(true);
-
       if(!!allowance && !!swapAmount) {
         if (Number(ethers.utils.formatUnits(String(allowance), tokenFrom?.wrapped?.decimals)) >= Number(swapAmount)) {
           setApproved(true);
@@ -980,7 +978,7 @@ const SwapCard: React.FC<Props> = () => {
                         {isLoadingReceiveAmount ? (
                           <div className="animate-pulse w-[27.5%] h-4 bg-white bg-opacity-10 rounded-full"></div>
                         ) : (
-                          <span className={"xs:text-base text-sm " + (Number(priceImpact) > 0 ? "text-white" : (Number(priceImpact) < 0 ? "text-green-500" : "text-white"))}>{Number(priceImpact) > 0 ? ("<" + priceImpact + "%") : "- %"}</span>
+                          <span className={"xs:text-base text-sm " + (Number(priceImpact) > 0 ? "text-white" : (Number(priceImpact) < 0 ? "text-green-500" : "text-white"))}>{Number(priceImpact) > 0 ? ("-" + priceImpact + "%") : (Number(priceImpact) < 0 ? ("+" + priceImpact + "%") : "- %")}</span>
                         )}
                       </div>
                     </div>
