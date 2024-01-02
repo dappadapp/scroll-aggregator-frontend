@@ -393,7 +393,7 @@ const SwapCard: React.FC<Props> = () => {
           setReceiveAmount("");
           setBestRouteData(undefined);
           setIsLoadingReceiveAmount(false);
-          toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
+          // toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
           return;
         }
 
@@ -469,7 +469,7 @@ const SwapCard: React.FC<Props> = () => {
         setReceiveAmount("");
         setBestRouteData(undefined);
         setIsLoadingReceiveAmount(false);
-        toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
+        // toast.error("Increase your swap amount or try the swap with different pairs", { toastId: 'swap' });
         return;
       }
     }
@@ -566,9 +566,9 @@ const SwapCard: React.FC<Props> = () => {
       if (!balanceFrom || !tokenFrom) return;
       const balance = formatUnits(balanceFrom.value, tokenFrom?.decimals);
       setPercentage(percent);
-      setSwapAmount(((parseFloat(balance) *  percent) / 100).toFixed(6).toString());
-      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * percent) / 100).toFixed(6).toString());
-      setReceiveAmount(((parseFloat(balance) * percent) / 100).toFixed(tokenTo?.decimals).toString());
+      setSwapAmount(((parseFloat(balance) *  (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(6).toString());
+      await generateBestRouteData(tokenFrom!, tokenTo!, ((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(6).toString());
+      setReceiveAmount(((parseFloat(balance) * (percent === 100 ? percent - 2.3 : percent)) / 100).toFixed(tokenTo?.decimals).toString());
       setChangeFrom(true);
     } else if (tokenFrom?.symbol == "ETH") {
       if (!balanceFrom || !tokenFrom) return;
