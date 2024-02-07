@@ -227,6 +227,7 @@ const SwapCard: React.FC<Props> = () => {
     ...(!tokenFrom?.isNative && {
       token: tokenFrom?.wrapped?.address,
     }),
+    watch: true,
     chainId: tokenFrom?.chainId,
     enabled: !!address && !!tokenFrom,
   });
@@ -240,6 +241,7 @@ const SwapCard: React.FC<Props> = () => {
     ...(!tokenTo?.isNative && {
       token: tokenTo?.wrapped?.address,
     }),
+    watch: true,
     chainId: tokenTo?.chainId,
     enabled: !!address && !!tokenTo,
   });
@@ -671,7 +673,6 @@ const SwapCard: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    if (!address || !tokenFrom || !tokenTo) return;
     fetchBalanceFrom?.();
     fetchBalanceTo?.();
   }, [address, tokenFrom, tokenTo, swapAmount]);
