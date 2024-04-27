@@ -197,7 +197,9 @@ export default function LeaderBoard() {
   };
 
   const getEpochData = async () => {
+    if (!address) return;
     try {
+      /*
       const response = await axios.get("/api/getEpoch");
       response.data.map((epoch: any, index: any) => {
         let now = Date.now();
@@ -205,7 +207,8 @@ export default function LeaderBoard() {
           setSelectedPhase(index + 1);
         }
       });
-      setEpochData(response.data);
+      */
+      setEpochData(null);
     } catch (error) {
       // Handle errors
     }

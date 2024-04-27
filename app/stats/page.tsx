@@ -7,20 +7,25 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Loading from "@/assets/images/loading.svg";
 import { SWAP_TYPE } from "@/types";
+import { useAccount } from "wagmi";
 
 const formatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 function Page() {
+  const { address } = useAccount();
   const [statsData, setStatsData] = useState<any>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     getStatsData().finally(() => setLoading(false));
   }, []);
   const getStatsData = async () => {
+    if (!address) return;
+    /*
     const response = await axios.get("/api/stats");
-    setStatsData(response.data);
+    */
+    setStatsData(null);
   };
   const timestampToDate = (timestamp: number) => {
     let today = new Date(timestamp);

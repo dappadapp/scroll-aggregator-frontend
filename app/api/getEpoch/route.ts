@@ -7,12 +7,14 @@ export async function GET(request: Request) {
     "x-api-key": process.env.NEXT_PUBLIC_NEW_API_KEY,
   };
 
-  const statusDataResponse = await axios.get(
+  const statusDataResponse = null;
+  /*
+  await axios.get(
     `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/phases`,
     {
       headers,
     }
-  );
+  );*/
 
-  return NextResponse.json(statusDataResponse.data);
+  return NextResponse.json(statusDataResponse);
 }

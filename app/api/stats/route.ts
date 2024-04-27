@@ -7,12 +7,14 @@ export async function GET() {
     "x-api-key": process.env.NEXT_PUBLIC_NEW_API_KEY,
   };
 
-  const statsDataResponse = await axios.get(
+  const statsDataResponse = null;
+  
+  /*await axios.get(
     `${process.env.NEXT_PUBLIC_NEW_BASE_URL}/aggre/mainnet/stats`,
     {
       headers,
     }
-  );
+  );*/
 
-  return NextResponse.json(statsDataResponse.data);
+  return NextResponse.json(statsDataResponse);
 }
