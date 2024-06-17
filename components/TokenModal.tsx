@@ -3,13 +3,9 @@ import { faSearch, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef, useState } from "react";
 import { CurrencyLogo } from "./CurrencyLogo";
-import { FaRegStar, FaStar } from "react-icons/fa";
-import axios from "axios";
-import Loading from "@/assets/images/loading.svg";
-import { useAccount, useBalance } from "wagmi";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
-import { ethers } from "ethers";
+import TokenModalItem from "./TokenModalItem";
 
 type Props = {
   onCloseModal: () => void;
@@ -20,10 +16,8 @@ type Props = {
 function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
   const [search, setSearch] = useState("");
   const [tokens, setTokens] = useState<any[]>(tokenList);
-  const { address } = useAccount();
   const [filteredToken, setFilteredToken] = useState<any[]>([]);
   const [favTokens, setFavTokens] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -39,11 +33,6 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onCloseModal]);
-
-  const { data } = useBalance({
-    address: address!,
-    chainId: 534352,
-  });
 
   const handleFilter = (key: string) => {
     setFilteredToken(
@@ -65,12 +54,6 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
     setFavTokens(fav_tokens);
   }, []);
 
-  useEffect(() => {
-    if (!tokens || !address) return;
-    setLoading(true);
-    getScrollTokenBalances().finally(() => setLoading(false));
-  }, [address, tokens]);
-
   const handleFavToken = (token: string) => {
     if (favTokens.some((tokenX) => tokenX === token)) {
       setFavTokens(favTokens.filter((tokenX) => tokenX !== token));
@@ -79,7 +62,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
         JSON.stringify(favTokens.filter((tokenX) => tokenX !== token))
       );
     } else {
-      if(favTokens.length >= 4) {
+      if (favTokens.length >= 4) {
         toast.error("You can only add up to 4 favorite tokens");
         return;
       }
@@ -88,67 +71,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
       localStorage.setItem("fav_tokens", JSON.stringify([...favTokens, token]));
     }
   };
-  const getScrollTokenBalances = async () => {
-    const ethBalanceJson = await axios(
-      `https://blockscout.scroll.io/api?module=account&action=eth_get_balance&address=${address}`
-    )
-      .then((response) => response)
-      .catch((error) => error.response);
 
-    const json = await axios(
-      `https://blockscout.scroll.io/api?module=account&action=tokenlist&address=${address}`
-    )
-      .then((response) => response)
-      .catch((error) => error.response);
-
-    if (ethBalanceJson.status === 200 && json.status === 200) {
-      if (json.data.message === "OK" && json.data.status === "1") {
-        const formatted = json.data.result.map((x: any) => ({
-          balance: Number(x.balance) / 10 ** Number(x.decimals),
-          name: x.name,
-          symbol: x.symbol,
-          decimals: x.decimals,
-          contractAddress: x.contractAddress,
-          type: x.type,
-        }));
-
-        let listWithBalance = tokens;
-
-        for(let i = 0; i < tokens.length; i++) {
-          if(tokens[i].symbol == "ETH") {
-            listWithBalance[i].balance = Number(ethers.utils.formatEther(ethBalanceJson.data.result)).toFixed(4);
-          }
-
-          for(let j = 0; j < formatted.length; j++) {
-            if(formatted[j].symbol === tokens[i].symbol) {
-              if(Number(formatted[j].balance) > 0) {
-                listWithBalance[i].wrapped.balance = Number(formatted[j].balance).toFixed(4);
-              } else {
-                listWithBalance[i].wrapped.balance = 0;
-              }
-            }
-          }
-        }
-
-        // let listWithBalance = tokens?.map((tokenA) => {
-        //   return {
-        //     ...tokenA,
-        //     balance: formatted.some(
-        //       (formatedToken: any) => formatedToken.symbol === tokenA.symbol
-        //     )
-        //       ? formatted.find(
-        //           (formatedToken: any) => formatedToken.symbol === tokenA.symbol
-        //         )?.balance
-        //       : 0,
-        //   };
-        // });
-
-        setTokens(listWithBalance);
-      }
-    } else {
-      // console.log("errorr");
-    }
-  };
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -165,11 +88,14 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.15 }}
         ref={modalRef}
-        className={ 
-          "z-[9999] xs:mt-0 mt-[2.5rem] lg:p-10 sm:p-8 p-6 xl:w-[28rem] lg:w-[26rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[75%] max-h-screen min-h-[17.5rem] xl:h-[36rem] lg:h-[34rem] sm:h-[28rem] xs:h-[28rem] h-[26rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] sm:rounded-[48px] rounded-[32px]"}
+        className={
+          "z-[9999] xs:mt-0 mt-[2.5rem] lg:p-10 sm:p-8 p-6 xl:w-[28rem] lg:w-[26rem] md:w-[24rem] sm:w-[22rem] xs:w-[20rem] w-[75%] max-h-screen min-h-[17.5rem] xl:h-[36rem] lg:h-[34rem] sm:h-[28rem] xs:h-[28rem] h-[26rem] bg-[rgba(26,29,36,0.75)] backdrop-blur-[52px] sm:rounded-[48px] rounded-[32px]"
+        }
       >
         <div className="flex justify-between items-center mb-1 text-white">
-          <h1 className="text-white lg:text-2xl md:text-xl sm:text-lg xs:text-base text-sm -mb-1">Select Token</h1>
+          <h1 className="text-white lg:text-2xl md:text-xl sm:text-lg xs:text-base text-sm -mb-1">
+            Select Token
+          </h1>
           <div
             onClick={() => onCloseModal()}
             className="right-0 z-[9999] font-medium hover:bg-white/10 bg-black/20 transition-all rounded-md flex justify-center items-center cursor-pointer lg:w-10 md:w-9 w-8 lg:h-10 md:h-9 h-8"
@@ -182,7 +108,7 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
             type="text"
             value={search}
             onChange={(e) => {
-              if(e.target.value.length < 18) {
+              if (e.target.value.length < 18) {
                 handleFilter(e.target.value.toUpperCase());
                 setSearch(e.target.value.toUpperCase());
               }
@@ -195,7 +121,16 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
             className="absolute top-1/2 right-5  transform -translate-y-1/2 text-gray-500 pointer-events-none"
           />
         </div>
-        <div className={"flex flex-row xs:flex-nowrap flex-wrap items-center xs:gap-3 gap-2 w-full " + (favTokens.length > 0 ? (favTokens.length == 4 ? "justify-evenly pb-6" : "xs:justify-start justify-evenly pb-6") : "xs:justify-start justify-evenly")}>
+        <div
+          className={
+            "flex flex-row xs:flex-nowrap flex-wrap items-center xs:gap-3 gap-2 w-full " +
+            (favTokens.length > 0
+              ? favTokens.length == 4
+                ? "justify-evenly pb-6"
+                : "xs:justify-start justify-evenly pb-6"
+              : "xs:justify-start justify-evenly")
+          }
+        >
           {favTokens.map((favToken) => (
             <div
               key={favToken}
@@ -229,66 +164,34 @@ function TokenModal({ onCloseModal, onSelectToken, tokenList }: Props) {
           ))}
         </div>
         <div className="border-t-2 border-t-[#FFF0DD]/20"></div>
-        <div className={(favTokens.length > 0 ? (favTokens.length > 2 ? "xs:max-h-[60%] max-h-[42.5%]" : "xs:max-h-[60%] max-h-[55%]") : "max-h-[72.5%]") + "  py-4 overflow-y-scroll gap-4 no-scrollbar flex flex-col mb-4"}>
+        <div
+          className={
+            (favTokens.length > 0
+              ? favTokens.length > 2
+                ? "xs:max-h-[60%] max-h-[42.5%]"
+                : "xs:max-h-[60%] max-h-[55%]"
+              : "max-h-[72.5%]") +
+            "  py-4 overflow-y-scroll gap-4 no-scrollbar flex flex-col mb-4"
+          }
+        >
           {(search.length ? filteredToken : tokens)
             // ?.sort((a: any, b: any) => {
             //   if (a?.wrapped?.balance > b?.wrapped?.balance) return -1;
             //   else return 1;
             // })
             .map((tokenX, tokenXIndex) => (
-              <div
-                key={tokenX.name}
-                onClick={() => {
-                  onSelectToken(tokenX);
-                  onCloseModal();
-                }}
-                className="hover:bg-white hover:bg-opacity-10 gap-2 rounded-2xl transition-all duration-150 ease-in-out text-[#FFF0DD] cursor-pointer py-2 xs:px-4 px-2 flex items-center justify-between"
-              >
-                <div className="flex gap-5 items-center">
-                  <CurrencyLogo size={8} currency={tokenX} />
-                  <div className="flex flex-col gap-1">
-                    <span className="lg:text-lg text-sm font-bold ">{tokenX.symbol}</span>
-                    <span className="text-opacity-40 lg:text-sm text-xs">
-                      {tokenX.name}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-row justify-center items-center">
-                  {loading ? (
-                    <div className="-mt-1 mr-3 rounded-full text-black-500 w-[5rem] h-[1.625rem] animate-pulse bg-white opacity-5 xs:flex hidden"></div>
-                  ) : (
-                    <div className="flex-1 -mt-1 justify-end mr-3 truncate text-sm lg:text-lg font-bold xs:flex hidden ">
-                      {tokenX.symbol === "ETH"
-                        ? Number(tokenX.balance).toFixed(4) === "NaN" ? "0.0000" : Number(tokenX.balance).toFixed(4)
-                        : Number(tokenX.wrapped?.balance).toFixed(4) === "NaN" ? "0.0000" : Number(tokenX.wrapped?.balance).toFixed(4)
-                      } 
-                    </div>
-                  )}
-
-                  {favTokens.some((tokenY) => tokenX.symbol === tokenY) ? (
-                    <FaStar
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFavToken(tokenX.symbol);
-                      }}
-                      fill={"#FFF0DD "}
-                      className="mb-2"
-                    />
-                  ) : (
-                    <FaRegStar
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFavToken(tokenX.symbol);
-                      }}
-                      fill={"#fff"}
-                      className="mb-2"
-                    />
-                  )}
-                </div>
-              </div>
+              <TokenModalItem
+                key={tokenXIndex}
+                favTokens={favTokens}
+                handleFavToken={handleFavToken}
+                onCloseModal={onCloseModal}
+                onSelectToken={onSelectToken}
+                token={tokenX}
+                tokenList={tokenList}
+              />
             ))}
         </div>
-      </motion.div>  
+      </motion.div>
     </motion.div>
   );
 }
