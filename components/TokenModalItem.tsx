@@ -47,7 +47,7 @@ function TokenModalItem({
           <div className="-mt-1 mr-3 rounded-full text-black-500 w-[5rem] h-[1.625rem] animate-pulse bg-white opacity-5 xs:flex hidden"></div>
         ) : (
           <div className="flex-1 -mt-1 justify-end mr-3 truncate text-sm lg:text-lg font-bold xs:flex hidden ">
-            {Number(data?.formatted).toFixed(4)}
+            {data ? Number(data?.formatted).toFixed(4) : "0.000"}
           </div>
         )}
 
