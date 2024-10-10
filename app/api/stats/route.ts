@@ -6,6 +6,7 @@ export async function GET() {
     "Content-Type": "application/json",
     "x-api-key": process.env.NEXT_PUBLIC_NEW_API_KEY,
   };
+  
 
   const statsDataResponse = null;
   
