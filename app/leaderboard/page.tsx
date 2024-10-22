@@ -56,6 +56,7 @@ export default function LeaderBoard() {
   const [totalUSDValue, setTotalUSDValue] = useState<number>(0);
   const [epochData, setEpochData] = useState<any>();
 
+  
   useEffect(() => {
     // Define the API URL to fetch token balances
     const apiUrl =
